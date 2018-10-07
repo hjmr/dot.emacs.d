@@ -47,9 +47,6 @@
 ;;-------------------------------
 (when sys-mac-p
   (cd (getenv "HOME"))
-  (add-to-list 'load-path '"/brew/share/emacs/site-lisp")
-  (add-to-list 'load-path (expand-file-name "~/Library/EmacsLisp/mac"))
-  (add-to-list 'load-path (expand-file-name "~/Library/EmacsLisp"))
   (setenv "TEXINPUTS" "~/Library/TeX//:")
   ;; (let ((path-str
   ;;        (concat
@@ -62,10 +59,7 @@
   ;;   (setenv "PATH" path-str)
   ;;   (setq exec-path (nconc (split-string path-str ":") exec-path)))
   )
-(when sys-linux-p
-  (add-to-list 'load-path (concat (getenv "HOME") "/elisp")))
-(when sys-win-p
-  (add-to-list 'load-path '"/Users/hjmr/EmacsLisp"))
+(add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
 ;;-------------------------------
 ;;  Package System
 ;;-------------------------------
@@ -162,41 +156,42 @@
 ;;-------------------------------
 ;; shorten mode-line
 ;;-------------------------------
-(setq sml/no-confirm-load-theme t)
-(setq sml/theme 'dark)
-(sml/setup)
+(when (fboundp 'sml/setup)
+  (setq sml/no-confirm-load-theme t)
+  (setq sml/theme 'dark)
+  (sml/setup)
 
-(defvar projectile-mode-line
-  '(:eval (format " Proj[%s]"
-                  (projectile-project-name))))
+  (defvar projectile-mode-line
+    '(:eval (format " Proj[%s]"
+                    (projectile-project-name))))
 
-(defvar mode-line-cleaner-alist
-  '( ;; For minor-mode, first char is 'space'
-    (undo-tree-mode . "")
-    (company-mode . "")
-    (hiwin-mode . "")
-    (global-whitespace-mode . "")
-    (eldoc-mode . "")
-    (flyspell-mode . " FlyS")
-    ;; Major modes
-    (lisp-interaction-mode . "Li")
-    (python-mode . "Py")
-    (emacs-lisp-mode . "El")
-    (js-mode . "JS")
-    (markdown-mode . "Md")))
+  (defvar mode-line-cleaner-alist
+    '( ;; For minor-mode, first char is 'space'
+      (undo-tree-mode . "")
+      (company-mode . "")
+      (hiwin-mode . "")
+      (global-whitespace-mode . "")
+      (eldoc-mode . "")
+      (flyspell-mode . " FlyS")
+      ;; Major modes
+      (lisp-interaction-mode . "Li")
+      (python-mode . "Py")
+      (emacs-lisp-mode . "El")
+      (js-mode . "JS")
+      (markdown-mode . "Md")))
 
-(defun clean-mode-line ()
-  (interactive)
-  (loop for (mode . mode-str) in mode-line-cleaner-alist
-        do
-        (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
-          (when old-mode-str
-            (setcar old-mode-str mode-str))
-          ;; major mode
-          (when (eq mode major-mode)
-            (setq mode-name mode-str)))))
+  (defun clean-mode-line ()
+    (interactive)
+    (loop for (mode . mode-str) in mode-line-cleaner-alist
+          do
+          (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
+            (when old-mode-str
+              (setcar old-mode-str mode-str))
+            ;; major mode
+            (when (eq mode major-mode)
+              (setq mode-name mode-str)))))
 
-(add-hook 'after-change-major-mode-hook 'clean-mode-line)
+  (add-hook 'after-change-major-mode-hook 'clean-mode-line))
 ;;-------------------------------
 ;; line and column on mode-line
 ;;-------------------------------
@@ -1323,11 +1318,12 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
-(auctex-latexmk-setup)
+(exec-if-bound (auctex-latexmk-setup))
+(exec-if-bound (company-auctex-init))
 
+(setq-default TeX-master nil)
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
-(setq-default TeX-master nil)
 (setq TeX-PDF-mode t)
 
 (add-hook 'LaTeX-mode-hook
@@ -1339,12 +1335,6 @@ check for the whole contents of FILE, otherwise check for the first
 
 (setq latex-preview-pane-multifile-mode 'auctex)
 (setq pdf-latex-command "latexmk")
-
-;;-------------------------------
-;; sdoc-mode settings
-;;-------------------------------
-;(setq sgml-quick-keys t)
-(autoload 'sdoc-mode "sdoc-mode" nil t)
 ;;
 ;;===============================================================================================
 ;;
