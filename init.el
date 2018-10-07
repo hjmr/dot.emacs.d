@@ -1109,8 +1109,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 (when (fboundp 'global-flycheck-mode)
   (global-flycheck-mode)
-  (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)
-  (exec-if-bound (flycheck-vale-setup)))
+  (exec-if-bound (flycheck-vale-setup))
+  (when (fboundp 'flycheck-popup-tip-mode)
+    (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
 ;; (add-to-list 'flycheck-vale-modes 'LaTeX-mode)
 ;;-------------------------------
 ;; spell checker (aspell)
