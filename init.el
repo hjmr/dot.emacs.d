@@ -1122,7 +1122,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; flyspell
 ;;-------------------------------
-(require 'flyspell-correct-popup)
+(require 'flyspell-correct-popup nil t)
 ;;
 ;;===============================================================================================
 ;;
