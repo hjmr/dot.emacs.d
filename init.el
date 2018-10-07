@@ -160,39 +160,39 @@
 (when (fboundp 'sml/setup)
   (setq sml/no-confirm-load-theme t)
   (setq sml/theme 'dark)
-  (sml/setup)
+  (sml/setup))
 
-  (defvar projectile-mode-line
-    '(:eval (format " Proj[%s]"
-                    (projectile-project-name))))
+(defvar projectile-mode-line
+  '(:eval (format " Proj[%s]"
+                  (projectile-project-name))))
 
-  (defvar mode-line-cleaner-alist
-    '( ;; For minor-mode, first char is 'space'
-      (undo-tree-mode . "")
-      (company-mode . "")
-      (hiwin-mode . "")
-      (global-whitespace-mode . "")
-      (eldoc-mode . "")
-      (flyspell-mode . " FlyS")
-      ;; Major modes
-      (lisp-interaction-mode . "Li")
-      (python-mode . "Py")
-      (emacs-lisp-mode . "El")
-      (js-mode . "JS")
-      (markdown-mode . "Md")))
+(defvar mode-line-cleaner-alist
+  '( ;; For minor-mode, first char is 'space'
+    (undo-tree-mode . "")
+    (company-mode . "")
+    (hiwin-mode . "")
+    (global-whitespace-mode . "")
+    (eldoc-mode . "")
+    (flyspell-mode . " FlyS")
+    ;; Major modes
+    (lisp-interaction-mode . "Li")
+    (python-mode . "Py")
+    (emacs-lisp-mode . "El")
+    (js-mode . "JS")
+    (markdown-mode . "Md")))
 
-  (defun clean-mode-line ()
-    (interactive)
-    (loop for (mode . mode-str) in mode-line-cleaner-alist
-          do
-          (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
-            (when old-mode-str
-              (setcar old-mode-str mode-str))
-            ;; major mode
-            (when (eq mode major-mode)
-              (setq mode-name mode-str)))))
+(defun clean-mode-line ()
+  (interactive)
+  (loop for (mode . mode-str) in mode-line-cleaner-alist
+        do
+        (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
+          (when old-mode-str
+            (setcar old-mode-str mode-str))
+          ;; major mode
+          (when (eq mode major-mode)
+            (setq mode-name mode-str)))))
 
-  (add-hook 'after-change-major-mode-hook 'clean-mode-line))
+(add-hook 'after-change-major-mode-hook 'clean-mode-line)
 ;;-------------------------------
 ;; line and column on mode-line
 ;;-------------------------------
