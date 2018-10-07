@@ -24,7 +24,7 @@
       sys-win-p       (eq system-type 'window-nt)
       sys-linux-p     (eq system-type 'gnu/linux)
       sys-centos-p    (string-match "centos" (emacs-version))
-      sys-ubuntu-p    (string-match "ubuntu" (emacs-version))
+      sys-ubuntu-p    (string-match "Debian" (emacs-version))
       )
 ;;-------------------------------
 ;; for in different environment
@@ -586,8 +586,8 @@ properly disable mozc-mode."
     (set-default-font "fontset-vlgothic16")
     (add-to-list 'default-frame-alist '(font . "fontset-vlgothic16")))
   (when sys-ubuntu-p
-    (set-default-font "fontset-takaoexgoth16")
-    (add-to-list 'default-frame-alist '(font . "fontset-takaoexgoth16"))))
+    (set-default-font "fontset-notosans16")
+    (add-to-list 'default-frame-alist '(font . "fontset-notosans16"))))
 ;;
 ;;===============================================================================================
 ;;
