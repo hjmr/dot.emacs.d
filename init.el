@@ -1278,24 +1278,25 @@ check for the whole contents of FILE, otherwise check for the first
           )
 
 ;; pyenv-mode
-(setq pyenv-mode-map nil)
-(pyenv-mode)
+(when (fboundp 'pyenv-mode)
+  (setq pyenv-mode-map nil)
+  (pyenv-mode)
 
-;; pyenv-mode-auto
-(defun pyenv-mode-auto-hook (prev cur)
-  "Automatically set pyenv version when changing buffer from PREV to CUR."
-  (let ((file-path '(buffer-file-name (cur))))
-    (unless (f-traverse-upwards
-             (lambda (file-path)
-               (let ((pyenv-version-path (f-expand ".python-version" file-path)))
-                 (if (f-exists? pyenv-version-path)
-                     (progn
-                       (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
-                       t)))))
-      (pyenv-mode-unset)
-      )))
+  ;; pyenv-mode-auto
+  (defun pyenv-mode-auto-hook (prev cur)
+    "Automatically set pyenv version when changing buffer from PREV to CUR."
+    (let ((file-path '(buffer-file-name (cur))))
+      (unless (f-traverse-upwards
+               (lambda (file-path)
+                 (let ((pyenv-version-path (f-expand ".python-version" file-path)))
+                   (if (f-exists? pyenv-version-path)
+                       (progn
+                         (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
+                         t)))))
+        (pyenv-mode-unset)
+        )))
 
-(add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook)
+  (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
 ;;-------------------------------
 ;; text-mode settings
 ;;-------------------------------
