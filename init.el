@@ -40,7 +40,8 @@
 ;;
 (defun safe-define-key (map key command)
   "Assign KEY in MAP to COMMAND iff COMMAND exsits."
-  (when (fboundp command)
+  (when (and (boundp 'map)
+             (fboundp command))
     (define-key map key command)))
 ;;-------------------------------
 ;; paths and environment vars
@@ -1389,11 +1390,11 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- projectile
 (safe-define-key projectile-mode-map (kbd "C-c p")     'projectile-command-map)
 ;;-- company
-(define-key company-active-map       (kbd "C-n")       'company-select-next)
-(define-key company-active-map       (kbd "C-p")       'company-select-previous)
+(safe-define-key company-active-map  (kbd "C-n")       'company-select-next)
+(safe-define-key company-active-map  (kbd "C-p")       'company-select-previous)
 ;;(define-key company-active-map     (kbd "C-h")       'backward-delete-char-untabify)
-(define-key company-active-map       (kbd "M-n")       nil)
-(define-key company-active-map       (kbd "M-p")       nil)
+(safe-define-key company-active-map  (kbd "M-n")       nil)
+(safe-define-key company-active-map  (kbd "M-p")       nil)
 ;;-- flyspell
 (safe-define-key flyspell-mode-map   (kbd "C-;")       'flyspell-correct-previous-word-generic)
 ;;-- Mac Finder control
