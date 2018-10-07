@@ -40,9 +40,9 @@
 ;;
 (defun safe-define-key (map key command)
   "Assign KEY in MAP to COMMAND iff COMMAND exsits."
-  (when (and (boundp 'map)
-             (fboundp command))
-    (define-key map key command)))
+  (when (and (boundp map)
+         (fboundp command))
+    (define-key (eval map) key command)))
 ;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
@@ -1350,56 +1350,56 @@ check for the whole contents of FILE, otherwise check for the first
 (when sys-mac-p
   (setq mac-option-modifier 'meta))
 
-(global-set-key                      (kbd "C-x n")     'next-error)
-(global-set-key                      (kbd "C-z")       'scroll-down)
-(global-set-key                      (kbd "M-g")       'goto-line)
-(global-set-key                      (kbd "C-_")       'undo)
-(global-set-key                      (kbd "C-x C-b")   'buffer-menu)
-(global-set-key                      (kbd "<end>")     'end-of-buffer )
-(global-set-key                      (kbd "<home>")    'beginning-of-buffer )
-(global-set-key                      (kbd "C-^")       'universal-argument) ;; quick hack
-(safe-global-set-key                 (kbd "<ns-drag-file>") 'ns-find-file)
+(global-set-key                       (kbd "C-x n")     'next-error)
+(global-set-key                       (kbd "C-z")       'scroll-down)
+(global-set-key                       (kbd "M-g")       'goto-line)
+(global-set-key                       (kbd "C-_")       'undo)
+(global-set-key                       (kbd "C-x C-b")   'buffer-menu)
+(global-set-key                       (kbd "<end>")     'end-of-buffer )
+(global-set-key                       (kbd "<home>")    'beginning-of-buffer )
+(global-set-key                       (kbd "C-^")       'universal-argument) ;; quick hack
+(safe-global-set-key                  (kbd "<ns-drag-file>") 'ns-find-file)
 ;;-- multiple-cursor
-(global-set-key                      (kbd "C->")       'mc/mark-next-like-this)
-(global-set-key                      (kbd "C-<")       'mc/mark-previous-like-this)
-(global-set-key                      (kbd "C-c C-<")   'mc/mark-all-like-this)
+(global-set-key                       (kbd "C->")       'mc/mark-next-like-this)
+(global-set-key                       (kbd "C-<")       'mc/mark-previous-like-this)
+(global-set-key                       (kbd "C-c C-<")   'mc/mark-all-like-this)
 ;;-- UCS normalization
-(global-set-key                      (kbd "C-x RET u") 'ucs-normalize-NFC-buffer)
+(global-set-key                       (kbd "C-x RET u") 'ucs-normalize-NFC-buffer)
 ;;-- SMEX
-(global-set-key                      (kbd "M-x")       'smex)
-(global-set-key                      (kbd "M-X")       'smex-major-mode-commands)
+(global-set-key                       (kbd "M-x")       'smex)
+(global-set-key                       (kbd "M-X")       'smex-major-mode-commands)
 ;;-- imenus
-(global-set-key                      (kbd "C-.")       #'imenu-anywhere)
+(global-set-key                       (kbd "C-.")       #'imenu-anywhere)
 ;;-- move file
-(global-set-key                      (kbd "C-x m")     #'move-file)
+(global-set-key                       (kbd "C-x m")     #'move-file)
 ;;-- neotree
-(global-set-key                      (kbd "<f8>")      'neotree-project-dir)
-(global-set-key                      (kbd "<f9>")      'neotree-refresh)
+(global-set-key                       (kbd "<f8>")      'neotree-project-dir)
+(global-set-key                       (kbd "<f9>")      'neotree-refresh)
 ;;-- EWW
-(global-set-key                      (kbd "C-c g")     'my-eww-search-words)
+(global-set-key                       (kbd "C-c g")     'my-eww-search-words)
 ;;-- counr-words-region
-(safe-global-set-key                 (kbd "C-c =")     'count-words-region)
+(safe-global-set-key                  (kbd "C-c =")     'count-words-region)
 ;;-- toggle-fullscreen
-(safe-global-set-key                 (kbd "M-RET")     'my-toggle-fullscreen)
+(safe-global-set-key                  (kbd "M-RET")     'my-toggle-fullscreen)
 ;;-- IME control on linux
-(safe-global-set-key                 (kbd "<hiragana-katakana>") 'my-turn-on-input-method)
+(safe-global-set-key                  (kbd "<hiragana-katakana>") 'my-turn-on-input-method)
 ;;-- ripgrep
-(safe-global-set-key                 (kbd "C-c n")     'ripgrep-regexp)
+(safe-global-set-key                  (kbd "C-c n")     'ripgrep-regexp)
 ;;-- magit
-(safe-global-set-key                 (kbd "C-x g")     'magit-status)
+(safe-global-set-key                  (kbd "C-x g")     'magit-status)
 ;;-- projectile
-(safe-define-key projectile-mode-map (kbd "C-c p")     'projectile-command-map)
+(safe-define-key 'projectile-mode-map (kbd "C-c p")     'projectile-command-map)
 ;;-- company
-(safe-define-key company-active-map  (kbd "C-n")       'company-select-next)
-(safe-define-key company-active-map  (kbd "C-p")       'company-select-previous)
-;;(define-key company-active-map     (kbd "C-h")       'backward-delete-char-untabify)
-(safe-define-key company-active-map  (kbd "M-n")       nil)
-(safe-define-key company-active-map  (kbd "M-p")       nil)
+(safe-define-key 'company-active-map  (kbd "C-n")       'company-select-next)
+(safe-define-key 'company-active-map  (kbd "C-p")       'company-select-previous)
+;;(define-key company-active-map        (kbd "C-h")       'backward-delete-char-untabify)
+(safe-define-key 'company-active-map  (kbd "M-n")       nil)
+(safe-define-key 'company-active-map  (kbd "M-p")       nil)
 ;;-- flyspell
-(safe-define-key flyspell-mode-map   (kbd "C-;")       'flyspell-correct-previous-word-generic)
+(safe-define-key 'flyspell-mode-map   (kbd "C-;")       'flyspell-correct-previous-word-generic)
 ;;-- Mac Finder control
-(safe-global-set-key                 (kbd "<f7>")      'open-in-finder)
-(safe-global-set-key                 (kbd "<f6>")      'open-terminal-here)
+(safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
+(safe-global-set-key                  (kbd "<f6>")      'open-terminal-here)
 ;;
 ;;===============================================================================================
 ;;
