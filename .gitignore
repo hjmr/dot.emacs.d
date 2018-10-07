@@ -1,0 +1,13 @@
+*~
+*.elc
+ac-comphist.dat
+ido.last
+smex-items
+eshell/
+projectile-bookmarks.eld
+tramp
+.emacs.desktop*
+url/
+.python-environments/
+elpa/archives/
+elpa/gnupg/
