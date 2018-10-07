@@ -1147,6 +1147,7 @@ check for the whole contents of FILE, otherwise check for the first
                 ("\\.[Cc][Ss][Vv]\\'" . csv-mode)
                 ("\\.html\\'"         . jinja2-mode)
                 ("\\.jinja2\\'"       . jinja2-mode)
+                ("\\.el\\'"           . emacs-lisp-mode)
                 )
               auto-mode-alist))
 ;;-------------------------------
