@@ -487,7 +487,7 @@ properly disable mozc-mode."
 
 (ignore-errors
   (let* ((name "notosans16")
-         (asciifont "Ubuntu Mono")
+         (asciifont "DejaVu Sans Mono")
          (jpfont "Noto Sans CJK JP")
          (fontspec (font-spec :family asciifont :size 16 :weight 'light))
          (jp-fontspec (font-spec :family jpfont :weight 'light))
@@ -1367,8 +1367,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- UCS normalization
 (global-set-key                       (kbd "C-x RET u") 'ucs-normalize-NFC-buffer)
 ;;-- SMEX
-(global-set-key                       (kbd "M-x")       'smex)
-(global-set-key                       (kbd "M-X")       'smex-major-mode-commands)
+(safe-global-set-key                       (kbd "M-x")       'smex)
+(safe-global-set-key                       (kbd "M-X")       'smex-major-mode-commands)
 ;;-- imenus
 (global-set-key                       (kbd "C-.")       #'imenu-anywhere)
 ;;-- move file
