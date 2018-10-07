@@ -76,7 +76,7 @@
 ;;(setq desktop-restore-frames nil)
 ;;-------------------------------
 ;; Japanese environment
-;;-------------------------------
+ ;;-------------------------------
 (set-language-environment 'Japanese)
 ;;-------------------------------
 ;; hide menus
@@ -1110,7 +1110,7 @@ check for the whole contents of FILE, otherwise check for the first
 (when (fboundp 'global-flycheck-mode)
   (global-flycheck-mode)
   (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)
-  (flycheck-vale-setup))
+  (exec-if-bound (flycheck-vale-setup)))
 ;; (add-to-list 'flycheck-vale-modes 'LaTeX-mode)
 ;;-------------------------------
 ;; spell checker (aspell)
