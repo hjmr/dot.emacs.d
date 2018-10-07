@@ -1367,8 +1367,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- UCS normalization
 (global-set-key                       (kbd "C-x RET u") 'ucs-normalize-NFC-buffer)
 ;;-- SMEX
-(safe-global-set-key                       (kbd "M-x")       'smex)
-(safe-global-set-key                       (kbd "M-X")       'smex-major-mode-commands)
+(safe-global-set-key                  (kbd "M-x")       'smex)
+(safe-global-set-key                  (kbd "M-X")       'smex-major-mode-commands)
 ;;-- imenus
 (global-set-key                       (kbd "C-.")       #'imenu-anywhere)
 ;;-- move file
