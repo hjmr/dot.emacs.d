@@ -109,7 +109,9 @@
 (add-to-list 'default-frame-alist '(foreground-color . "white"))
 (add-to-list 'default-frame-alist '(background-color . "black"))
 (add-to-list 'default-frame-alist '(width . 130))
-(add-to-list 'default-frame-alist '(height . 100))
+(if gui-win-p
+    (add-to-list 'default-frame-alist '(height . 58))
+  (add-to-list 'default-frame-alist '(height . 100)))
 (add-to-list 'default-frame-alist '(top .  0))
 (add-to-list 'default-frame-alist '(left   . 0))
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
