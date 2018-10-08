@@ -342,7 +342,7 @@ properly disable mozc-mode."
 ;;  macOS
 ;;-----------------------------
 ;;
-;;-------- Hiragino Kaku-Gothic ----------
+;;-------- macOS:Hiragino Kaku-Gothic ----------
 
 (ignore-errors
   (let* ((name "hirakaku12")
@@ -360,7 +360,7 @@ properly disable mozc-mode."
     )
   t)
 
-;;--------- Hiragino Mincho -----------
+;;--------- macOS:Hiragino Mincho -----------
 
 (ignore-errors
   (let* ((name "hiramin14")
@@ -460,7 +460,7 @@ properly disable mozc-mode."
          (fontspec (font-spec :family asciifont :size 14 :weight 'light))
 ;;         (fontspec (font-spec :family asciifont :size 14 :weight 'regular))
 ;;         (jp-fontspec (font-spec :family jpfont :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :weight 'regular))
+         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'regular))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -469,7 +469,7 @@ properly disable mozc-mode."
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
     (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
     (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
-    (setq face-font-rescale-alist '(("UD Digi Kyokasho N-R" . 1.2)))
+;;    (setq face-font-rescale-alist '(("UD Digi Kyokasho N-R" . 1.2)))
     )
   t)
 
@@ -927,17 +927,17 @@ check for the whole contents of FILE, otherwise check for the first
   (defun my-tabbar-buffer-hide-groups ()
     "Hide groups"
     (interactive)
-    ;; (global-set-key "\C-g"                 'keyboard-quit)
-    (global-set-key [(control tab)]        'tabbar-forward-tab)
-    (global-set-key [(control shift tab)]  'tabbar-backward-tab)
+    ;; (global-set-key "\C-g"             'keyboard-quit)
+    (global-set-key (kbd "<C-tab>")    'tabbar-forward-tab)
+    (global-set-key (kbd "<C-S-tab>")  'tabbar-backward-tab)
     (setq my-tabbar-show-group-timer nil)
     (tabbar-buffer-show-groups nil)
     (tabbar-display-update))
   ;;
   (defun my-tabbar-change-group (backward)
     "Change tab in the next/previous available group."
-    (global-set-key [(control tab)]        'my-tabbar-forward-group)
-    (global-set-key [(control shift tab)]  'my-tabbar-backward-group)
+    (global-set-key (kbd "<C-tab>")    'my-tabbar-forward-group)
+    (global-set-key (kbd "<C-S-tab>")  'my-tabbar-backward-group)
     (let ((tabbar-cycle-scope 'groups))
       (tabbar-cycle backward))
     (tabbar-buffer-show-groups t)
@@ -964,15 +964,15 @@ check for the whole contents of FILE, otherwise check for the first
       (progn
         (tabbar-buffer-show-groups t)
         (tabbar-display-update)
-        ;;(global-set-key "\C-g"                'my-tabbar-buffer-hide-groups)
-        (global-set-key [(control tab)]       'my-tabbar-forward-group)
-        (global-set-key [(control shift tab)] 'my-tabbar-backward-group))))
+        ;; (global-set-key "\C-g"             'my-tabbar-buffer-hide-groups)
+        (global-set-key (kbd "<C-tab>")    'my-tabbar-forward-group)
+        (global-set-key (kbd "<C-S-tab>")  'my-tabbar-backward-group))))
 
   (setq tabbar-cycle-scope 'tabs)
   (setq tabbar-auto-scroll-flag t)
-  (global-set-key [(control c) (control tab)]        'my-tabbar-press-home)
-  (global-set-key [(control tab)]                    'tabbar-forward-tab)
-  (global-set-key [(control shift tab)]              'tabbar-backward-tab)
+  (global-set-key (kbd "C-c <C-tab>")        'my-tabbar-press-home)
+  (global-set-key (kbd "<C-tab>")            'tabbar-forward-tab)
+  (global-set-key (kbd "<C-S-tab>")          'tabbar-backward-tab)
   ;;
   ;;-- mode-line
   ;;(add-to-list 'tabbar-header-line-format
