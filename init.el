@@ -139,10 +139,10 @@
 ;;-------------------------------
 ;; UCS normalize
 ;;-------------------------------
-(load-library "ucs-normalize")
-(defun ucs-normalize-NFC-buffer ()
-  (interactive)
-  (ucs-normalize-NFC-region (point-min) (point-max)))
+;;(load-library "ucs-normalize")
+;;(defun ucs-normalize-NFC-buffer ()
+;;  (interactive)
+;;  (ucs-normalize-NFC-region (point-min) (point-max)))
 ;;-------------------------------
 ;; KANJI code
 ;;-------------------------------
@@ -153,9 +153,9 @@
 (set-clipboard-coding-system 'utf-8)
 (set-keyboard-coding-system  'utf-7)
 (setq default-process-coding-system '(utf-8 . utf-8))
-(when sys-mac-p
-  (setq default-file-name-coding-system 'utf-8-hfs-mac)
-  (set-file-name-coding-system 'utf-8-hfs-mac))
+;;(when sys-mac-p
+;;  (setq default-file-name-coding-system 'utf-8-hfs-mac)
+;;  (set-file-name-coding-system 'utf-8-hfs-mac))
 ;;-------------------------------
 ;; shorten mode-line
 ;;-------------------------------
@@ -1362,10 +1362,6 @@ check for the whole contents of FILE, otherwise check for the first
 
   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
 ;;-------------------------------
-;; text-mode settings
-;;-------------------------------
-(add-hook 'text-mode-hook 'flyspell-mode)
-;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
 (autoload 'csv-mode "csv-mode"
@@ -1393,10 +1389,11 @@ check for the whole contents of FILE, otherwise check for the first
 
 (add-hook 'LaTeX-mode-hook
           '(lambda ()
-             (japanese-latex-mode)
+;;             (japanese-latex-mode)
              (visual-line-mode)
              (flyspell-mode)
-             (LaTeX-math-mode)))
+             (LaTeX-math-mode)
+             ))
 
 (setq latex-preview-pane-multifile-mode 'auctex)
 (setq pdf-latex-command "latexmk")
