@@ -580,6 +580,7 @@ properly disable mozc-mode."
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
+    (setq face-font-rescale-alist '(("UD デジタル 教科書体 N-R" . 1.1)))
     )
   t)
 
@@ -597,6 +598,7 @@ properly disable mozc-mode."
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
+    (setq face-font-rescale-alist '(("UD デジタル 教科書体 N-R" . 1.1)))
     )
   t)
 
