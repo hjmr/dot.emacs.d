@@ -513,10 +513,10 @@ properly disable mozc-mode."
 ;;-------- CentOS 7: VL Gothic ---------
 
 (ignore-errors
-  (let* ((name "vlgothic16")
+  (let* ((name "vlgothic14")
          (asciifont "DejaVu Sans Mono")
          (jpfont "VL Goghic")
-         (fontspec (font-spec :family asciifont :size 16 :weight 'light))
+         (fontspec (font-spec :family asciifont :size 14 :weight 'light))
          (jp-fontspec (font-spec :family jpfont :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
@@ -637,8 +637,8 @@ properly disable mozc-mode."
     (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho15"))))
 (when gui-x-p
   (when sys-centos-p
-    (set-default-font "fontset-vlgothic16")
-    (add-to-list 'default-frame-alist '(font . "fontset-vlgothic16")))
+    (set-default-font "fontset-vlgothic14")
+    (add-to-list 'default-frame-alist '(font . "fontset-vlgothic14")))
   (when sys-ubuntu-p
     (set-default-font "fontset-notosans16")
     (add-to-list 'default-frame-alist '(font . "fontset-notosans16"))))
