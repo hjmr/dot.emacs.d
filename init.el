@@ -336,6 +336,10 @@ properly disable mozc-mode."
   (setq fixed-width-use-QuickDraw-for-ascii t)
   (setq mac-allow-anti-aliasing nil))
 
+;;-----------------------------
+;;  macOS
+;;-----------------------------
+;;
 ;;-------- Hiragino Kaku-Gothic ----------
 
 (ignore-errors
@@ -379,7 +383,7 @@ properly disable mozc-mode."
          (asciifont "Inconsolata")
          (jpfont "Hiragino Sans")
          (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -396,14 +400,13 @@ properly disable mozc-mode."
          (asciifont "Letter Gothic Std")
          (jpfont "Hiragino Sans")
          (fontspec (font-spec :family asciifont :size 14))
-         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 15 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (setq face-font-rescale-alist '(("Hiragino Sans" . 1.2)))
     )
   t)
 
@@ -414,14 +417,13 @@ properly disable mozc-mode."
          (asciifont "Letter Gothic Std")
          (jpfont "Hiragino Sans")
          (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (setq face-font-rescale-alist '(("Hiragino Sans" . 1.2)))
     )
   t)
 
@@ -434,7 +436,7 @@ properly disable mozc-mode."
 ;;         (fontspec (font-spec :family asciifont :size 14 :weight 'ultra-light))
          (fontspec (font-spec :family asciifont :size 14 :weight 'light))
 ;;         (fontspec (font-spec :family asciifont :size 14 :weight 'regular))
-         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 15 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -443,29 +445,36 @@ properly disable mozc-mode."
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
     (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
     (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
-;;    (setq face-font-rescale-alist '(("Hiragino Sans" . 1.2)))
     )
   t)
 
-;;-------- macOS:Input Mono 15 ----------
+;;-------- macOS:Input Mono + UD教科書体 14 ----------
 
 (ignore-errors
-  (let* ((name "inputmono15")
+  (let* ((name "inputmonoudkyokasho14")
          (asciifont "Input Mono Narrow")
-         (jpfont "Hiragino Sans")
-;;         (fontspec (font-spec :family asciifont :size 15 :weight 'ultra-light))
+         (jpfont "UD Digi Kyokasho N-R")
+;;         (fontspec (font-spec :family asciifont :size 14 :weight 'ultra-light))
          (fontspec (font-spec :family asciifont :size 14 :weight 'light))
 ;;         (fontspec (font-spec :family asciifont :size 14 :weight 'regular))
+;;         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :weight 'regular))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-;;    (setq face-font-rescale-alist '(("Hiragino Sans" . 1.2)))
+    (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
+    (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
+    (setq face-font-rescale-alist '(("UD Digi Kyokasho N-R" . 1.2)))
     )
   t)
 
+;;-----------------------------
+;;  Linux
+;;-----------------------------
+;;
 ;;-------- Ubuntu 16.04: TakaoEx ---------
 
 (ignore-errors
@@ -517,6 +526,10 @@ properly disable mozc-mode."
     )
   t)
 
+;;-----------------------------
+;;  Windows
+;;-----------------------------
+;;
 ;;-------- Meiryo 28 ----------
 
 (ignore-errors
@@ -551,6 +564,44 @@ properly disable mozc-mode."
     )
   t)
 
+;;-------- UD教科書体 28 ----------
+
+(ignore-errors
+  (let* ((name "winudkyokasho28")
+         (asciifont "Consolas")
+         (jpfont "UD デジタル 教科書体 N-R")
+         (fontspec (font-spec :family asciifont :size 28))
+         (jp-fontspec (font-spec :family jpfont))
+         (fsn (create-fontset-from-ascii-font asciifont nil name)))
+    (set-fontset-font fsn 'ascii fontspec)
+    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
+    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
+    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
+    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
+    )
+  t)
+
+;;-------- UD教科書体 14 ----------
+
+(ignore-errors
+  (let* ((name "winudkyokasho14")
+         (asciifont "Consolas")
+         (jpfont "UD デジタル 教科書体 N-R")
+         (fontspec (font-spec :family asciifont :size 14))
+         (jp-fontspec (font-spec :family jpfont))
+         (fsn (create-fontset-from-ascii-font asciifont nil name)))
+    (set-fontset-font fsn 'ascii fontspec)
+    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
+    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
+    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
+    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
+    )
+  t)
+
+;;-----------------------------
+;;  General
+;;-----------------------------
+;;
 ;;-------- Ricty-Diminished 16 ----------
 
 (ignore-errors
@@ -570,17 +621,19 @@ properly disable mozc-mode."
 
 ;;-------- Default Font ----------
 (when gui-mac-p
-  (set-default-font "fontset-inputmono14")
-  (add-to-list 'default-frame-alist '(font . "fontset-inputmono14")))
+;;  (set-default-font "fontset-inputmono14")
+;;  (add-to-list 'default-frame-alist '(font . "fontset-inputmono14")))
+  (set-default-font "fontset-inputmonoudkyokasho14")
+  (add-to-list 'default-frame-alist '(font . "fontset-inputmonoudkyokasho14")))
 (when gui-ns-p
   (add-to-list 'default-frame-alist '(font . "fontset-inputmono14")))
 (when gui-win-p
   (if (>= (display-pixel-width) 2000)
       (progn
-        (set-default-font "fontset-meiryo28")
-        (add-to-list 'default-frame-alist '(font . "fontset-meiryo28")))
-    (set-default-font "fontset-meiryo14")
-    (add-to-list 'default-frame-alist '(font . "fontset-meiryo14"))))
+        (set-default-font "fontset-winudkyokasho28")
+        (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho28")))
+    (set-default-font "fontset-winudkyokasho14")
+    (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho14"))))
 (when gui-x-p
   (when sys-centos-p
     (set-default-font "fontset-vlgothic16")
