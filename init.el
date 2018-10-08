@@ -110,7 +110,7 @@
 (add-to-list 'default-frame-alist '(background-color . "black"))
 (add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
-    (add-to-list 'default-frame-alist '(height . 58))
+    (add-to-list 'default-frame-alist '(height . 54))
   (add-to-list 'default-frame-alist '(height . 100)))
 (add-to-list 'default-frame-alist '(top .  0))
 (add-to-list 'default-frame-alist '(left   . 0))
@@ -469,7 +469,6 @@ properly disable mozc-mode."
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
     (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
     (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
-;;    (setq face-font-rescale-alist '(("UD Digi Kyokasho N-R" . 1.2)))
     )
   t)
 
@@ -532,13 +531,13 @@ properly disable mozc-mode."
 ;;  Windows
 ;;-----------------------------
 ;;
-;;-------- Meiryo 28 ----------
+;;-------- Meiryo 30 ----------
 
 (ignore-errors
-  (let* ((name "meiryo28")
+  (let* ((name "meiryo30")
          (asciifont "Consolas")
          (jpfont "メイリオ")
-         (fontspec (font-spec :family asciifont :size 28))
+         (fontspec (font-spec :family asciifont :size 30))
          (jp-fontspec (font-spec :family jpfont))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
@@ -549,13 +548,13 @@ properly disable mozc-mode."
     )
   t)
 
-;;-------- Meiryo 14 ----------
+;;-------- Meiryo 15 ----------
 
 (ignore-errors
-  (let* ((name "meiryo14")
+  (let* ((name "meiryo15")
          (asciifont "Consolas")
          (jpfont "メイリオ")
-         (fontspec (font-spec :family asciifont :size 14))
+         (fontspec (font-spec :family asciifont :size 15))
          (jp-fontspec (font-spec :family jpfont))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
@@ -566,39 +565,37 @@ properly disable mozc-mode."
     )
   t)
 
-;;-------- UD教科書体 28 ----------
+;;-------- UD教科書体 30 ----------
 
 (ignore-errors
-  (let* ((name "winudkyokasho28")
+  (let* ((name "winudkyokasho30")
          (asciifont "Consolas")
          (jpfont "UD デジタル 教科書体 N-R")
-         (fontspec (font-spec :family asciifont :size 28))
-         (jp-fontspec (font-spec :family jpfont))
+         (fontspec (font-spec :family asciifont :size 30))
+         (jp-fontspec (font-spec :family jpfont :size 32))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (setq face-font-rescale-alist '(("UD デジタル 教科書体 N-R" . 1.1)))
     )
   t)
 
-;;-------- UD教科書体 14 ----------
+;;-------- UD教科書体 15 ----------
 
 (ignore-errors
-  (let* ((name "winudkyokasho14")
+  (let* ((name "winudkyokasho15")
          (asciifont "Consolas")
          (jpfont "UD デジタル 教科書体 N-R")
-         (fontspec (font-spec :family asciifont :size 14))
-         (jp-fontspec (font-spec :family jpfont))
+         (fontspec (font-spec :family asciifont :size 15))
+         (jp-fontspec (font-spec :family jpfont :size 16))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
     (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
     (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (setq face-font-rescale-alist '(("UD デジタル 教科書体 N-R" . 1.1)))
     )
   t)
 
@@ -634,10 +631,10 @@ properly disable mozc-mode."
 (when gui-win-p
   (if (>= (display-pixel-width) 2000)
       (progn
-        (set-default-font "fontset-winudkyokasho28")
-        (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho28")))
-    (set-default-font "fontset-winudkyokasho14")
-    (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho14"))))
+        (set-default-font "fontset-winudkyokasho30")
+        (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho30")))
+    (set-default-font "fontset-winudkyokasho15")
+    (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho15"))))
 (when gui-x-p
   (when sys-centos-p
     (set-default-font "fontset-vlgothic16")
@@ -892,6 +889,13 @@ check for the whole contents of FILE, otherwise check for the first
     (add-hook 'linum-mode-hook
               '(lambda ()
                  (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-10-*"))
+              ))
+  (when gui-win-p
+    (add-hook 'linum-mode-hook
+              '(lambda ()
+                 (if (>= (display-pixel-width) 2000)
+                     (set-face-font 'linum "-*-Consolas-*-*-*-*-24-*")
+                   (set-face-font 'linum "-*-Consolas-*-*-*-*-12-*")))
               ))
   ;;
   (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
