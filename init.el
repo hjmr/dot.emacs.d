@@ -479,11 +479,11 @@ properly disable mozc-mode."
 ;;-------- Ubuntu 16.04: TakaoEx ---------
 
 (ignore-errors
-  (let* ((name "takaoexgoth16")
+  (let* ((name "takaoexgoth15")
          (asciifont "Ubuntu Mono")
          (jpfont "TakaoExゴシック")
-         (fontspec (font-spec :family asciifont :size 16 :weight 'light))
-         (jp-fontspec (font-spec :family jpfont))
+         (fontspec (font-spec :family asciifont :size 15 :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 18))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -496,11 +496,11 @@ properly disable mozc-mode."
 ;;-------- Ubuntu 16.04: Noto Sans ---------
 
 (ignore-errors
-  (let* ((name "notosans16")
+  (let* ((name "notosans15")
          (asciifont "DejaVu Sans Mono")
          (jpfont "Noto Sans CJK JP")
-         (fontspec (font-spec :family asciifont :size 16 :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (fontspec (font-spec :family asciifont :size 15 :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -516,8 +516,8 @@ properly disable mozc-mode."
   (let* ((name "vlgothic14")
          (asciifont "DejaVu Sans Mono")
          (jpfont "VL Goghic")
-         (fontspec (font-spec :family asciifont :size 14 :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :weight 'light))
+         (fontspec (font-spec :family asciifont :size 15 :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -640,8 +640,8 @@ properly disable mozc-mode."
     (set-default-font "fontset-vlgothic14")
     (add-to-list 'default-frame-alist '(font . "fontset-vlgothic14")))
   (when sys-ubuntu-p
-    (set-default-font "fontset-notosans16")
-    (add-to-list 'default-frame-alist '(font . "fontset-notosans16"))))
+    (set-default-font "fontset-notosans15")
+    (add-to-list 'default-frame-alist '(font . "fontset-notosans15"))))
 ;;
 ;;===============================================================================================
 ;;
