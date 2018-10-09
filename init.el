@@ -25,6 +25,7 @@
       sys-linux-p     (eq system-type 'gnu/linux)
       sys-centos-p    (string-match "centos" (emacs-version))
       sys-ubuntu-p    (string-match "Debian" (emacs-version))
+      sys-kobeu-p     (string-match "\.epc\.center\.kobe-u\.ac\.jp$" system-name)
       )
 ;;-------------------------------
 ;; for in different environment
@@ -385,7 +386,7 @@ properly disable mozc-mode."
          (asciifont "Inconsolata")
          (jpfont "Hiragino Sans")
          (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -419,7 +420,7 @@ properly disable mozc-mode."
          (asciifont "Letter Gothic Std")
          (jpfont "Hiragino Sans")
          (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -438,7 +439,7 @@ properly disable mozc-mode."
 ;;         (fontspec (font-spec :family asciifont :size 14 :weight 'ultra-light))
          (fontspec (font-spec :family asciifont :size 14 :weight 'light))
 ;;         (fontspec (font-spec :family asciifont :size 14 :weight 'regular))
-         (jp-fontspec (font-spec :family jpfont :size 15 :weight 'light))
+         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'light))
          (fsn (create-fontset-from-ascii-font asciifont nil name)))
     (set-fontset-font fsn 'ascii fontspec)
     (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
@@ -627,7 +628,7 @@ properly disable mozc-mode."
   (set-default-font "fontset-inputmonoudkyokasho14")
   (add-to-list 'default-frame-alist '(font . "fontset-inputmonoudkyokasho14")))
 (when gui-ns-p
-  (add-to-list 'default-frame-alist '(font . "fontset-inputmono14")))
+  (add-to-list 'default-frame-alist '(font . "fontset-lettergoth15")))
 (when gui-win-p
   (if (>= (display-pixel-width) 2000)
       (progn
