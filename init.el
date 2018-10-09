@@ -73,7 +73,8 @@
 ;;-------------------------------
 (if window-system
     (desktop-save-mode 1))
-;;(setq desktop-restore-frames nil)
+(when gui-ns-p
+  (setq desktop-restore-frames nil))
 ;;-------------------------------
 ;; Japanese environment
  ;;-------------------------------
