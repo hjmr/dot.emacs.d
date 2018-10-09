@@ -884,12 +884,12 @@ check for the whole contents of FILE, otherwise check for the first
   (when gui-x-p
     (add-hook 'linum-mode-hook
               '(lambda ()
-                 (set-face-font 'linum "-*-*-*-*-*-*-9-*"))
+                 (set-face-font 'linum "-*-*-*-*-*-*-12-*"))
               ))
   (when gui-mac-p
     (add-hook 'linum-mode-hook
               '(lambda ()
-                 (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-10-*"))
+                 (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-12-*"))
               ))
   (when gui-ns-p
     (add-hook 'linum-mode-hook
