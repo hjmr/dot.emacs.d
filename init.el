@@ -286,25 +286,25 @@
 (when gui-mac-p
   (mac-auto-ascii-mode 1))
 
-(when (and sys-linux-p
-           (require 'mozc nil t))
-  (setq default-input-method "japanese-mozc")
+(when sys-linux-p
+  (when (require 'mozc nil t)
+    (setq default-input-method "japanese-mozc")
 
-  (defun my-turn-on-input-method ()
-    (interactive)
-    (when (null current-input-method)
-      (toggle-input-method)))
-;; 全角半角キーと無変換キーのキーイベントを横取りする
-  (defadvice mozc-handle-event (around intercept-keys (event))
-    "Intercept keys muhenkan and zenkaku-hankaku, before passing keys
+    (defun my-turn-on-input-method ()
+      (interactive)
+      (when (null current-input-method)
+        (toggle-input-method)))
+    ;; 全角半角キーと無変換キーのキーイベントを横取りする
+    (defadvice mozc-handle-event (around intercept-keys (event))
+      "Intercept keys muhenkan and zenkaku-hankaku, before passing keys
 to mozc-server (which the function mozc-handle-event does), to
 properly disable mozc-mode."
-    (if (member event (list 'muhenkan))
-        (progn
-          (mozc-clean-up-session)
-          (toggle-input-method))
-      (progn ad-do-it)))
-  (ad-activate 'mozc-handle-event)
+      (if (member event (list 'muhenkan))
+          (progn
+            (mozc-clean-up-session)
+            (toggle-input-method))
+        (progn ad-do-it)))
+    (ad-activate 'mozc-handle-event))
 
   (when (require 'mozc-popup nil t)
     (setq mozc-candidate-style 'popup))
