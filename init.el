@@ -25,7 +25,6 @@
       sys-linux-p     (eq system-type 'gnu/linux)
       sys-centos-p    (string-match "centos" (emacs-version))
       sys-ubuntu-p    (string-match "Debian" (emacs-version))
-      sys-kobeu-p     (string-match "\.epc\.center\.kobe-u\.ac\.jp$" system-name)
       )
 ;;-------------------------------
 ;; for in different environment
@@ -886,10 +885,15 @@ check for the whole contents of FILE, otherwise check for the first
               '(lambda ()
                  (set-face-font 'linum "-*-*-*-*-*-*-9-*"))
               ))
-  (when gui-mac-or-ns-p
+  (when gui-mac-p
     (add-hook 'linum-mode-hook
               '(lambda ()
                  (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-10-*"))
+              ))
+  (when gui-ns-p
+    (add-hook 'linum-mode-hook
+              '(lambda ()
+                 (set-face-font 'linum "-*-*-*-*-*-*-12-*"))
               ))
   (when gui-win-p
     (add-hook 'linum-mode-hook
