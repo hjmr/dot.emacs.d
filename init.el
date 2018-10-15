@@ -774,7 +774,8 @@ check for the whole contents of FILE, otherwise check for the first
     (interactive)
     (require 'neotree nil t)
     (let ((project-dir
-           (if (projectile-project-p)
+           (if (and (fboundp 'projectile-project-p)
+                    (projectile-project-p))
                (projectile-project-root)
              (if (buffer-file-name)
                  (file-name-directory (buffer-file-name))
@@ -1020,7 +1021,8 @@ check for the whole contents of FILE, otherwise check for the first
              ((string-match-p "/.emacs.d/" dir)
               (list ".emacs.d"))
              (t
-              (if (projectile-project-p)
+              (if (and (fboundp 'projectile-project-p)
+                       (projectile-project-p))
                   (list (projectile-project-name))
                 (list
                  (tabbar-shorten (if (string-match (getenv "HOME") dir)
@@ -1114,6 +1116,9 @@ check for the whole contents of FILE, otherwise check for the first
   (setq company-minimum-prefix-length 4)  ; デフォルトは4
   (setq company-selection-wrap-around t)  ; 候補の一番下でさらに下に行こうとすると一番上に戻る
   (setq company-dabbrev-downcase nil)     ; ケースセンシティブに
+  ;;
+  (when sys-centos-p
+    (setq company-clang-executable "/usr/bin/cc"))
   ;;
   (set-face-attribute 'company-tooltip nil
                       :foreground "black" :background "lightgrey")
@@ -1399,6 +1404,7 @@ check for the whole contents of FILE, otherwise check for the first
              (visual-line-mode)
              (flyspell-mode)
              (LaTeX-math-mode)
+             (safe-define-key 'LaTeX-mode-map (kbd "M-RET") 'my-toggle-fullscreen)
              ))
 
 (setq latex-preview-pane-multifile-mode 'auctex)
