@@ -1181,10 +1181,11 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 (when (fboundp 'global-flycheck-mode)
   (global-flycheck-mode)
-  (exec-if-bound (flycheck-vale-setup))
   (when (fboundp 'flycheck-popup-tip-mode)
-    (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode)))
-;; (add-to-list 'flycheck-vale-modes 'LaTeX-mode)
+    (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
+  (when (fboundp 'flycheck-vale-setup)
+    (flycheck-vale-setup)
+    (flycheck-add-mode 'vale 'LaTeX-mode)))
 ;;-------------------------------
 ;; spell checker (aspell)
 ;;-------------------------------
@@ -1282,28 +1283,8 @@ check for the whole contents of FILE, otherwise check for the first
              (setq c-basic-offset 4)
              (c-set-offset 'label -2)
              (c-set-offset 'case-label -2)
+             (highlight-indent-guides-mode)
              (define-key c-mode-map "\C-c\C-b" 'compile)
-             ))
-;;-------------------------------
-;; C settings
-;;-------------------------------
-(add-hook 'c-mode-hook
-          '(lambda ()
-             ))
-;;-------------------------------
-;; C++ settings
-;;-------------------------------
-(add-hook 'c++-mode-hook
-          '(lambda ()
-             (define-key c++-mode-map "\C-c\C-b" 'compile)
-;;             (c-set-style "cc-mode")
-             ))
-;;-------------------------------
-;; ObjC settings
-;;-------------------------------
-(add-hook 'objc-mode-hook
-          '(lambda ()
-             (define-key objc-mode-map "\C-c\C-b" 'compile)
              ))
 ;;-------------------------------
 ;; java mode settings
