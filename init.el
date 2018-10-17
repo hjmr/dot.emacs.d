@@ -2,17 +2,28 @@
 ;;-------------------------------
 ;; control startup process
 ;;-------------------------------
-;; profile startup process
 ;;(profiler-start 'cpu+mem)
-;;; Code:
-;; surpress startup messages
 (setq inhibit-startup-message t)
-;; debug init file
 (setq debug-on-error t)
-;; control garbage collection
-(setq gc-cons-threshold (* 128 1024 1024))
 (setq garbage-collection-messages t)
 ;;-------------------------------
+;; speeding up startup process
+;;-------------------------------
+;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
+(defun ambrevar/reset-gc-cons-threshold ()
+  (setq gc-cons-threshold (* 128 1024 1024)))
+(setq gc-cons-threshold (* 64 1024 1024))
+(add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
+
+;;; Temporarily disable the file name handler.
+(setq default-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+(defun ambrevar/reset-file-name-handler-alist ()
+  (setq file-name-handler-alist
+	(append default-file-name-handler-alist
+		file-name-handler-alist))
+  (cl-delete-duplicates file-name-handler-alist :test 'equal))
+(add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist);;-------------------------------
 ;; set system check variables
 ;;-------------------------------
 (setq gui-mac-or-ns-p (memq window-system '(mac ns))
