@@ -36,6 +36,7 @@
       sys-linux-p     (eq system-type 'gnu/linux)
       sys-centos-p    (string-match "centos" (emacs-version))
       sys-ubuntu-p    (string-match "Debian" (emacs-version))
+      sys-istc-p      (string-match "\\.center\\.kobe-u\\.ac\\.jp$" (system-name))
       )
 ;;-------------------------------
 ;; for in different environment
@@ -84,7 +85,7 @@
 ;;-------------------------------
 (if window-system
     (desktop-save-mode 1))
-(when gui-ns-p
+(when sys-istc-p
   (setq desktop-restore-frames nil))
 ;;-------------------------------
 ;; Japanese environment
