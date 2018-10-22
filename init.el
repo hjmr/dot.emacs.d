@@ -261,6 +261,10 @@
   (set-face-background 'highlight-indent-guides-even-face "Gray15")
   (set-face-foreground 'highlight-indent-guides-character-face "Gray25"))
 ;;-------------------------------
+;; highlight volatile
+;;-------------------------------
+(exec-if-bound (volatile-highlights-mode t))
+;;-------------------------------
 ;; IDO & SMEX
 ;;-------------------------------
 (exec-if-bound (ido-mode 1))
@@ -736,12 +740,6 @@ check for the whole contents of FILE, otherwise check for the first
     ))
 (ad-activate 'find-file)
 ;;
-;;===============================================================================================
-;;
-;;  packages from melpa/gnu or default packages
-;;
-;;===============================================================================================
-;;
 ;;-------------------------------
 ;; Projectile: a project manager
 ;;-------------------------------
@@ -749,8 +747,12 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; undo-tree
 ;;-------------------------------
-(when (require 'undo-tree nil t)
-  (global-undo-tree-mode t))
+(exec-if-bound (global-undo-tree-mode t))
+;;-------------------------------
+;; undo hist
+;;-------------------------------
+(exec-if-bound (undohist-initialize))
+(setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa"))
 ;;-------------------------------
 ;; super-save
 ;;-------------------------------
@@ -1296,6 +1298,7 @@ check for the whole contents of FILE, otherwise check for the first
              (c-set-offset 'case-label -2)
              (highlight-indent-guides-mode)
              (define-key c-mode-map "\C-c\C-b" 'compile)
+             (fic-mode)
              ))
 ;;-------------------------------
 ;; java mode settings
@@ -1341,6 +1344,7 @@ check for the whole contents of FILE, otherwise check for the first
              (define-key python-mode-map (kbd "C-c C-^") 'pyenv-mode-unset)
 
              (highlight-indent-guides-mode)
+             (fic-mode)
              )
           )
 
@@ -1454,6 +1458,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- projectile
 (safe-define-key 'projectile-mode-map (kbd "C-c p")     'projectile-command-map)
 ;;-- company
+(safe-global-set-key                  (kbd "M-/")       'company-dabbrev)
 (safe-define-key 'company-active-map  (kbd "C-n")       'company-select-next)
 (safe-define-key 'company-active-map  (kbd "C-p")       'company-select-previous)
 ;;(define-key company-active-map        (kbd "C-h")       'backward-delete-char-untabify)
