@@ -189,6 +189,8 @@
     (global-whitespace-mode . "")
     (eldoc-mode . "")
     (flyspell-mode . " FlyS")
+    (highlight-indent-guides-mode . "")
+    (volatile-highlights-mode . "")
     ;; Major modes
     (lisp-interaction-mode . "Li")
     (python-mode . "Py")
