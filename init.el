@@ -638,13 +638,11 @@ properly disable mozc-mode."
   t)
 
 ;;-------- Default Font ----------
-(when gui-mac-p
+(when gui-mac-or-ns-p
 ;;  (set-default-font "fontset-inputmono14")
 ;;  (add-to-list 'default-frame-alist '(font . "fontset-inputmono14")))
   (set-default-font "fontset-inputmonoudkyokasho14")
   (add-to-list 'default-frame-alist '(font . "fontset-inputmonoudkyokasho14")))
-(when gui-ns-p
-  (add-to-list 'default-frame-alist '(font . "fontset-lettergoth15")))
 (when gui-win-p
   (if (>= (display-pixel-width) 2000)
       (progn
@@ -901,15 +899,10 @@ check for the whole contents of FILE, otherwise check for the first
               '(lambda ()
                  (set-face-font 'linum "-*-*-*-*-*-*-12-*"))
               ))
-  (when gui-mac-p
+  (when gui-mac-or-ns-p
     (add-hook 'linum-mode-hook
               '(lambda ()
                  (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-12-*"))
-              ))
-  (when gui-ns-p
-    (add-hook 'linum-mode-hook
-              '(lambda ()
-                 (set-face-font 'linum "-*-*-*-*-*-*-12-*"))
               ))
   (when gui-win-p
     (add-hook 'linum-mode-hook
