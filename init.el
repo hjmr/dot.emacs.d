@@ -61,21 +61,23 @@
   "check if FONT exists"
   (if (null (x-list-fonts font)) nil t))
 ;;
-(defun my-dpi (&optional display)
-  "Get the DPI of DISPLAY.  DISPLAY is a display name, frame or terminal, as in `display-monitor-attributes-list'."
-  (cl-flet ((pyth (lambda (w h)
-                    (sqrt (+ (* w w)
-                             (* h h)))))
-            (mm2in (lambda (mm)
-                     (/ mm 25.4))))
-    (let* ((atts (frame-monitor-attributes))
-           (pix-w (cl-fourth (assoc 'geometry atts)))
-           (pix-h (cl-fifth (assoc 'geometry atts)))
-           (pix-d (pyth pix-w pix-h))
-           (mm-w (cl-second (assoc 'mm-size atts)))
-           (mm-h (cl-third (assoc 'mm-size atts)))
-           (mm-d (pyth mm-w mm-h)))
-      (/ pix-d (mm2in mm-d)))))
+(defun my-dpi ()
+  "Get the DPI of the physical monitor dominating FRAME."
+  (if (fboundp 'display-monitor-attributes-list)
+      (cl-flet ((pyth (w h)
+                      (sqrt (+ (* w w)
+                               (* h h))))
+                (mm2in (mm)
+                       (/ mm 25.4)))
+        (let* ((atts (frame-monitor-attributes))
+               (pix-w (cl-fourth (assoc 'geometry atts)))
+               (pix-h (cl-fifth (assoc 'geometry atts)))
+               (pix-d (pyth pix-w pix-h))
+               (mm-w (cl-second (assoc 'mm-size atts)))
+               (mm-h (cl-third (assoc 'mm-size atts)))
+               (mm-d (pyth mm-w mm-h)))
+          (/ pix-d (mm2in mm-d))))
+    (96.0)))
 ;;
 ;;-------------------------------
 ;; paths and environment vars
@@ -387,7 +389,7 @@ properly disable mozc-mode."
     (cond
      ((< 260 dpi) 30)
      (t 14))))
-
+;;
 (defvar my-ascii-font-size (my-preferred-ascii-font-size))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
@@ -445,8 +447,8 @@ properly disable mozc-mode."
   (set-default-font "fontset-udkyokasho")
   (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
 (when gui-win-p
-    (set-default-font "fontset-udkyokasho")
-    (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
+  (set-default-font "fontset-udkyokasho")
+  (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
 (when gui-x-p
   (when sys-centos-p
     (set-default-font "fontset-vlgoth")
