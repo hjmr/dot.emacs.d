@@ -380,14 +380,11 @@ properly disable mozc-mode."
 ;;
 ;;===============================================================================================
 ;;
-(when gui-mac-p
-  (setq fixed-width-use-QuickDraw-for-ascii t)
-  (setq mac-allow-anti-aliasing nil))
-;;
 (defun my-preferred-ascii-font-size ()
   (let ( (dpi (my-dpi)) )
     (cond
      ((< 260 dpi) 30)
+     (gui-x-p 15)
      (t 14))))
 ;;
 (defvar my-ascii-font-size (my-preferred-ascii-font-size))
@@ -411,6 +408,10 @@ properly disable mozc-mode."
 ;;-----------------------------
 ;;  macOS
 ;;-----------------------------
+;;
+(when gui-mac-p
+  (setq fixed-width-use-QuickDraw-for-ascii t)
+  (setq mac-allow-anti-aliasing nil))
 ;;
 (my-def-font "hirakaku" "Monaco" my-ascii-font-size 'medium "Hiragino Kaku Gothic Pro" my-jp-font-size 'medium)
 (my-def-font "hiramin" "Monaco" my-ascii-font-size 'medium "Hiragino Mincho Pro" my-jp-font-size 'medium)
@@ -687,7 +688,7 @@ check for the whole contents of FILE, otherwise check for the first
 (defun my-preferred-linum-font-size ()
   (let ( (dpi (my-dpi)) )
     (cond
-     ((< 200 dpi) 24)
+     ((< 260 dpi) 24)
      (t 12))))
 
 (if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
