@@ -20,10 +20,11 @@
 (setq file-name-handler-alist nil)
 (defun ambrevar/reset-file-name-handler-alist ()
   (setq file-name-handler-alist
-	(append default-file-name-handler-alist
-		file-name-handler-alist))
+        (append default-file-name-handler-alist
+                file-name-handler-alist))
   (cl-delete-duplicates file-name-handler-alist :test 'equal))
-(add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist);;-------------------------------
+(add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist)
+;;-------------------------------
 ;; set system check variables
 ;;-------------------------------
 (setq gui-mac-or-ns-p (memq window-system '(mac ns))
@@ -55,6 +56,27 @@
   (when (and (boundp map)
          (fboundp command))
     (define-key (eval map) key command)))
+;;
+(defun font-exists-p (font)
+  "check if FONT exists"
+  (if (null (x-list-fonts font)) nil t))
+;;
+(defun my-dpi ()
+  (let* ((attrs (car (display-monitor-attributes-list)))
+         (size (assoc 'mm-size attrs))
+         (sizex (cadr size))
+         (res (cdr (assoc 'geometry attrs)))
+         (resx (- (caddr res) (car res)))
+         dpi)
+    (catch 'exit
+      ;; in terminal
+      (unless sizex
+        (throw 'exit 10))
+      ;; on big screen
+      (when (> sizex 1000)
+        (throw 'exit 10))
+      ;; DPI
+      (* (/ (float resx) sizex) 25.4))))
 ;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
@@ -893,15 +915,33 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; linum-mode
 ;;-------------------------------
+(defun my-preferred-linum-font-size ()
+  (let ( (dpi (my-dpi)) )
+    (cond
+     ((< dpi 110) 10)
+     ((< dpi 130) 11)
+     ((< dpi 160) 12)
+     (t 12))))
+
+(defvar my-linum-font-size (my-preferred-linum-font-size))
+
 (if (version<= "26.0.50" emacs-version)
     (progn
       (setq-default display-line-numbers-width 4
                     display-line-numbers-widen t)
-      (set-face-attribute 'line-number nil
-                          :font "-*-Input Mono Compressed-light-*-*-*-12-*")
-      (set-face-attribute 'line-number-current-line nil
-                          :font "-*-Input Mono Compressed-light-*-*-*-12-*"
-                          :foreground "white")
+      (if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
+          (progn
+            (set-face-attribute 'line-number nil
+                                :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size))
+            (set-face-attribute 'line-number-current-line nil
+                                :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size)
+                                :foreground "white"))
+        (set-face-attribute 'line-number nil
+                            :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size))
+        (set-face-attribute 'line-number-current-line nil
+                            :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size)
+                            :foreground "white"))
+
       (add-hook 'text-mode-hook #'display-line-numbers-mode)
       (add-hook 'prog-mode-hook #'display-line-numbers-mode))
   ;; emacs-version < 26.0.50
@@ -912,20 +952,11 @@ check for the whole contents of FILE, otherwise check for the first
     (defadvice linum-schedule (around my-linum-schedule () activate)
       (run-with-idle-timer 0.2 nil #'linum-update-current))
     ;; setting font for linum
-    (when gui-x-p
-      (add-hook 'linum-mode-hook
-                '(lambda ()
-                   (set-face-font 'linum "-*-*-*-*-*-*-12-*"))))
-    (when gui-mac-or-ns-p
-      (add-hook 'linum-mode-hook
-                '(lambda ()
-                   (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-12-*"))))
-    (when gui-win-p
-      (add-hook 'linum-mode-hook
-                '(lambda ()
-                   (if (>= (display-pixel-width) 2000)
-                       (set-face-font 'linum "-*-Consolas-*-*-*-*-24-*")
-                     (set-face-font 'linum "-*-Consolas-*-*-*-*-12-*")))))
+    (add-hook 'linum-mode-hook
+              '(lambda ()
+                 (if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
+                     (set-face-font 'linum (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size))
+                   (set-face-font 'linum (format "-*-*-*-*-*-*-%d-*" my-linum-font-size)))))
     ;;
     (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
     (defun linum-on ()
