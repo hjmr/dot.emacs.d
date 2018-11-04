@@ -918,9 +918,7 @@ check for the whole contents of FILE, otherwise check for the first
 (defun my-preferred-linum-font-size ()
   (let ( (dpi (my-dpi)) )
     (cond
-     ((< dpi 110) 10)
-     ((< dpi 130) 11)
-     ((< dpi 160) 12)
+     ((< 200 dpi) 24)
      (t 12))))
 
 (defvar my-linum-font-size (my-preferred-linum-font-size))
