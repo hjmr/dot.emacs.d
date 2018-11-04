@@ -937,9 +937,9 @@ check for the whole contents of FILE, otherwise check for the first
                                 :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size)
                                 :foreground "white"))
         (set-face-attribute 'line-number nil
-                            :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size))
+                            :font (format "-*-*-*-*-*-*-%d-*" my-linum-font-size))
         (set-face-attribute 'line-number-current-line nil
-                            :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size)
+                            :font (format "-*-*-*-*-*-*-%d-*" my-linum-font-size)
                             :foreground "white"))
 
       (add-hook 'text-mode-hook #'display-line-numbers-mode)
