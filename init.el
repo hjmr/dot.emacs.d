@@ -77,7 +77,7 @@
                (mm-h (cl-third (assoc 'mm-size atts)))
                (mm-d (pyth mm-w mm-h)))
           (/ pix-d (mm2in mm-d))))
-    (96.0)))
+    96.0))
 ;;
 ;;-------------------------------
 ;; paths and environment vars
