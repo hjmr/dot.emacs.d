@@ -61,22 +61,22 @@
   "check if FONT exists"
   (if (null (x-list-fonts font)) nil t))
 ;;
-(defun my-dpi ()
-  (let* ((attrs (car (display-monitor-attributes-list)))
-         (size (assoc 'mm-size attrs))
-         (sizex (cadr size))
-         (res (cdr (assoc 'geometry attrs)))
-         (resx (- (caddr res) (car res)))
-         dpi)
-    (catch 'exit
-      ;; in terminal
-      (unless sizex
-        (throw 'exit 10))
-      ;; on big screen
-      (when (> sizex 1000)
-        (throw 'exit 10))
-      ;; DPI
-      (* (/ (float resx) sizex) 25.4))))
+(defun my-dpi (&optional display)
+  "Get the DPI of DISPLAY.  DISPLAY is a display name, frame or terminal, as in `display-monitor-attributes-list'."
+  (cl-flet ((pyth (lambda (w h)
+                    (sqrt (+ (* w w)
+                             (* h h)))))
+            (mm2in (lambda (mm)
+                     (/ mm 25.4))))
+    (let* ((atts (frame-monitor-attributes))
+           (pix-w (cl-fourth (assoc 'geometry atts)))
+           (pix-h (cl-fifth (assoc 'geometry atts)))
+           (pix-d (pyth pix-w pix-h))
+           (mm-w (cl-second (assoc 'mm-size atts)))
+           (mm-h (cl-third (assoc 'mm-size atts)))
+           (mm-d (pyth mm-w mm-h)))
+      (/ pix-d (mm2in mm-d)))))
+;;
 ;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
@@ -141,8 +141,8 @@
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
-;; (add-to-list 'default-frame-alist '(foreground-color . "white"))
-;; (add-to-list 'default-frame-alist '(background-color . "black"))
+(add-to-list 'default-frame-alist '(foreground-color . "white"))
+(add-to-list 'default-frame-alist '(background-color . "black"))
 (add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
@@ -381,309 +381,79 @@ properly disable mozc-mode."
 (when gui-mac-p
   (setq fixed-width-use-QuickDraw-for-ascii t)
   (setq mac-allow-anti-aliasing nil))
+;;
+(defun my-preferred-ascii-font-size ()
+  (let ( (dpi (my-dpi)) )
+    (cond
+     ((< 260 dpi) 30)
+     (t 14))))
 
+(defvar my-ascii-font-size (my-preferred-ascii-font-size))
+(defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
+;;
+(defun my-def-font (name asciifont asciifont-size asciifont-weight jpfont jpfont-size jpfont-weight)
+  (ignore-errors
+    (let* ((fontspec (font-spec :family asciifont :size asciifont-size :weight asciifont-weight))
+           (jp-fontspec (font-spec :family jpfont :size jpfont-size :weight jpfont-weight))
+           (fsn (create-fontset-from-ascii-font asciifont nil name)))
+      (set-fontset-font fsn 'ascii fontspec)
+      (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
+      (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
+      (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
+      (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
+      (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
+      (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
+      )
+    t))
+;;
 ;;-----------------------------
 ;;  macOS
 ;;-----------------------------
 ;;
-;;-------- macOS:Hiragino Kaku-Gothic ----------
 
-(ignore-errors
-  (let* ((name "hirakaku12")
-         (asciifont "Monaco")
-         (jpfont "Hiragino Kaku Gothic Pro")
-         (fontspec (font-spec :family asciifont :size 12))
-         (jp-fontspec (font-spec :family jpfont))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (setq face-font-rescale-alist '(("Hiragino Kaku Gothic Pro" . 1.2)))
-    )
-  t)
-
-;;--------- macOS:Hiragino Mincho -----------
-
-(ignore-errors
-  (let* ((name "hiramin14")
-         (asciifont "Monaco")
-         (jpfont "Hiragino Mincho Pro")
-         (fontspec (font-spec :family asciifont :size 14))
-         (jp-fontspec (font-spec :family jpfont))
-        (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (setq face-font-rescale-alist '(("Hiragino Mincho Pro" . 1.2)))
-    )
-  t)
-
-;;-------- macOS:Hiragino Sans ----------
-
-(ignore-errors
-  (let* ((name "hirasans15")
-         (asciifont "Inconsolata")
-         (jpfont "Hiragino Sans")
-         (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- macOS:Letter Gothic Std 14 ----------
-
-(ignore-errors
-  (let* ((name "lettergoth14")
-         (asciifont "Letter Gothic Std")
-         (jpfont "Hiragino Sans")
-         (fontspec (font-spec :family asciifont :size 14))
-         (jp-fontspec (font-spec :family jpfont :size 15 :weight 'light))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- macOS:Letter Gothic Std 15 ----------
-
-(ignore-errors
-  (let* ((name "lettergoth15")
-         (asciifont "Letter Gothic Std")
-         (jpfont "Hiragino Sans")
-         (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- macOS:Input Mono 14 ----------
-
-(ignore-errors
-  (let* ((name "inputmono14")
-         (asciifont "Input Mono Narrow")
-         (jpfont "Hiragino Sans")
-;;         (fontspec (font-spec :family asciifont :size 14 :weight 'ultra-light))
-         (fontspec (font-spec :family asciifont :size 14 :weight 'light))
-;;         (fontspec (font-spec :family asciifont :size 14 :weight 'regular))
-         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'light))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
-    (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
-    )
-  t)
-
-;;-------- macOS:Input Mono + UD教科書体 14 ----------
-
-(ignore-errors
-  (let* ((name "inputmonoudkyokasho14")
-         (asciifont "Input Mono Narrow")
-         (jpfont "UD Digi Kyokasho N-R")
-;;         (fontspec (font-spec :family asciifont :size 14 :weight 'ultra-light))
-         (fontspec (font-spec :family asciifont :size 14 :weight 'light))
-;;         (fontspec (font-spec :family asciifont :size 14 :weight 'regular))
-;;         (jp-fontspec (font-spec :family jpfont :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :size 16 :weight 'regular))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
-    (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
-    )
-  t)
+(my-def-font "hirakaku" "Monaco" my-ascii-font-size 'medium "Hiragino Kaku Gothic Pro" my-jp-font-size 'medium)
+(my-def-font "hiramin" "Monaco" my-ascii-font-size 'medium "Hiragino Mincho Pro" my-jp-font-size 'medium)
+(my-def-font "hirasans" "Inconsolata" my-ascii-font-size 'medium "Hiragino Sans" my-jp-font-size 'light)
+(my-def-font "lettergoth" "Letter Gothic Std" my-ascii-font-size 'medium "Hiragino Sans" my-jp-font-size 'light)
+(my-def-font "inputmono" "Input Mono Narrow" my-ascii-font-size 'light "Hiragino Sans" my-jp-font-size 'light)
+(my-def-font "udkyokasho" "Input Mono Narrow" my-ascii-font-size 'light "UD Digi Kyokasho N-R" my-jp-font-size 'medium)
 
 ;;-----------------------------
 ;;  Linux
 ;;-----------------------------
-;;
-;;-------- Ubuntu 16.04: TakaoEx ---------
 
-(ignore-errors
-  (let* ((name "takaoexgoth15")
-         (asciifont "Ubuntu Mono")
-         (jpfont "TakaoExゴシック")
-         (fontspec (font-spec :family asciifont :size 15 :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :size 18))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- Ubuntu 16.04: Noto Sans ---------
-
-(ignore-errors
-  (let* ((name "notosans15")
-         (asciifont "DejaVu Sans Mono")
-         (jpfont "Noto Sans CJK JP")
-         (fontspec (font-spec :family asciifont :size 15 :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- CentOS 7: VL Gothic ---------
-
-(ignore-errors
-  (let* ((name "vlgothic15")
-         (asciifont "DejaVu Sans Mono")
-         (jpfont "VL Goghic")
-         (fontspec (font-spec :family asciifont :size 15 :weight 'light))
-         (jp-fontspec (font-spec :family jpfont :size 18 :weight 'light))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
+(my-def-font "taakoexgoth" "Ubuntu Mono" my-ascii-font-size 'light "TakaoExゴシック" my-jp-font-size 'medium)
+(my-def-font "notosans" "DejaVu Sans Mono" my-ascii-font-size 'light "Noto Sans CJK JP" my-jp-font-size 'light)
+(my-def-font "vlgoth" "DejaVu Sans Mono" my-ascii-font-size 'light "VL Gothic" my-jp-font-size 'light)
 
 ;;-----------------------------
 ;;  Windows
 ;;-----------------------------
 ;;
-;;-------- Meiryo 30 ----------
 
-(ignore-errors
-  (let* ((name "meiryo30")
-         (asciifont "Consolas")
-         (jpfont "メイリオ")
-         (fontspec (font-spec :family asciifont :size 30))
-         (jp-fontspec (font-spec :family jpfont))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- Meiryo 15 ----------
-
-(ignore-errors
-  (let* ((name "meiryo15")
-         (asciifont "Consolas")
-         (jpfont "メイリオ")
-         (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- UD教科書体 30 ----------
-
-(ignore-errors
-  (let* ((name "winudkyokasho30")
-         (asciifont "Consolas")
-         (jpfont "UD デジタル 教科書体 N-R")
-         (fontspec (font-spec :family asciifont :size 30))
-         (jp-fontspec (font-spec :family jpfont :size 32))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
-
-;;-------- UD教科書体 15 ----------
-
-(ignore-errors
-  (let* ((name "winudkyokasho15")
-         (asciifont "Consolas")
-         (jpfont "UD デジタル 教科書体 N-R")
-         (fontspec (font-spec :family asciifont :size 15))
-         (jp-fontspec (font-spec :family jpfont :size 16))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
+(my-def-font "meiryo" "Consolas" my-ascii-font-size 'medium "メイリオ" my-jp-font-size 'medium)
+(my-def-font "udkyokashowin" "Consolas" my-ascii-font-size 'medium "UD デジタル 教科書体 N-R" my-jp-font-size 'medium)
 
 ;;-----------------------------
 ;;  General
 ;;-----------------------------
-;;
-;;-------- Ricty-Diminished 16 ----------
 
-(ignore-errors
-  (let* ((name "ricty16")
-         (asciifont "Ricty Diminished")
-         (jpfont "Ricty Diminished")
-         (fontspec (font-spec :family asciifont :size 16))
-         (jp-fontspec (font-spec :family jpfont))
-         (fsn (create-fontset-from-ascii-font asciifont nil name)))
-    (set-fontset-font fsn 'ascii fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-    (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-    (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-    )
-  t)
+(my-def-font "ricty" "Ricty Diminished" my-ascii-font-size 'medium "Ricty Diminished" my-jp-font-size 'medium)
 
 ;;-------- Default Font ----------
 (when gui-mac-or-ns-p
-;;  (set-default-font "fontset-inputmono14")
-;;  (add-to-list 'default-frame-alist '(font . "fontset-inputmono14")))
-  (set-default-font "fontset-inputmonoudkyokasho14")
-  (add-to-list 'default-frame-alist '(font . "fontset-inputmonoudkyokasho14")))
+  (set-default-font "fontset-udkyokasho")
+  (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
 (when gui-win-p
-  (if (>= (display-pixel-width) 2000)
-      (progn
-        (set-default-font "fontset-winudkyokasho30")
-        (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho30")))
-    (set-default-font "fontset-winudkyokasho15")
-    (add-to-list 'default-frame-alist '(font . "fontset-winudkyokasho15"))))
+    (set-default-font "fontset-udkyokasho")
+    (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
 (when gui-x-p
   (when sys-centos-p
-    (set-default-font "fontset-vlgothic15")
-    (add-to-list 'default-frame-alist '(font . "fontset-vlgothic15")))
+    (set-default-font "fontset-vlgoth")
+    (add-to-list 'default-frame-alist '(font . "fontset-vlgoth")))
   (when sys-ubuntu-p
-    (set-default-font "fontset-notosans15")
-    (add-to-list 'default-frame-alist '(font . "fontset-notosans15"))))
+    (set-default-font "fontset-notosans")
+    (add-to-list 'default-frame-alist '(font . "fontset-notosans"))))
 ;;
 ;;===============================================================================================
 ;;
@@ -921,24 +691,19 @@ check for the whole contents of FILE, otherwise check for the first
      ((< 200 dpi) 24)
      (t 12))))
 
-(defvar my-linum-font-size (my-preferred-linum-font-size))
+(if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
+    (setq my-linum-font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" (my-preferred-linum-font-size)))
+  (setq my-linum-font (format "-*-*-*-*-*-*-%d-*" (my-preferred-linum-font-size))))
 
 (if (version<= "26.0.50" emacs-version)
     (progn
       (setq-default display-line-numbers-width 4
                     display-line-numbers-widen t)
-      (if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
-          (progn
-            (set-face-attribute 'line-number nil
-                                :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size))
-            (set-face-attribute 'line-number-current-line nil
-                                :font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size)
-                                :foreground "white"))
-        (set-face-attribute 'line-number nil
-                            :font (format "-*-*-*-*-*-*-%d-*" my-linum-font-size))
-        (set-face-attribute 'line-number-current-line nil
-                            :font (format "-*-*-*-*-*-*-%d-*" my-linum-font-size)
-                            :foreground "white"))
+      (set-face-attribute 'line-number nil
+                          :font my-linum-font)
+      (set-face-attribute 'line-number-current-line nil
+                          :font my-linum-font
+                          :foreground "white")
 
       (add-hook 'text-mode-hook #'display-line-numbers-mode)
       (add-hook 'prog-mode-hook #'display-line-numbers-mode))
@@ -952,9 +717,7 @@ check for the whole contents of FILE, otherwise check for the first
     ;; setting font for linum
     (add-hook 'linum-mode-hook
               '(lambda ()
-                 (if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
-                     (set-face-font 'linum (format "-*-Input Mono Compressed-light-*-*-*-%d-*" my-linum-font-size))
-                   (set-face-font 'linum (format "-*-*-*-*-*-*-%d-*" my-linum-font-size)))))
+                 (set-face-font 'linum my-linum-font)))
     ;;
     (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
     (defun linum-on ()
