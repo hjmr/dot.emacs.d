@@ -119,8 +119,8 @@
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
-(add-to-list 'default-frame-alist '(foreground-color . "white"))
-(add-to-list 'default-frame-alist '(background-color . "black"))
+;; (add-to-list 'default-frame-alist '(foreground-color . "white"))
+;; (add-to-list 'default-frame-alist '(background-color . "black"))
 (add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
@@ -175,11 +175,12 @@
 (when (fboundp 'sml/setup)
   (setq sml/no-confirm-load-theme t)
   (setq sml/theme 'dark)
+  (setq sml/shorten-modes t)
+  (setq sml/shorten-directory t)
   (sml/setup))
 
-(defvar projectile-mode-line
-  '(:eval (format " Proj[%s]"
-                  (projectile-project-name))))
+(when (boundp 'sml/replacer-regexp-list)
+  (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/" ":Prog:") t))
 
 (defvar mode-line-cleaner-alist
   '( ;; For minor-mode, first char is 'space'
@@ -191,6 +192,7 @@
     (flyspell-mode . " FlyS")
     (highlight-indent-guides-mode . "")
     (volatile-highlights-mode . "")
+    (auto-revert-mode . "")
     ;; Major modes
     (lisp-interaction-mode . "Li")
     (python-mode . "Py")
@@ -201,15 +203,16 @@
 (defun clean-mode-line ()
   (interactive)
   (cl-loop for (mode . mode-str) in mode-line-cleaner-alist
-        do
-        (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
-          (when old-mode-str
-            (setcar old-mode-str mode-str))
-          ;; major mode
-          (when (eq mode major-mode)
-            (setq mode-name mode-str)))))
+           do
+           (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
+             (when old-mode-str
+               (setcar old-mode-str mode-str))
+             ;; major mode
+             (when (eq mode major-mode)
+               (setq mode-name mode-str)))))
 
 (add-hook 'after-change-major-mode-hook 'clean-mode-line)
+
 ;;-------------------------------
 ;; line and column on mode-line
 ;;-------------------------------
@@ -745,6 +748,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Projectile: a project manager
 ;;-------------------------------
 (exec-if-bound (projectile-global-mode))
+(setq projectile-mode-line-prefix " PR")
 ;;-------------------------------
 ;; undo-tree
 ;;-------------------------------
@@ -889,36 +893,45 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; linum-mode
 ;;-------------------------------
-(when (fboundp 'global-linum-mode)
-  (global-linum-mode t)
-  (setq linum-format "%5d")
-  (setq linum-delay t)
-  (defadvice linum-schedule (around my-linum-schedule () activate)
-    (run-with-idle-timer 0.2 nil #'linum-update-current))
-  ;; setting font for linum
-  (when gui-x-p
-    (add-hook 'linum-mode-hook
-              '(lambda ()
-                 (set-face-font 'linum "-*-*-*-*-*-*-12-*"))
-              ))
-  (when gui-mac-or-ns-p
-    (add-hook 'linum-mode-hook
-              '(lambda ()
-                 (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-12-*"))
-              ))
-  (when gui-win-p
-    (add-hook 'linum-mode-hook
-              '(lambda ()
-                 (if (>= (display-pixel-width) 2000)
-                     (set-face-font 'linum "-*-Consolas-*-*-*-*-24-*")
-                   (set-face-font 'linum "-*-Consolas-*-*-*-*-12-*")))
-              ))
-  ;;
-  (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
-  (defun linum-on ()
-    (unless (or (minibufferp)
-                (member major-mode linum-disabled-modes))
-      (linum-mode 1))))
+(if (version<= "26.0.50" emacs-version)
+    (progn
+      (setq-default display-line-numbers-width 4
+                    display-line-numbers-widen t)
+      (set-face-attribute 'line-number nil
+                          :font "-*-Input Mono Compressed-light-*-*-*-12-*")
+      (set-face-attribute 'line-number-current-line nil
+                          :font "-*-Input Mono Compressed-light-*-*-*-12-*"
+                          :foreground "white")
+      (add-hook 'text-mode-hook #'display-line-numbers-mode)
+      (add-hook 'prog-mode-hook #'display-line-numbers-mode))
+  ;; emacs-version < 26.0.50
+  (when (fboundp 'global-linum-mode)
+    (global-linum-mode t)
+    (setq linum-format "%4d")
+    (setq linum-delay t)
+    (defadvice linum-schedule (around my-linum-schedule () activate)
+      (run-with-idle-timer 0.2 nil #'linum-update-current))
+    ;; setting font for linum
+    (when gui-x-p
+      (add-hook 'linum-mode-hook
+                '(lambda ()
+                   (set-face-font 'linum "-*-*-*-*-*-*-12-*"))))
+    (when gui-mac-or-ns-p
+      (add-hook 'linum-mode-hook
+                '(lambda ()
+                   (set-face-font 'linum "-*-Input Mono Compressed-light-*-*-*-12-*"))))
+    (when gui-win-p
+      (add-hook 'linum-mode-hook
+                '(lambda ()
+                   (if (>= (display-pixel-width) 2000)
+                       (set-face-font 'linum "-*-Consolas-*-*-*-*-24-*")
+                     (set-face-font 'linum "-*-Consolas-*-*-*-*-12-*")))))
+    ;;
+    (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
+    (defun linum-on ()
+      (unless (or (minibufferp)
+                  (member major-mode linum-disabled-modes))
+        (linum-mode 1)))))
 ;;-------------------------------
 ;; hiwin-mode
 ;;-------------------------------
