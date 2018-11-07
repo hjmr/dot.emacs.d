@@ -74,10 +74,15 @@
                (pix-h (cl-fifth (assoc 'geometry atts)))
                (pix-d (pyth pix-w pix-h))
                (mm-w (cl-second (assoc 'mm-size atts)))
-               (mm-h (cl-third (assoc 'mm-size atts)))
+                (mm-h (cl-third (assoc 'mm-size atts)))
                (mm-d (pyth mm-w mm-h)))
           (/ pix-d (mm2in mm-d))))
     96.0))
+;;
+(defun describe-face-at-point ()
+  "Return face used at point."
+  (interactive)
+  (message "%s" (get-char-property (point) 'face)))
 ;;
 ;;-------------------------------
 ;; paths and environment vars
@@ -145,6 +150,8 @@
 ;;-------------------------------
 (add-to-list 'default-frame-alist '(foreground-color . "white"))
 (add-to-list 'default-frame-alist '(background-color . "black"))
+(set-face-foreground 'font-lock-comment-delimiter-face "gray60")
+(set-face-foreground 'font-lock-comment-face           "gray60")
 (add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
@@ -217,6 +224,7 @@
     (highlight-indent-guides-mode . "")
     (volatile-highlights-mode . "")
     (auto-revert-mode . "")
+    (latex-preview-pane-mode . " LtxPP")
     ;; Major modes
     (lisp-interaction-mode . "Li")
     (python-mode . "Py")
@@ -384,8 +392,7 @@ properly disable mozc-mode."
   (let ( (dpi (my-dpi)) )
     (cond
      ((< 260 dpi) 30)
-     (gui-x-p 15)
-     (t 14))))
+     (t 15))))
 ;;
 (defvar my-ascii-font-size (my-preferred-ascii-font-size))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
@@ -1191,9 +1198,10 @@ check for the whole contents of FILE, otherwise check for the first
 (exec-if-bound (company-auctex-init))
 
 (setq-default TeX-master nil)
+(setq TeX-PDF-mode t)
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
-(setq TeX-PDF-mode t)
+(setq TeX-PDF-from-DVI "Dvipdfmx")
 
 (add-hook 'LaTeX-mode-hook
           '(lambda ()
@@ -1202,6 +1210,7 @@ check for the whole contents of FILE, otherwise check for the first
              (flyspell-mode)
              (LaTeX-math-mode)
              (safe-define-key 'LaTeX-mode-map (kbd "M-RET") 'my-toggle-fullscreen)
+	     (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
              ))
 
 (setq latex-preview-pane-multifile-mode 'auctex)
