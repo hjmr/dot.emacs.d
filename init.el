@@ -303,6 +303,10 @@
 ;;-------------------------------
 (exec-if-bound (volatile-highlights-mode t))
 ;;-------------------------------
+;; debugging module
+;;-------------------------------
+(ignore-errors (load-library "realgud"))
+;;-------------------------------
 ;; IDO & SMEX
 ;;-------------------------------
 (exec-if-bound (ido-mode 1))
@@ -1136,6 +1140,8 @@ check for the whole contents of FILE, otherwise check for the first
              (setq python-shell-interpreter "python")
              (setq python-shell-interpreter-args "")
              (setq python-shell-completion-native-enable nil)
+
+             (setq realgud:pdb-command-name "python -m pdb")
 
 ;; settings for python-mode
 ;;             (define-key python-mode-map "\C-h" 'py-electric-backspace)
