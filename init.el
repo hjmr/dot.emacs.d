@@ -829,7 +829,7 @@ check for the whole contents of FILE, otherwise check for the first
                                      "*Python*"
                                      "*Help*"
                                      "*eww*"
-                                     "*eshell*"
+                                     "*ansi-term*"
                                      ))
   ;;
   (setq tabbar-buffer-groups-function
@@ -1217,7 +1217,7 @@ check for the whole contents of FILE, otherwise check for the first
              (flyspell-mode)
              (LaTeX-math-mode)
              (safe-define-key 'LaTeX-mode-map (kbd "M-RET") 'my-toggle-fullscreen)
-	     (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
+             (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
              ))
 
 (setq latex-preview-pane-multifile-mode 'auctex)
