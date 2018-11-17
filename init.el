@@ -88,7 +88,7 @@
 ;; paths and environment vars
 ;;-------------------------------
 (when (getenv "HOME")
-  (cd (getenev "HOME")))
+  (cd (getenv "HOME")))
 (when sys-mac-p
   (setenv "TEXINPUTS" "~/Library/TeX//:")
   ;; (let ((path-str
