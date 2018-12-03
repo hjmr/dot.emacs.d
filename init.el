@@ -153,7 +153,7 @@
 (add-to-list 'default-frame-alist '(background-color . "black"))
 (set-face-foreground 'font-lock-comment-delimiter-face "gray60")
 (set-face-foreground 'font-lock-comment-face           "gray60")
-(add-to-list 'default-frame-alist '(width . 130))
+(add-to-list 'default-frame-alist '(width . 120))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
   (add-to-list 'default-frame-alist '(height . 100)))
@@ -198,9 +198,9 @@
 (set-clipboard-coding-system 'utf-8)
 (set-keyboard-coding-system  'utf-7)
 (setq default-process-coding-system '(utf-8 . utf-8))
-;;(when sys-mac-p
-;;  (setq default-file-name-coding-system 'utf-8-hfs-mac)
-;;  (set-file-name-coding-system 'utf-8-hfs-mac))
+(when (memq 'utf-8-hfs-mac coding-system-list)
+  (setq default-file-name-coding-system 'utf-8-hfs-mac)
+  (set-file-name-coding-system 'utf-8-hfs-mac))
 ;;-------------------------------
 ;; shorten mode-line
 ;;-------------------------------
@@ -328,7 +328,7 @@
     (if (eq (frame-parameter nil 'fullscreen) 'fullscreen)
         (progn
           (set-frame-parameter nil 'fullscreen nil)
-          (set-frame-width nil 130)
+          (set-frame-width nil 120)
           (set-frame-height nil 100)
           (set-frame-position nil 0 0))
       (set-frame-parameter nil 'fullscreen 'fullscreen))))
@@ -712,9 +712,8 @@ check for the whole contents of FILE, otherwise check for the first
       (setq-default display-line-numbers-width 4
                     display-line-numbers-widen t)
       (set-face-attribute 'line-number nil
-                          :font my-linum-font)
+                          :foreground "gray40")
       (set-face-attribute 'line-number-current-line nil
-                          :font my-linum-font
                           :foreground "white")
 
       (add-hook 'text-mode-hook #'display-line-numbers-mode)
@@ -829,7 +828,6 @@ check for the whole contents of FILE, otherwise check for the first
                                      "*Python*"
                                      "*Help*"
                                      "*eww*"
-                                     "*ansi-term*"
                                      ))
   ;;
   (setq tabbar-buffer-groups-function
@@ -839,6 +837,8 @@ check for the whole contents of FILE, otherwise check for the first
              ((or (get-buffer-process (current-buffer))
                   (tabbar-buffer-mode-derived-p
                    major-mode '(comint-mode compilation-mode)))
+              (list "*proc*"))
+             ((string-match "^\*ansi-term" (buffer-name))
               (list "*proc*"))
              ((member (buffer-name) my-tabbar-star-buffer-list)
               (list "*common*"))
@@ -1061,6 +1061,26 @@ check for the whole contents of FILE, otherwise check for the first
        (list
         (list "emacs" "find-file $1"))))
 ;;-------------------------------
+;; multi-term
+;;-------------------------------
+;; (when (require 'multi-term nil t)
+;;   (add-to-list 'term-unbind-key-list '"C-p")
+;;   (add-to-list 'term-unbind-key-list '"C-n"))
+
+;; (add-hook 'term-mode-hook
+;;           '(lambda ()
+;;              (define-key term-raw-map (kbd "C-y") 'term-paste)
+;;              (define-key term-raw-map (kbd "C-z")
+;;                (lookup-key (current-global-map) (kbd "C-z")))
+;;              ))
+(when (require 'shell-pop nil t)
+  (custom-set-variables
+   '(shell-pop-shell-type (quote ("multi-term" "*shell-pop-multi-term*" (lambda nil (multi-term)))))
+   '(shell-pop-window-height 30)           ;; 30% の高さに分割する
+   '(shell-pop-window-position "bottom")   ;; 下に開く
+;;   '(shell-pop-full-span t)                ;; 横幅いっぱいに開く
+  ))
+;;-------------------------------
 ;; eww-mode
 ;;-------------------------------
 (setq shr-color-visible-luminance-min 90)
@@ -1259,7 +1279,7 @@ check for the whole contents of FILE, otherwise check for the first
 (global-set-key                       (kbd "C-x m")     #'move-file)
 ;;-- neotree
 (global-set-key                       (kbd "<f8>")      'neotree-project-dir)
-(global-set-key                       (kbd "<f9>")      'neotree-refresh)
+(global-set-key                       (kbd "<f9>")      'shell-pop)
 ;;-- EWW
 (global-set-key                       (kbd "C-c g")     'my-eww-search-words)
 ;;-- counr-words-region
@@ -1284,8 +1304,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- flyspell
 (safe-define-key 'flyspell-mode-map   (kbd "C-;")       'flyspell-correct-previous-word-generic)
 ;;-- Mac Finder control
-(safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
 (safe-global-set-key                  (kbd "<f6>")      'open-terminal-here)
+(safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
 ;;
 ;;===============================================================================================
 ;;
