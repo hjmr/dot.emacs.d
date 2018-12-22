@@ -160,7 +160,7 @@
 (add-to-list 'default-frame-alist '(top .  0))
 (add-to-list 'default-frame-alist '(left   . 0))
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(alpha . (100 65)))
+(add-to-list 'default-frame-alist '(alpha . (100 75)))
 (add-to-list 'default-frame-alist '(line-spacing . 2))
 (setq initial-frame-alist default-frame-alist)
 ;;-------------------------------
