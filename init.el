@@ -397,7 +397,7 @@ properly disable mozc-mode."
   (let ( (dpi (my-dpi)) )
     (cond
      ((< 260 dpi) 30)
-     (t 15))))
+     (t 14))))
 ;;
 (defvar my-ascii-font-size (my-preferred-ascii-font-size))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
@@ -1007,6 +1007,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 (when (fboundp 'global-flycheck-mode)
   (global-flycheck-mode)
+  (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+  (setq flycheck-idle-change-delay 5)
   (when (fboundp 'flycheck-popup-tip-mode)
     (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
   (when (fboundp 'flycheck-vale-setup)
