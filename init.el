@@ -274,7 +274,7 @@
     (let ((global-hl-line-mode t))
       (global-hl-line-highlight)))
   (setq global-hl-line-timer
-        (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
+        (run-with-idle-timer 0.1 t 'global-hl-line-timer-function))
   (defface my-hl-line-face
     '((((class color) (background dark))  ; カラーかつ, 背景が dark ならば,
        (:background "Gray15" t))          ; 背景を黒に.
@@ -1240,6 +1240,7 @@ check for the whole contents of FILE, otherwise check for the first
              (LaTeX-math-mode)
              (safe-define-key 'LaTeX-mode-map (kbd "M-RET") 'my-toggle-fullscreen)
              (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
+             (fic-mode)
              ))
 
 (setq latex-preview-pane-multifile-mode 'auctex)
