@@ -222,6 +222,7 @@
     (global-whitespace-mode . "")
     (eldoc-mode . "")
     (flyspell-mode . " FlyS")
+    (pipenv-mode . " Pev")
     (highlight-indent-guides-mode . "")
     (volatile-highlights-mode . "")
     (auto-revert-mode . "")
@@ -1160,11 +1161,11 @@ check for the whole contents of FILE, otherwise check for the first
           '(lambda ()
              (setq python-indent        4)
              (setq python-indent-offset 4)
-             (setq python-shell-interpreter "python")
+             (setq python-shell-interpreter "python3")
              (setq python-shell-interpreter-args "")
              (setq python-shell-completion-native-enable nil)
 
-             (setq realgud:pdb-command-name "python -m pdb")
+             (setq realgud:pdb-command-name "python3 -m pdb")
 
 ;; settings for python-mode
 ;;             (define-key python-mode-map "\C-h" 'py-electric-backspace)
@@ -1177,8 +1178,10 @@ check for the whole contents of FILE, otherwise check for the first
              (setq py-autopep8-options '("--max-line-length=120"))
              (define-key python-mode-map "\C-cf" 'py-autopep8)
 
-             (define-key python-mode-map (kbd "C-c C-s") 'pyenv-mode-set)
-             (define-key python-mode-map (kbd "C-c C-^") 'pyenv-mode-unset)
+             (setq flycheck-python-pylint-executable "pylint")
+
+;;             (pipenv-mode)
+;;             (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended)
 
              (highlight-indent-guides-mode)
              (fic-mode)
@@ -1238,7 +1241,7 @@ check for the whole contents of FILE, otherwise check for the first
              (visual-line-mode)
              (flyspell-mode)
              (LaTeX-math-mode)
-             (safe-define-key 'LaTeX-mode-map (kbd "M-RET") 'my-toggle-fullscreen)
+             (safe-define-key 'LaTeX-mode-map (kbd "<f12>") 'my-toggle-fullscreen)
              (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
              (fic-mode)
              ))
@@ -1288,7 +1291,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- counr-words-region
 (safe-global-set-key                  (kbd "C-c =")     'count-words-region)
 ;;-- toggle-fullscreen
-(safe-global-set-key                  (kbd "M-RET")     'my-toggle-fullscreen)
+(safe-global-set-key                  (kbd "<f12>")     'my-toggle-fullscreen)
 ;;-- IME control on linux
 (safe-global-set-key                  (kbd "<hiragana-katakana>") 'my-turn-on-input-method)
 ;;-- ripgrep
