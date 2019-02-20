@@ -127,6 +127,7 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (set-scroll-bar-mode 'nil)
+;; (setq visible-bell t)
 ;;-------------------------------
 ;; misc global settings
 ;;-------------------------------
