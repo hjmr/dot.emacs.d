@@ -127,7 +127,12 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (set-scroll-bar-mode 'nil)
-;; (setq visible-bell t)
+;;(setq visible-bell t)
+(defun flash-mode-line ()
+  (invert-face 'mode-line)
+  (run-with-timer 0.1 nil #'invert-face 'mode-line))
+(setq visible-bell nil
+      ring-bell-function 'flash-mode-line)
 ;;-------------------------------
 ;; misc global settings
 ;;-------------------------------
