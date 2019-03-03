@@ -559,7 +559,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Projectile: a project manager
 ;;-------------------------------
 (exec-if-bound (projectile-global-mode))
-(setq projectile-mode-line-prefix " PR")
+(setq projectile-mode-line-prefix " Prj")
 ;;-------------------------------
 ;; undo-tree
 ;;-------------------------------
@@ -1247,7 +1247,8 @@ check for the whole contents of FILE, otherwise check for the first
              (visual-line-mode)
              (flyspell-mode)
              (LaTeX-math-mode)
-             (safe-define-key 'LaTeX-mode-map (kbd "<f12>") 'my-toggle-fullscreen)
+             (safe-define-key 'LaTeX-mode-map (kbd "<f12>")        'my-toggle-fullscreen)
+             (safe-define-key 'LaTeX-mode-map (kbd "<C-M-return>") 'my-toggle-fullscreen)
              (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
              (fic-mode)
              ))
@@ -1298,6 +1299,7 @@ check for the whole contents of FILE, otherwise check for the first
 (safe-global-set-key                  (kbd "C-c =")     'count-words-region)
 ;;-- toggle-fullscreen
 (safe-global-set-key                  (kbd "<f12>")     'my-toggle-fullscreen)
+(safe-global-set-key                  (kbd "<C-M-return>")        'my-toggle-fullscreen)
 ;;-- IME control on linux
 (safe-global-set-key                  (kbd "<hiragana-katakana>") 'my-turn-on-input-method)
 ;;-- ripgrep
