@@ -237,7 +237,7 @@
     (visual-line-mode . "")
     (volatile-highlights-mode . "")
     (auto-revert-mode . "")
-    (latex-preview-pane-mode . " PP")
+    (latex-preview-pane-mode . " LtxPP")
     ;; Major modes
     (lisp-interaction-mode . "Li")
     (python-mode . "Py")
