@@ -46,6 +46,7 @@
   "Execute function in SEXPLIST iff function exists."
   `(if (fboundp (car ',sexplist))
        ,sexplist))
+;;
 (defun safe-global-set-key (key command)
   "Assign KEY to COMMAND iff COMMAND exsits."
   (when (fboundp command)
@@ -220,6 +221,9 @@
 (when (boundp 'sml/replacer-regexp-list)
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/" ":Prog:") t))
 
+(when (boundp 'rm-blacklist)
+  (add-to-list 'rm-blacklist '" Projectile" t))
+
 (defvar mode-line-cleaner-alist
   '( ;; For minor-mode, first char is 'space'
     (undo-tree-mode . "")
@@ -230,9 +234,10 @@
     (flyspell-mode . " FlyS")
     (pipenv-mode . " Pev")
     (highlight-indent-guides-mode . "")
+    (visual-line-mode . "")
     (volatile-highlights-mode . "")
     (auto-revert-mode . "")
-    (latex-preview-pane-mode . " LtxPP")
+    (latex-preview-pane-mode . " PP")
     ;; Major modes
     (lisp-interaction-mode . "Li")
     (python-mode . "Py")
@@ -559,7 +564,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Projectile: a project manager
 ;;-------------------------------
 (exec-if-bound (projectile-global-mode))
-(setq projectile-mode-line-prefix " Prj")
+(setq projectile-mode-line-prefix " Proj")
 ;;-------------------------------
 ;; undo-tree
 ;;-------------------------------
