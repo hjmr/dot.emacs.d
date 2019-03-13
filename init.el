@@ -156,10 +156,10 @@
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
-(add-to-list 'default-frame-alist '(foreground-color . "white"))
-(add-to-list 'default-frame-alist '(background-color . "black"))
 (set-face-foreground 'font-lock-comment-delimiter-face "gray60")
 (set-face-foreground 'font-lock-comment-face           "gray60")
+(add-to-list 'default-frame-alist '(foreground-color . "white"))
+(add-to-list 'default-frame-alist '(background-color . "black"))
 (add-to-list 'default-frame-alist '(width . 120))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
@@ -169,6 +169,7 @@
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(alpha . (100 75)))
 (add-to-list 'default-frame-alist '(line-spacing . 2))
+(add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
 ;;-------------------------------
 ;; set undo buffer
@@ -219,6 +220,7 @@
   (sml/setup))
 
 (when (boundp 'sml/replacer-regexp-list)
+  (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/Python/" ":Python:") t)
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/" ":Prog:") t))
 
 (when (boundp 'rm-blacklist)
