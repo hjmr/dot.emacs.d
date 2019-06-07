@@ -480,6 +480,7 @@ properly disable mozc-mode."
   (when sys-ubuntu-p
     (set-default-font "fontset-notosans")
     (add-to-list 'default-frame-alist '(font . "fontset-notosans"))))
+
 ;;
 ;;===============================================================================================
 ;;
@@ -589,9 +590,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;;   (setq minimap-window-location 'right)
 ;;   (set-face-attribute 'minimap-font-face nil
 ;;                       :family "Input Mono Narrow" :height 30 :weight 'ultra-light)
-;;   ;;(set-face-attribute 'minimap-active-region-background nil
-;;   ;;                    :background "#003355")
-;;   (global-set-key [f10] 'minimap-mode))
+;;   (set-face-attribute 'minimap-active-region-background nil
+;;                       :background "#003355")
+;;   )
 ;;-------------------------------------------------
 ;; neotree: show directory tree at the left-side
 ;;-------------------------------------------------
@@ -1063,6 +1064,7 @@ check for the whole contents of FILE, otherwise check for the first
                 ("\\.html\\'"         . jinja2-mode)
                 ("\\.jinja2\\'"       . jinja2-mode)
                 ("\\.el\\'"           . emacs-lisp-mode)
+                ("\\.gs\\'"           . js-mode)
                 )
               auto-mode-alist))
 ;;-------------------------------
@@ -1327,6 +1329,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- Mac Finder control
 (safe-global-set-key                  (kbd "<f6>")      'open-terminal-here)
 (safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
+;;-- minimap
+;; (safe-global-set-key                  (kbd "<f10>")     'minimap-mode)
 ;;
 ;;===============================================================================================
 ;;
