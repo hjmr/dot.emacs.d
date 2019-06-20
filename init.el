@@ -64,7 +64,8 @@
 ;;
 (defun my-dpi ()
   "Get the DPI of the physical monitor dominating FRAME."
-  (if (fboundp 'display-monitor-attributes-list)
+  (if (and (fboundp 'display-monitor-attributes-list)
+           (sequencep (display-monitor-attributes-list)))
       (cl-flet ((pyth (w h)
                       (sqrt (+ (* w w)
                                (* h h))))
@@ -153,6 +154,7 @@
 (setq scroll-conservatively 150)
 (setq scroll-margin 5)
 (setq scroll-step 1)
+(setq tramp-default-method "ssh")
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
