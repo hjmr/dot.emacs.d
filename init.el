@@ -64,9 +64,7 @@
 ;;
 (defun my-dpi ()
   "Get the DPI of the physical monitor dominating FRAME."
-  (if (and (fboundp 'display-monitor-attributes-list)
-           (sequencep (display-monitor-attributes-list))
-           (> (length (display-monitor-attributes-list)) 0))
+  (if (fboundp 'display-monitor-attributes-list)
       (cl-flet ((pyth (w h)
                       (sqrt (+ (* w w)
                                (* h h))))
@@ -483,7 +481,6 @@ properly disable mozc-mode."
   (when sys-ubuntu-p
     (set-default-font "fontset-notosans")
     (add-to-list 'default-frame-alist '(font . "fontset-notosans"))))
-
 ;;
 ;;===============================================================================================
 ;;
