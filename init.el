@@ -62,25 +62,6 @@
   "check if FONT exists"
   (if (null (x-list-fonts font)) nil t))
 ;;
-(defun my-dpi ()
-  "Get the DPI of the physical monitor dominating FRAME."
-  (if (and window-system
-           (fboundp 'display-monitor-attributes-list))
-      (cl-flet ((pyth (w h)
-                      (sqrt (+ (* w w)
-                               (* h h))))
-                (mm2in (mm)
-                       (/ mm 25.4)))
-        (let* ((atts (frame-monitor-attributes))
-               (pix-w (cl-fourth (assoc 'geometry atts)))
-               (pix-h (cl-fifth (assoc 'geometry atts)))
-               (pix-d (pyth pix-w pix-h))
-               (mm-w (cl-second (assoc 'mm-size atts)))
-               (mm-h (cl-third (assoc 'mm-size atts)))
-               (mm-d (pyth mm-w mm-h)))
-          (/ pix-d (mm2in mm-d))))
-    96.0))
-;;
 (defun describe-face-at-point ()
   "Return face used at point."
   (interactive)
@@ -104,6 +85,7 @@
   ;;   (setenv "PATH" path-str)
   ;;   (setq exec-path (nconc (split-string path-str ":") exec-path)))
   )
+(add-to-list 'load-path (concat user-emacs-directory "conf"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
 ;;-------------------------------
 ;;  Package System
@@ -124,7 +106,7 @@
  ;;-------------------------------
 (set-language-environment 'Japanese)
 ;;-------------------------------
-;; hide menus
+;; hide menus and tool bars
 ;;-------------------------------
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -173,6 +155,11 @@
 (add-to-list 'default-frame-alist '(line-spacing . 2))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
+;;-------------------------------
+;; font settings
+;;-------------------------------
+(when window-system
+  (load "font-init"))
 ;;-------------------------------
 ;; set undo buffer
 ;;-------------------------------
@@ -333,7 +320,7 @@
 (setq ido-enable-flex-matching t)
 (setq ido-vertical-define-keys 'C-n-and-C-p-only)
 (setq ido-vertical-show-count t)
-
+;;
 (exec-if-bound (smex-initialize))
 ;;-------------------------------
 ;; toggle-full-screen
@@ -402,93 +389,6 @@ properly disable mozc-mode."
                (file-exists-p new-location)
                (not (string-equal old-location new-location)))
       (delete-file old-location))))
-;;
-;;===============================================================================================
-;;
-;; font setting
-;;
-;;===============================================================================================
-;;
-(defun my-preferred-ascii-font-size ()
-  (let ( (dpi (my-dpi)) )
-    (cond
-     ((< 260 dpi) 30)
-     (t 14))))
-;;
-(defvar my-ascii-font-size (my-preferred-ascii-font-size))
-(defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
-;;
-(defun my-def-font (name asciifont asciifont-size asciifont-weight jpfont jpfont-size jpfont-weight)
-  (ignore-errors
-    (let* ((fontspec (font-spec :family asciifont :size asciifont-size :weight asciifont-weight))
-           (jp-fontspec (font-spec :family jpfont :size jpfont-size :weight jpfont-weight))
-           (fsn (create-fontset-from-ascii-font asciifont nil name)))
-      (set-fontset-font fsn 'ascii fontspec)
-      (set-fontset-font fsn 'japanese-jisx0213.2004-1 jp-fontspec)
-      (set-fontset-font fsn 'japanese-jisx0213-2 jp-fontspec)
-      (set-fontset-font fsn 'japanese-jisx0208 jp-fontspec)
-      (set-fontset-font fsn 'katakana-jisx0201 jp-fontspec)
-      (set-fontset-font fsn '(#x0080 . #x024F) fontspec)
-      (set-fontset-font fsn '(#x0370 . #x03FF) fontspec)
-      )
-    t))
-;;
-;;-----------------------------
-;;  macOS
-;;-----------------------------
-;;
-(when gui-mac-p
-  (setq fixed-width-use-QuickDraw-for-ascii t)
-  (setq mac-allow-anti-aliasing nil))
-;;
-(my-def-font "hirakaku" "Monaco" my-ascii-font-size 'medium "Hiragino Kaku Gothic Pro" my-jp-font-size 'medium)
-(my-def-font "hiramin" "Monaco" my-ascii-font-size 'medium "Hiragino Mincho Pro" my-jp-font-size 'medium)
-(my-def-font "hirasans" "Inconsolata" my-ascii-font-size 'medium "Hiragino Sans" my-jp-font-size 'light)
-(my-def-font "lettergoth" "Letter Gothic Std" my-ascii-font-size 'medium "Hiragino Sans" my-jp-font-size 'light)
-(my-def-font "inputmono" "Input Mono Narrow" my-ascii-font-size 'light "Hiragino Sans" my-jp-font-size 'light)
-(my-def-font "udkyokasho" "Input Mono Narrow" my-ascii-font-size 'light "UD Digi Kyokasho N-R" my-jp-font-size 'medium)
-;;
-;;-----------------------------
-;;  Linux
-;;-----------------------------
-(my-def-font "taakoexgoth" "Ubuntu Mono" my-ascii-font-size 'light "TakaoExゴシック" my-jp-font-size 'medium)
-(my-def-font "notosans" "DejaVu Sans Mono" my-ascii-font-size 'light "Noto Sans CJK JP" my-jp-font-size 'light)
-(my-def-font "vlgoth" "DejaVu Sans Mono" my-ascii-font-size 'light "VL Gothic" my-jp-font-size 'light)
-;;
-;;-----------------------------
-;;  Windows
-;;-----------------------------
-;;
-(my-def-font "meiryo" "Consolas" my-ascii-font-size 'medium "メイリオ" my-jp-font-size 'medium)
-(my-def-font "udkyokashowin" "Consolas" my-ascii-font-size 'medium "UD デジタル 教科書体 N-R" my-jp-font-size 'medium)
-;;
-;;-----------------------------
-;;  General
-;;-----------------------------
-;;
-(my-def-font "ricty" "Ricty Diminished" my-ascii-font-size 'medium "Ricty Diminished" my-jp-font-size 'medium)
-;;
-;;-------- Default Font ----------
-(when gui-mac-or-ns-p
-  (set-default-font "fontset-udkyokasho")
-  (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
-(when gui-win-p
-  (set-default-font "fontset-udkyokashowin")
-  (add-to-list 'default-frame-alist '(font . "fontset-udkyokashowin")))
-(when gui-x-p
-  (when sys-centos-p
-    (set-default-font "fontset-vlgoth")
-    (add-to-list 'default-frame-alist '(font . "fontset-vlgoth")))
-  (when sys-ubuntu-p
-    (set-default-font "fontset-notosans")
-    (add-to-list 'default-frame-alist '(font . "fontset-notosans"))))
-;;
-;;===============================================================================================
-;;
-;;  original settings
-;;
-;;===============================================================================================
-;;
 ;;-------------------------------
 ;; numbering-region
 ;;-------------------------------
@@ -713,16 +613,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; linum-mode
 ;;-------------------------------
-(defun my-preferred-linum-font-size ()
-  (let ( (dpi (my-dpi)) )
-    (cond
-     ((< 260 dpi) 24)
-     (t 12))))
-
-(if (font-exists-p "-*-Input Mono Compressed-light-*-*-*-*-*")
-    (setq my-linum-font (format "-*-Input Mono Compressed-light-*-*-*-%d-*" (my-preferred-linum-font-size)))
-  (setq my-linum-font (format "-*-*-*-*-*-*-%d-*" (my-preferred-linum-font-size))))
-
 (if (version<= "26.0.50" emacs-version)
     (progn
       (setq-default display-line-numbers-width 4
@@ -742,9 +632,10 @@ check for the whole contents of FILE, otherwise check for the first
     (defadvice linum-schedule (around my-linum-schedule () activate)
       (run-with-idle-timer 0.2 nil #'linum-update-current))
     ;; setting font for linum
-    (add-hook 'linum-mode-hook
-              '(lambda ()
-                 (set-face-font 'linum my-linum-font)))
+    (when window-system
+      (add-hook 'linum-mode-hook
+                '(lambda ()
+                   (set-face-font 'linum my-linum-font))))
     ;;
     (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
     (defun linum-on ()
@@ -1044,9 +935,7 @@ check for the whole contents of FILE, otherwise check for the first
 (require 'flyspell-correct-popup nil t)
 ;;
 ;;===============================================================================================
-;;
 ;;  major mode settings
-;;
 ;;===============================================================================================
 ;;
 ;;-------------------------------
@@ -1267,9 +1156,7 @@ check for the whole contents of FILE, otherwise check for the first
 (setq pdf-latex-command "latexmk")
 ;;
 ;;===============================================================================================
-;;
 ;;  key configuration
-;;
 ;;===============================================================================================
 ;;
 ;;-- global keys
@@ -1334,9 +1221,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; (safe-global-set-key                  (kbd "<f10>")     'minimap-mode)
 ;;
 ;;===============================================================================================
-;;
 ;;  set custom-file
-;;
 ;;===============================================================================================
 ;;
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
