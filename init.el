@@ -64,7 +64,8 @@
 ;;
 (defun my-dpi ()
   "Get the DPI of the physical monitor dominating FRAME."
-  (if (fboundp 'display-monitor-attributes-list)
+  (if (and window-system
+           (fboundp 'display-monitor-attributes-list))
       (cl-flet ((pyth (w h)
                       (sqrt (+ (* w w)
                                (* h h))))
