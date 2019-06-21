@@ -97,8 +97,7 @@
 ;;-------------------------------
 ;; desktop-save
 ;;-------------------------------
-(if window-system
-    (desktop-save-mode 1))
+(desktop-save-mode 1)
 (when sys-istc-p
   (setq desktop-restore-frames nil))
 ;;-------------------------------
@@ -193,7 +192,7 @@
 (set-default-coding-systems  'utf-8)
 (set-terminal-coding-system  'utf-8)
 (set-clipboard-coding-system 'utf-8)
-(set-keyboard-coding-system  'utf-7)
+(set-keyboard-coding-system  nil)
 (setq default-process-coding-system '(utf-8 . utf-8))
 (when (memq 'utf-8-hfs-mac coding-system-list)
   (setq default-file-name-coding-system 'utf-8-hfs-mac)
