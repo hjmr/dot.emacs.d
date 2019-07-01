@@ -657,6 +657,12 @@ check for the whole contents of FILE, otherwise check for the first
            (autoload 'magit-status "magit" nil t))
   (setq magit-completing-read-function 'magit-ido-completing-read))
 ;;-------------------------------
+;; Show diff
+;;-------------------------------
+(global-diff-hl-mode)
+(diff-hl-margin-mode 1)
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+;;-------------------------------
 ;; Tabbar
 ;;-------------------------------
 (when (require 'tabbar nil t)
@@ -888,10 +894,12 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; ripgrep.el
 ;;-------------------------------
-(when (require 'ripgrep nil t)
-  (setq ripgrep-arguments '("-S"))
-  (define-key ripgrep-search-mode-map "n" 'next-error-no-select)
-  (define-key ripgrep-search-mode-map "p" 'previous-error-no-select))
+(autoload 'ripgrep-regexp "ripgrep" nil t)
+(eval-after-load "ripgrep"
+  '(progn
+     (setq ripgrep-arguments '("-S"))
+     (define-key ripgrep-search-mode-map "n" 'next-error-no-select)
+     (define-key ripgrep-search-mode-map "p" 'previous-error-no-select)))
 ;;-------------------------------
 ;; migemo
 ;;-------------------------------
@@ -902,7 +910,6 @@ check for the whole contents of FILE, otherwise check for the first
 (when (and (executable-find "cmigemo")
            (require 'migemo nil t))
   (setq migemo-options '("-q" "--emacs"))
-
   (setq migemo-user-dictionary nil)
   (setq migemo-regex-dictionary nil)
   (setq migemo-coding-system 'utf-8-unix)
@@ -980,13 +987,15 @@ check for the whole contents of FILE, otherwise check for the first
 ;;              (define-key term-raw-map (kbd "C-z")
 ;;                (lookup-key (current-global-map) (kbd "C-z")))
 ;;              ))
-(when (require 'shell-pop nil t)
-  (custom-set-variables
-   '(shell-pop-shell-type (quote ("multi-term" "*shell-pop-multi-term*" (lambda nil (multi-term)))))
-   '(shell-pop-window-height 30)           ;; 30% の高さに分割する
-   '(shell-pop-window-position "bottom")   ;; 下に開く
-;;   '(shell-pop-full-span t)                ;; 横幅いっぱいに開く
-  ))
+(autoload 'shell-pop "shell-pop" nil t)
+(eval-after-load "shell-pop"
+  '(progn
+     (custom-set-variables
+      '(shell-pop-shell-type (quote ("multi-term" "*shell-pop-multi-term*" (lambda nil (multi-term)))))
+      '(shell-pop-window-height 30)           ;; 30% の高さに分割する
+      '(shell-pop-window-position "bottom")   ;; 下に開く
+;;       '(shell-pop-full-span t)                ;; 横幅いっぱいに開く
+      )))
 ;;-------------------------------
 ;; eww-mode
 ;;-------------------------------
