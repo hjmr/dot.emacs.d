@@ -659,9 +659,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; Show diff
 ;;-------------------------------
-(global-diff-hl-mode)
-(diff-hl-margin-mode 1)
-(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+(when (fboundp 'global-diff-hl-mode)
+  (diff-hl-margin-mode 1)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 ;;-------------------------------
 ;; Tabbar
 ;;-------------------------------
