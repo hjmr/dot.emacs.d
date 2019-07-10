@@ -162,8 +162,10 @@
 ;;-------------------------------
 ;; set undo buffer
 ;;-------------------------------
-(setq undo-limit 20000)
-(setq undo-strong-limit 30000)
+(when (or (not (boundp 'undo-limit))
+          (< undo-limit 20000))
+  (setq undo-limit 20000)
+  (setq undo-strong-limit 30000))
 ;;-------------------------------
 ;; mark-ring
 ;;-------------------------------
