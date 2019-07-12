@@ -906,7 +906,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; migemo
 ;;-------------------------------
 (when sys-mac-p
-  (setq migemo-dictionary "/brew/share/migemo/utf-8/migemo-dict"))
+  (setq migemo-dictionary "/opt/brew/share/migemo/utf-8/migemo-dict"))
 
 (setq migemo-command "cmigemo")
 (when (and (executable-find "cmigemo")
@@ -1048,7 +1048,7 @@ check for the whole contents of FILE, otherwise check for the first
              (c-set-offset 'label -2)
              (c-set-offset 'case-label -2)
              (highlight-indent-guides-mode)
-             (define-key c-mode-map "\C-c\C-b" 'compile)
+             (define-key c-mode-map (kbd "C-c C-b") 'compile)
              (fic-mode)
              ))
 ;;-------------------------------
@@ -1058,7 +1058,7 @@ check for the whole contents of FILE, otherwise check for the first
           '(lambda ()
              (load-library "java-compile")
              (setq java-compile-command "javec")
-             (define-key java-mode-map "\C-c\C-b" 'java-compile)
+             (define-key java-mode-map (kbd "C-c C-b") 'java-compile)
              ))
 ;;-------------------------------
 ;; Python mode settings
@@ -1083,7 +1083,7 @@ check for the whole contents of FILE, otherwise check for the first
              (setq realgud:pdb-command-name "python3 -m pdb")
 
 ;; settings for python-mode
-;;             (define-key python-mode-map "\C-h" 'py-electric-backspace)
+;;             (define-key python-mode-map (kbd "C-h") 'py-electric-backspace)
 ;;             (setq py-indent-offset 4)
 ;;             (setq py-split-window-on-execute t)
 ;;             (setq py-split-windows-on-execute-function 'split-window-sensibly)
@@ -1091,7 +1091,7 @@ check for the whole contents of FILE, otherwise check for the first
              (require 'py-autopep8)
              (py-autopep8-enable-on-save)
              (setq py-autopep8-options '("--max-line-length=120"))
-             (define-key python-mode-map "\C-cf" 'py-autopep8)
+             (define-key python-mode-map (kbd "C-c f") 'py-autopep8)
 
              (setq flycheck-python-pylint-executable "pylint")
 
