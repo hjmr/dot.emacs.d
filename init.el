@@ -502,6 +502,7 @@ check for the whole contents of FILE, otherwise check for the first
   (setq neo-theme 'nerd)
   (setq projectile-switch-project-action 'neotree-projectile-action)
   ;;(setq neo-smart-open t)
+  (setq neo-autorefresh t)
   (setq neo-create-file-auto-open t)
   (setq neo-toggle-window-keep-p t)
   ;; do not delete neotree window by delete-other-window
