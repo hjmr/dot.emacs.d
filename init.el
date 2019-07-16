@@ -234,6 +234,8 @@
     (volatile-highlights-mode . "")
     (auto-revert-mode . "")
     (latex-preview-pane-mode . " LtxPP")
+    (counsel-mode . "")
+    (ivy-mode . "")
     ;; Major modes
     (lisp-interaction-mode . "Li")
     (python-mode . "Py")
@@ -915,7 +917,7 @@ check for the whole contents of FILE, otherwise check for the first
   (ivy-mode 1)
   (setq ivy-use-virtula-buffers t)
   (setq enable-recursive-minibuffers t)
-  (setq ivy-height 20)
+  (setq ivy-height 25)
   (setq ivy-extra-directories nil))
 
 (use-package ivy-rich
