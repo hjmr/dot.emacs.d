@@ -691,16 +691,16 @@ check for the whole contents of FILE, otherwise check for the first
     "Hide groups"
     (interactive)
     ;; (global-set-key "\C-g"             'keyboard-quit)
-    (global-set-key (kbd "<C-tab>")    'tabbar-forward-tab)
-    (global-set-key (kbd "<C-S-tab>")  'tabbar-backward-tab)
+    (global-set-key (kbd "C-<tab>")    'tabbar-forward-tab)
+    (global-set-key (kbd "C-S-<tab>")  'tabbar-backward-tab)
     (setq my-tabbar-show-group-timer nil)
     (tabbar-buffer-show-groups nil)
     (tabbar-display-update))
   ;;
   (defun my-tabbar-change-group (backward)
     "Change tab in the next/previous available group."
-    (global-set-key (kbd "<C-tab>")    'my-tabbar-forward-group)
-    (global-set-key (kbd "<C-S-tab>")  'my-tabbar-backward-group)
+    (global-set-key (kbd "C-<tab>")    'my-tabbar-forward-group)
+    (global-set-key (kbd "C-S-<tab>")  'my-tabbar-backward-group)
     (let ((tabbar-cycle-scope 'groups))
       (tabbar-cycle backward))
     (tabbar-buffer-show-groups t)
@@ -728,8 +728,8 @@ check for the whole contents of FILE, otherwise check for the first
         (tabbar-buffer-show-groups t)
         (tabbar-display-update)
         ;; (global-set-key "\C-g"             'my-tabbar-buffer-hide-groups)
-        (global-set-key (kbd "<C-tab>")    'my-tabbar-forward-group)
-        (global-set-key (kbd "<C-S-tab>")  'my-tabbar-backward-group))))
+        (global-set-key (kbd "C-<tab>")    'my-tabbar-forward-group)
+        (global-set-key (kbd "C-S-<tab>")  'my-tabbar-backward-group))))
 
   (setq tabbar-cycle-scope 'tabs)
   (setq tabbar-auto-scroll-flag t)
