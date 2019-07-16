@@ -90,10 +90,10 @@
 ;;-------------------------------
 ;;  Package System
 ;;-------------------------------
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-(when (< emacs-major-version 27)
-  (package-initialize))
+(when (require 'package nil t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  (when (< emacs-major-version 27)
+    (package-initialize)))
 ;;-------------------------------
 ;; desktop-save
 ;;-------------------------------
@@ -119,8 +119,8 @@
 ;;-------------------------------
 ;; misc global settings
 ;;-------------------------------
-(setq default-major-mode 'indented-text-mode)
-(setq default-fill-column 80)
+(setq-default major-mode 'indented-text-mode)
+(setq-default fill-column 96)
 (setq case-replace t)
 ;; do not open extra frames when drag-n-drop files
 (setq ns-pop-up-frames nil)
@@ -150,7 +150,7 @@
 (add-to-list 'default-frame-alist '(top .  0))
 (add-to-list 'default-frame-alist '(left   . 0))
 ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(alpha . (100 75)))
+(add-to-list 'default-frame-alist '(alpha . (100 . 75)))
 (add-to-list 'default-frame-alist '(line-spacing . 2))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
@@ -182,10 +182,13 @@
 ;;-------------------------------
 ;; UCS normalize
 ;;-------------------------------
-;;(load-library "ucs-normalize")
-;;(defun ucs-normalize-NFC-buffer ()
-;;  (interactive)
-;;  (ucs-normalize-NFC-region (point-min) (point-max)))
+(use-package ucs-normalize
+  :commands (ucs-normalize-NFC-buffer)
+  :bind (("C-x RET u"  .  ucs-normalize-NFC-buffer))
+  :init
+  (defun ucs-normalize-NFC-buffer ()
+    (interactive)
+    (ucs-normalize-NFC-region (point-min) (point-max))))
 ;;-------------------------------
 ;; KANJI code
 ;;-------------------------------
@@ -202,18 +205,19 @@
 ;;-------------------------------
 ;; shorten mode-line
 ;;-------------------------------
-(when (fboundp 'sml/setup)
+(use-package smart-mode-line
+  :config
   (setq sml/no-confirm-load-theme t)
   (setq sml/theme 'dark)
   (setq sml/shorten-modes t)
   (setq sml/shorten-directory t)
-  (sml/setup))
+  (sml/setup)
 
-(when (boundp 'sml/replacer-regexp-list)
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/Python/" ":Python:") t)
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/" ":Prog:") t))
 
-(when (boundp 'rm-blacklist)
+(use-package rich-minority
+  :config
   (add-to-list 'rm-blacklist '" Projectile" t))
 
 (defvar mode-line-cleaner-alist
@@ -226,7 +230,7 @@
     (flyspell-mode . " FlyS")
     (pipenv-mode . " Pev")
     (highlight-indent-guides-mode . "")
-    (visual-line-mode . "")
+    (visual-line-mode . " VLine")
     (volatile-highlights-mode . "")
     (auto-revert-mode . "")
     (latex-preview-pane-mode . " LtxPP")
@@ -272,7 +276,8 @@
 ;;-------------------------------
 ;; highlight current line
 ;;-------------------------------
-(when (require 'hl-line nil t)
+(use-package hl-line
+  :config
   (defun global-hl-line-timer-function ()
     (global-hl-line-unhighlight-all)
     (let ((global-hl-line-mode t))
@@ -291,7 +296,8 @@
 ;;-------------------------------
 ;; highlight indentation
 ;;-------------------------------
-(when (require 'highlight-indent-guides nil t)
+(use-package highlight-indent-guides
+  :config
   ;;(add-hook 'python-mode-hook 'highlight-indent-guides-mode)
   (setq highlight-indent-guides-method 'column)
   ;;(setq highlight-indent-guides-method 'fill)
@@ -302,27 +308,22 @@
   ;;
   (set-face-background 'highlight-indent-guides-odd-face "Gray15")
   (set-face-background 'highlight-indent-guides-even-face "Gray15")
-  (set-face-foreground 'highlight-indent-guides-character-face "Gray25"))
+  (set-face-foreground 'highlight-indent-guides-character-face "Gray25")
+  ;;
+  (add-hook 'prog-mode-hook #'highlight-indent-guides-mode))
 ;;-------------------------------
 ;; highlight volatile
 ;;-------------------------------
-(exec-if-bound (volatile-highlights-mode t))
+(use-package volatile-highlights
+  :config
+  (volatile-highlights-mode t))
 ;;-------------------------------
 ;; debugging module
 ;;-------------------------------
-(ignore-errors (load-library "realgud"))
-;;-------------------------------
-;; IDO & SMEX
-;;-------------------------------
-(exec-if-bound (ido-mode 1))
-(exec-if-bound (ido-everywhere 1))
-(exec-if-bound (ido-ubiquitous-mode 1))
-(exec-if-bound (ido-vertical-mode 1))
-(setq ido-enable-flex-matching t)
-(setq ido-vertical-define-keys 'C-n-and-C-p-only)
-(setq ido-vertical-show-count t)
-;;
-(exec-if-bound (smex-initialize))
+(use-package realgud
+  :commands (realgud:pdb)
+  :config
+  (setq realgud:pdb-command-name "python -m pdb"))
 ;;-------------------------------
 ;; toggle-full-screen
 ;;-------------------------------
@@ -345,32 +346,34 @@
   (add-hook 'minibuffer-setup-hook 'mac-change-language-to-us)
   (add-hook 'isearch-mode-hook     'mac-change-language-to-us))
 
-(when gui-mac-p
-  (mac-auto-ascii-mode 1))
+(exec-if-bound (mac-auto-ascii-mode 1))
 
-(when sys-linux-p
-  (when (require 'mozc nil t)
-    (setq default-input-method "japanese-mozc")
+(use-package mozc
+  :if sys-linux-p
+  :config
+  (setq default-input-method "japanese-mozc")
 
-    (defun my-turn-on-input-method ()
-      (interactive)
-      (when (null current-input-method)
-        (toggle-input-method)))
-    ;; 全角半角キーと無変換キーのキーイベントを横取りする
-    (defadvice mozc-handle-event (around intercept-keys (event))
-      "Intercept keys muhenkan and zenkaku-hankaku, before passing keys
+  (defun my-turn-on-input-method ()
+    (interactive)
+    (when (null current-input-method)
+      (toggle-input-method)))
+  ;; 全角半角キーと無変換キーのキーイベントを横取りする
+  (defadvice mozc-handle-event (around intercept-keys (event))
+    "Intercept keys muhenkan and zenkaku-hankaku, before passing keys
 to mozc-server (which the function mozc-handle-event does), to
 properly disable mozc-mode."
-      (if (member event (list 'muhenkan))
-          (progn
-            (mozc-clean-up-session)
-            (toggle-input-method))
-        (progn ad-do-it)))
-    (ad-activate 'mozc-handle-event))
+    (if (member event (list 'muhenkan))
+        (progn
+          (mozc-clean-up-session)
+          (toggle-input-method))
+      (progn ad-do-it)))
+  (ad-activate 'mozc-handle-event)
+  (bind-key "<hiragana-katakana>" 'my-turn-on-input-method))
 
-  (when (require 'mozc-popup nil t)
-    (setq mozc-candidate-style 'popup))
-  )
+(use-package mozc-popup
+  :if sys-linux-p
+  :config
+  (setq mozc-candidate-style 'popup))
 ;;-------------------------------
 ;; move-file
 ;;-------------------------------
@@ -393,11 +396,13 @@ properly disable mozc-mode."
 ;;-------------------------------
 ;; numbering-region
 ;;-------------------------------
-(ignore-errors (load-library "numbering") t)
+(use-package numbering
+  :commands (numbering-region numbering-buffer))
 ;;-------------------------------
 ;; count-words-region
 ;;-------------------------------
-(ignore-errors (load-library "count-words") t)
+(use-package count-words
+  :bind ("C-c =" . count-words-region))
 ;;-------------------------------
 ;; open finder
 ;;-------------------------------
@@ -468,17 +473,24 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; Projectile: a project manager
 ;;-------------------------------
-(exec-if-bound (projectile-global-mode))
-(setq projectile-mode-line-prefix " Proj")
+(use-package projectile
+  :config
+  (projectile-global-mode)
+  (setq projectile-mode-line-prefix " Proj")
+  (bind-key "C-c p" 'projectile-command-map projectile-mode-map))
 ;;-------------------------------
 ;; undo-tree
 ;;-------------------------------
-(exec-if-bound (global-undo-tree-mode t))
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode t))
 ;;-------------------------------
 ;; undo hist
 ;;-------------------------------
-(exec-if-bound (undohist-initialize))
-(setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa"))
+(use-package undohist
+  :config
+  (undohist-initialize)
+  (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa")))
 ;;-------------------------------
 ;; super-save
 ;;-------------------------------
@@ -498,7 +510,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------------------------
 ;; neotree: show directory tree at the left-side
 ;;-------------------------------------------------
-(when (fboundp 'neotree-toggle)
+(use-package neotree
+  :bind (("<f8>" . neotree-project-dir))
+  :config
   (setq neo-theme 'nerd)
   (setq projectile-switch-project-action 'neotree-projectile-action)
   ;;(setq neo-smart-open t)
@@ -529,39 +543,38 @@ check for the whole contents of FILE, otherwise check for the first
                    (neotree-find file-name)))
         (message "Could not find git project root."))))
   ;; font
-  (eval-after-load "neotree"
-    '(dolist (face
-              '(neo-banner-face
-                neo-header-face
-                neo-root-dir-face
-                neo-dir-link-face
-                neo-file-link-face
-                neo-button-face
-                neo-expand-btn-face
-                neo-vc-default-face
-                neo-vc-user-face
-                neo-vc-up-to-date-face
-                neo-vc-edited-face
-                neo-vc-needs-update-face
-                neo-vc-unlocked-changes-face
-                neo-vc-added-face
-                neo-vc-removed-face
-                neo-vc-conflict-face
-                neo-vc-missing-face
-                neo-vc-ignored-face
-                neo-vc-unregistered-face
-                ))
-       (set-face-attribute face nil :height 120)))
-  ;;
+  (dolist (face
+           '(neo-banner-face
+             neo-header-face
+             neo-root-dir-face
+             neo-dir-link-face
+             neo-file-link-face
+             neo-button-face
+             neo-expand-btn-face
+             neo-vc-default-face
+             neo-vc-user-face
+             neo-vc-up-to-date-face
+             neo-vc-edited-face
+             neo-vc-needs-update-face
+             neo-vc-unlocked-changes-face
+             neo-vc-added-face
+             neo-vc-removed-face
+             neo-vc-conflict-face
+             neo-vc-missing-face
+             neo-vc-ignored-face
+             neo-vc-unregistered-face
+             ))
+    (set-face-attribute face nil :height 120))
+  ;; hook
   (add-hook 'neo-after-create-hook
             '(lambda (w)
-               (setq line-spacing 1))
-            ))
+               (setq line-spacing 1))))
 ;;-------------------------------
 ;; enable to show spaces etc.
 ;;-------------------------------
 ;;(setq-default show-trailing-whitespace t)
-(when (require 'whitespace nil t)
+(use-package whitespace
+  :config
   (setq whitespace-style '(face              ; faceで可視化
                            trailing          ; 行末
                            newline           ; 改行
@@ -647,7 +660,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; hiwin-mode
 ;;-------------------------------
-(when (require 'hiwin nil t)
+(use-package hiwin
+  :config
   (add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
   (add-to-list 'hiwin-ignore-buffer-names '".pdf")
   ;; (set-face-attribute 'hiwin-face nil :weight 'bold :slant 'italic)
@@ -656,25 +670,23 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; Git Client
 ;;-------------------------------
-(when (and (executable-find "git")
-           (autoload 'magit-status "magit" nil t))
-  (setq magit-completing-read-function 'magit-ido-completing-read))
+(use-package magit
+  :if (executable-find "git")
+  :bind (("C-x g" . magit-status)))
 ;;-------------------------------
 ;; Show diff
 ;;-------------------------------
-(when (fboundp 'global-diff-hl-mode)
+(use-package diff-hl
+  :config
   (diff-hl-margin-mode 1)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 ;;-------------------------------
 ;; Tabbar
 ;;-------------------------------
-(when (require 'tabbar nil t)
+(use-package tabbar
+  :config
   (tabbar-mode 1)
-  ;;
-  ;; key bindings
-  ;;
   (defvar my-tabbar-show-group-timer nil)
-
   (defun my-tabbar-buffer-hide-groups ()
     "Hide groups"
     (interactive)
@@ -721,9 +733,9 @@ check for the whole contents of FILE, otherwise check for the first
 
   (setq tabbar-cycle-scope 'tabs)
   (setq tabbar-auto-scroll-flag t)
-  (global-set-key (kbd "C-c <C-tab>")        'my-tabbar-press-home)
-  (global-set-key (kbd "<C-tab>")            'tabbar-forward-tab)
-  (global-set-key (kbd "<C-S-tab>")          'tabbar-backward-tab)
+  (bind-keys ("C-c C-<tab>" .  my-tabbar-press-home)
+             ("C-<tab>"     .  tabbar-forward-tab)
+             ("C-S-<tab>"   .  tabbar-backward-tab))
   ;;
   ;;-- mode-line
   ;;(add-to-list 'tabbar-header-line-format
@@ -833,25 +845,10 @@ check for the whole contents of FILE, otherwise check for the first
    :box nil)
   (setq tabbar-separator '(1.0)))
 ;;-------------------------------
-;; auto-complete
-;;-------------------------------
-;; (require 'auto-complete-config)
-;; (ac-config-default)
-;; (setq ac-dwim t)                ;; 空気読んでほしい
-;; (setq ac-auto-start 3)          ;; n文字以上の単語の時に補完を開始
-;; (setq ac-delay 1.0)             ;; n秒後に補完開始
-;; (setq ac-use-fuzzy t)           ;; 曖昧マッチ有効
-;; (setq ac-use-comphist t)        ;; 補完推測機能有効
-;; (setq ac-auto-show-menu 1.0)    ;; n秒後に補完メニューを表示
-;; (setq ac-quick-help-delay 0.5)  ;; n秒後にクイックヘルプを表示
-;; (setq ac-ignore-case nil)       ;; 大文字・小文字を区別する
-;; ;; (setq ac-auto-start nil)        ;; 自動的に補完を始めない
-;; (ac-set-trigger-key "TAB")      ;; TABで補完開始(トリガーキー)
-;; (ac-linum-workaround)
-;;-------------------------------
 ;; company-mode
 ;;-------------------------------
-(when (fboundp 'global-company-mode)
+(use-package company
+  :config
   (global-company-mode)                   ; 全バッファで有効にする
   (setq company-idle-delay 0.5)           ; デフォルトは0.5
   (setq company-minimum-prefix-length 4)  ; デフォルトは4
@@ -893,59 +890,104 @@ check for the whole contents of FILE, otherwise check for the first
   ;;
   ;; (set-face-attribute 'company-template-field nil
   ;;                     :foreground "black" :background "lightgrey")
+  (bind-keys ("M-/"  .   company-dabbrev))
+  (bind-keys :map company-active-map
+             ("C-n"  .   company-select-next)
+             ("C-p"  .   company-select-previous)
+             ("M-n"  .   nil)
+             ("M-p"  .   nil))
   )
 ;;-------------------------------
 ;; ripgrep.el
 ;;-------------------------------
-(autoload 'ripgrep-regexp "ripgrep" nil t)
-(eval-after-load "ripgrep"
-  '(progn
-     (setq ripgrep-arguments '("-S"))
-     (define-key ripgrep-search-mode-map "n" 'next-error-no-select)
-     (define-key ripgrep-search-mode-map "p" 'previous-error-no-select)))
+(use-package ripgrep
+  :bind (("C-c n" . ripgrep-regexp))
+  :config
+  (setq ripgrep-arguments '("-S"))
+  (bind-keys :map ripgrep-search-mode-map
+             ("n" .  next-error-no-select)
+             ("p" .  previous-error-no-select)))
+;;-------------------------------
+;; IVY & COUNSEL
+;;-------------------------------
+(use-package ivy
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtula-buffers t)
+  (setq enable-recursive-minibuffers t)
+  (setq ivy-height 20)
+  (setq ivy-extra-directories nil))
+
+(use-package ivy-rich
+  :config
+  (ivy-rich-mode 1)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
+
+(use-package counsel
+  :config
+  (counsel-mode 1)
+  (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
+  (bind-keys ("M-x"      .   counsel-M-x)
+             ("C-x C-f"  .   counsel-find-file)))
 ;;-------------------------------
 ;; migemo
 ;;-------------------------------
-(when sys-mac-p
-  (setq migemo-dictionary "/opt/brew/share/migemo/utf-8/migemo-dict"))
-
-(setq migemo-command "cmigemo")
-(when (and (executable-find "cmigemo")
-           (require 'migemo nil t))
-  (setq migemo-options '("-q" "--emacs"))
+(use-package migemo
+  :if (executable-find "cmigemo")
+  :config
+  (setq migemo-command "cmigemo")
+  (when sys-mac-p
+    (setq migemo-dictionary "/opt/brew/share/migemo/utf-8/migemo-dict"))
+  (setq migemo-options '("-q" "--emacs" "-i" "\a"))
   (setq migemo-user-dictionary nil)
   (setq migemo-regex-dictionary nil)
   (setq migemo-coding-system 'utf-8-unix)
-  (load-library "migemo")
   (migemo-init))
+;;-------------------------------
+;; multi-cursor
+;;-------------------------------
+(use-package multiple-cursors
+  :bind (("C->"      .  mc/mark-next-like-this)
+         ("C-<"      .  mc/mark-previous-like-this)
+         ("C-c C-<"  .  mc/mark-all-like-this)))
 ;;-------------------------------
 ;; syntax check by flycheck
 ;;-------------------------------
-(when (fboundp 'global-flycheck-mode)
+(use-package flycheck
+  :config
   (global-flycheck-mode)
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-  (setq flycheck-idle-change-delay 5)
-  (when (fboundp 'flycheck-popup-tip-mode)
-    (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
-  (when (fboundp 'flycheck-vale-setup)
-    (flycheck-vale-setup)
-    (flycheck-add-mode 'vale 'LaTeX-mode)))
+  (setq flycheck-idle-change-delay 5))
+
+(use-package flycheck-popup-tip
+  :commands flycheck-popup-tip-mode
+  :init
+  (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
+
+(use-package flycheck-vale
+  :config
+  (flycheck-vale-setup)
+  (flycheck-add-mode 'vale 'LaTeX-mode))
 ;;-------------------------------
 ;; spell checker (aspell)
 ;;-------------------------------
-(setq-default ispell-program-name "aspell")
-(when (executable-find "aspell")
+(use-package ispell
+  :if (executable-find "aspell")
+  :config
+  (setq-default ispell-program-name "aspell")
   (setq ispell-list-command "--list")
-  (eval-after-load "ispell"
-    '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+"))))
+  (add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
 ;;-------------------------------
 ;; flyspell
 ;;-------------------------------
-(require 'flyspell-correct-popup nil t)
+(use-package flyspell-correct-popup
+  :config
+  (bind-key "C-;" 'flyspell-correct-previous-word-generic
+            flyspell-mode-map))
 ;;
-;;===============================================================================================
+;;=============================================================================================
 ;;  major mode settings
-;;===============================================================================================
+;;=============================================================================================
 ;;
 ;;-------------------------------
 ;; setup extra extentions
@@ -966,6 +1008,13 @@ check for the whole contents of FILE, otherwise check for the first
                 ("\\.gs\\'"           . js-mode)
                 )
               auto-mode-alist))
+;;-------------------------------
+;; text-mode
+;;-------------------------------
+(add-hook 'text-mode-hook
+          '(lambda ()
+             (visual-line-mode)
+             ))
 ;;-------------------------------
 ;; eshell-mode
 ;;-------------------------------
@@ -990,55 +1039,58 @@ check for the whole contents of FILE, otherwise check for the first
 ;;              (define-key term-raw-map (kbd "C-z")
 ;;                (lookup-key (current-global-map) (kbd "C-z")))
 ;;              ))
-(autoload 'shell-pop "shell-pop" nil t)
-(eval-after-load "shell-pop"
-  '(progn
-     (custom-set-variables
-      '(shell-pop-shell-type (quote ("multi-term" "*shell-pop-multi-term*" (lambda nil (multi-term)))))
-      '(shell-pop-window-height 30)           ;; 30% の高さに分割する
-      '(shell-pop-window-position "bottom")   ;; 下に開く
-;;       '(shell-pop-full-span t)                ;; 横幅いっぱいに開く
-      )))
+(use-package shell-pop
+  :bind (("<f9>" . shell-pop))
+  :config
+  (setq shell-pop-shell-type '("multi-term" "*shell-pop-multi-term*" (lambda nil (multi-term))))
+  (setq shell-pop-window-height 30)           ;; 30% の高さに分割する
+  (setq shell-pop-window-position "bottom")   ;; 下に開く
+  ;; (setq shell-pop-full-span t)                ;; 横幅いっぱいに開く
+  )
 ;;-------------------------------
 ;; eww-mode
 ;;-------------------------------
-(setq shr-color-visible-luminance-min 90)
-(setq shr-width 100)
-;; (setq shr-inhibit-images t)
-(setq shr-max-image-proportion 0.5)
-(setq eww-search-prefix "https://www.google.co.jp/search?btnI&q=")
-;;
-(defun my-eww-search--words (words)
-  "search web search engine for word on cursor."
-  (let ((search_words (read-from-minibuffer "EWW search for: " words)))
-    (split-window-sensibly)
-    (eww search_words)))
-;;
-(defun my-eww-search-words ()
-  "transient-mark-mode がオンの時はリージョンを，オフの時はカーソル位置の単語を検索する．"
-  (interactive)
-  (cond
-   ((region-active-p)
-    (and transient-mark-mode mark-active)
-    (my-eww-search--words (buffer-substring-no-properties (mark) (point))))
-   (t
-    (my-eww-search--words (thing-at-point 'word t)))))
-;;
-(add-hook 'eww-mode-hook
-          '(lambda ()
-             (setq show-trailing-whitespace nil)
-;;             (text-scale-set 1)
-             ))
+(use-package eww
+  :commands (eww my-eww-search-words)
+  :init
+  (defun my-eww-search--words (words)
+    "search web search engine for word on cursor."
+    (let ((search_words (read-from-minibuffer "EWW search for: " words)))
+      (split-window-sensibly)
+      (eww search_words)))
+  ;;
+  (defun my-eww-search-words ()
+    "transient-mark-mode がオンの時はリージョンを，オフの時はカーソル位置の単語を検索する．"
+    (interactive)
+    (cond
+     ((region-active-p)
+      (and transient-mark-mode mark-active)
+      (my-eww-search--words (buffer-substring-no-properties (mark) (point))))
+     (t
+      (my-eww-search--words (thing-at-point 'word t)))))
+  (bind-key "C-c g" 'my-eww-search-words)
+  :config
+  (setq shr-color-visible-luminance-min 90)
+  (setq shr-width 100)
+  (setq shr-max-image-proportion 0.5)
+  (setq eww-search-prefix "https://www.google.co.jp/search?btnI&q=")
+  ;;
+  (add-hook 'eww-mode-hook
+            '(lambda ()
+               (setq show-trailing-whitespace nil)
+               ;; (text-scale-set 1)
+               )))
 ;;-------------------------------
 ;; markdown-mode
 ;;-------------------------------
-(autoload 'markdown-mode "markdown-mode" nil t)
-(autoload 'gfm-mode      "markdown-mode" nil t)
-(add-hook 'markdown-mode-hook
-          '(lambda ()
-             (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)
-             (setq markdown-command "multimarkdown")
-             ))
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :config
+  (add-hook 'markdown-mode-hook
+            '(lambda ()
+               (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)
+               (setq markdown-command "multimarkdown")
+               )))
 ;;-------------------------------
 ;; C/C++/ObjC common settings
 ;;-------------------------------
@@ -1048,7 +1100,6 @@ check for the whole contents of FILE, otherwise check for the first
              (setq c-basic-offset 4)
              (c-set-offset 'label -2)
              (c-set-offset 'case-label -2)
-             (highlight-indent-guides-mode)
              (define-key c-mode-map (kbd "C-c C-b") 'compile)
              (fic-mode)
              ))
@@ -1067,7 +1118,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;; (require 'python-mode) ;; to use python-mode.el instead of default python.el
 ;; (setq python-indent-guess-indent-offset nil)
 ;; jedi
-(when (require 'jedi-core nil t)
+(use-package jedi-core
+  :config
   (setq jedi:complete-on-dot t)
   (setq jedi:use-shortcuts t)
   (add-to-list 'company-backends 'company-jedi)
@@ -1080,8 +1132,6 @@ check for the whole contents of FILE, otherwise check for the first
              (setq python-shell-interpreter "python3")
              (setq python-shell-interpreter-args "")
              (setq python-shell-completion-native-enable nil)
-
-             (setq realgud:pdb-command-name "python3 -m pdb")
 
 ;; settings for python-mode
 ;;             (define-key python-mode-map (kbd "C-h") 'py-electric-backspace)
@@ -1099,7 +1149,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;;             (pipenv-mode)
 ;;             (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended)
 
-             (highlight-indent-guides-mode)
              (fic-mode)
              )
           )
@@ -1166,9 +1215,9 @@ check for the whole contents of FILE, otherwise check for the first
 (setq latex-preview-pane-multifile-mode 'auctex)
 (setq pdf-latex-command "latexmk")
 ;;
-;;===============================================================================================
+;;=============================================================================================
 ;;  key configuration
-;;===============================================================================================
+;;=============================================================================================
 ;;
 ;;-- global keys
 ;;(global-set-key "\C-h"     'backward-delete-char-untabify)
@@ -1185,46 +1234,13 @@ check for the whole contents of FILE, otherwise check for the first
 (global-set-key                       (kbd "<home>")    'beginning-of-buffer )
 (global-set-key                       (kbd "C-^")       'universal-argument) ;; quick hack
 (safe-global-set-key                  (kbd "<ns-drag-file>") 'ns-find-file)
-;;-- multiple-cursor
-(global-set-key                       (kbd "C->")       'mc/mark-next-like-this)
-(global-set-key                       (kbd "C-<")       'mc/mark-previous-like-this)
-(global-set-key                       (kbd "C-c C-<")   'mc/mark-all-like-this)
-;;-- UCS normalization
-(global-set-key                       (kbd "C-x RET u") 'ucs-normalize-NFC-buffer)
-;;-- SMEX
-(safe-global-set-key                  (kbd "M-x")       'smex)
-(safe-global-set-key                  (kbd "M-X")       'smex-major-mode-commands)
 ;;-- imenus
 (global-set-key                       (kbd "C-.")       #'imenu-anywhere)
 ;;-- move file
 (global-set-key                       (kbd "C-x m")     #'move-file)
-;;-- neotree
-(global-set-key                       (kbd "<f8>")      'neotree-project-dir)
-(global-set-key                       (kbd "<f9>")      'shell-pop)
-;;-- EWW
-(global-set-key                       (kbd "C-c g")     'my-eww-search-words)
-;;-- counr-words-region
-(safe-global-set-key                  (kbd "C-c =")     'count-words-region)
 ;;-- toggle-fullscreen
 (safe-global-set-key                  (kbd "<f12>")     'my-toggle-fullscreen)
-(safe-global-set-key                  (kbd "<C-M-return>")        'my-toggle-fullscreen)
-;;-- IME control on linux
-(safe-global-set-key                  (kbd "<hiragana-katakana>") 'my-turn-on-input-method)
-;;-- ripgrep
-(safe-global-set-key                  (kbd "C-c n")     'ripgrep-regexp)
-;;-- magit
-(safe-global-set-key                  (kbd "C-x g")     'magit-status)
-;;-- projectile
-(safe-define-key 'projectile-mode-map (kbd "C-c p")     'projectile-command-map)
-;;-- company
-(safe-global-set-key                  (kbd "M-/")       'company-dabbrev)
-(safe-define-key 'company-active-map  (kbd "C-n")       'company-select-next)
-(safe-define-key 'company-active-map  (kbd "C-p")       'company-select-previous)
-;;(define-key company-active-map        (kbd "C-h")       'backward-delete-char-untabify)
-(safe-define-key 'company-active-map  (kbd "M-n")       nil)
-(safe-define-key 'company-active-map  (kbd "M-p")       nil)
-;;-- flyspell
-(safe-define-key 'flyspell-mode-map   (kbd "C-;")       'flyspell-correct-previous-word-generic)
+(safe-global-set-key                  (kbd "C-M-<return>")        'my-toggle-fullscreen)
 ;;-- Mac Finder control
 (safe-global-set-key                  (kbd "<f6>")      'open-terminal-here)
 (safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
