@@ -66,7 +66,23 @@
   "Return face used at point."
   (interactive)
   (message "%s" (get-char-property (point) 'face)))
-;;
+;;-------------------------------
+;;  Package System
+;;-------------------------------
+(when (require 'package nil t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  (when (< emacs-major-version 27)
+    (package-initialize)))
+;;-------------------------------
+;; use-package
+;;-------------------------------
+(when(not (package-installed-p 'use-package))
+  (package-install 'use-package))
+(setq use-package-enable-imenu-support t)
+(setq use-package-compute-statistics t)
+(setq use-package-minimum-reported-time 0)
+(setq use-package-verbose t)
+(require 'use-package)
 ;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
@@ -87,13 +103,6 @@
   )
 (add-to-list 'load-path (concat user-emacs-directory "conf"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
-;;-------------------------------
-;;  Package System
-;;-------------------------------
-(when (require 'package nil t)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-  (when (< emacs-major-version 27)
-    (package-initialize)))
 ;;-------------------------------
 ;; desktop-save
 ;;-------------------------------
@@ -287,6 +296,7 @@
 ;; highlight volatile
 ;;-------------------------------
 (use-package volatile-highlights
+  :defer t
   :delight
   :config
   (volatile-highlights-mode t))
@@ -654,6 +664,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Show diff
 ;;-------------------------------
 (use-package diff-hl
+  :defer t
   :config
   (diff-hl-margin-mode 1)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
@@ -825,6 +836,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; company-mode
 ;;-------------------------------
 (use-package company
+  :defer t
   :delight
   :config
   (global-company-mode)                   ; 全バッファで有効にする
@@ -889,6 +901,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; IVY & COUNSEL
 ;;-------------------------------
 (use-package ivy
+  :defer t
   :delight
   :config
   (ivy-mode 1)
@@ -898,12 +911,14 @@ check for the whole contents of FILE, otherwise check for the first
   (setq ivy-extra-directories nil))
 
 (use-package ivy-rich
+  :defer t
   :after (ivy)
   :config
   (ivy-rich-mode 1)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
 (use-package counsel
+  :defer t
   :delight
   :config
   (counsel-mode 1)
@@ -935,17 +950,20 @@ check for the whole contents of FILE, otherwise check for the first
 ;; syntax check by flycheck
 ;;-------------------------------
 (use-package flycheck
+  :defer t
   :config
   (global-flycheck-mode)
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   (setq flycheck-idle-change-delay 5))
 
 (use-package flycheck-popup-tip
+  :after (flycheck)
   :commands flycheck-popup-tip-mode
   :init
   (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
 
 (use-package flycheck-vale
+  :after (flycheck)
   :config
   (flycheck-vale-setup)
   (flycheck-add-mode 'vale 'LaTeX-mode))
@@ -981,6 +999,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; eshell-mode
 ;;-------------------------------
 (use-package esh-mode
+  :defer t
   :config
   (setq eshell-prompt-function
         (lambda ()
@@ -1083,6 +1102,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; (setq python-indent-guess-indent-offset nil)
 ;; jedi
 (use-package jedi-core
+  :defer t
   :config
   (setq jedi:complete-on-dot t)
   (setq jedi:use-shortcuts t)
@@ -1098,6 +1118,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;   (setq py-split-windows-on-execute-function 'split-window-sensibly))
 ;;
 (use-package python
+  :commands python-mode
   :delight "Py"
   :config
   (setq python-indent        4)
@@ -1106,15 +1127,17 @@ check for the whole contents of FILE, otherwise check for the first
   (setq python-shell-interpreter-args "")
   (setq python-shell-completion-native-enable nil)
   (setq flycheck-python-pylint-executable "pylint")
-  (add-hook 'python-mode-hook  #'fic-mode))
-
-(use-package py-autopep8
-  :config
-  (py-autopep8-enable-on-save)
-  (setq py-autopep8-options '("--max-line-length=120"))
-  (bind-key "C-c f" 'py-autopep8 python-mode-map))
+  (add-hook 'python-mode-hook
+            '(lambda ()
+               (fic-mode)
+               (use-package py-autopep8
+                 :config
+                 (py-autopep8-enable-on-save)
+                 (setq py-autopep8-options '("--max-line-length=120"))
+                 (bind-key "C-c f" 'py-autopep8 python-mode-map)))))
 
 (use-package pyenv-mode
+  :after (python)
   :config
   (setq pyenv-mode-map nil)
   (pyenv-mode)
@@ -1184,6 +1207,8 @@ check for the whole contents of FILE, otherwise check for the first
                )))
 
 (use-package latex-preview-pane
+  :defer t
+  :commands (latex-preview-pane-mode)
   :delight " LtxPP")
 ;;
 ;;=============================================================================================
