@@ -110,6 +110,9 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (set-scroll-bar-mode 'nil)
+;;-------------------------------
+;; visible-bell
+;;-------------------------------
 ;;(setq visible-bell t)
 (defun flash-mode-line ()
   (invert-face 'mode-line)
@@ -158,7 +161,7 @@
 ;; font settings
 ;;-------------------------------
 (when window-system
-  (load "font-init"))
+  (load-library "font-init"))
 ;;-------------------------------
 ;; set undo buffer
 ;;-------------------------------
@@ -193,6 +196,25 @@
   (setq default-file-name-coding-system 'utf-8-hfs-mac)
   (set-file-name-coding-system 'utf-8-hfs-mac))
 ;;-------------------------------
+;; line and column on mode-line
+;;-------------------------------
+(line-number-mode -1)
+(column-number-mode -1)
+;;-------------------------------
+;; highlight defined keywords
+;;-------------------------------
+(global-font-lock-mode t)
+;;-------------------------------
+;; highlight selected region
+;;-------------------------------
+(transient-mark-mode 1)
+;;-------------------------------
+;; highlight corresponding parensis
+;;-------------------------------
+(show-paren-mode t)
+(setq show-paren-style 'parensis)
+;;(setq show-paren-style 'mixed)
+;;-------------------------------
 ;; UCS normalize
 ;;-------------------------------
 (use-package ucs-normalize
@@ -222,26 +244,6 @@
 
 (use-package autorevert
   :delight auto-revert-mode)
-
-;;-------------------------------
-;; line and column on mode-line
-;;-------------------------------
-(line-number-mode -1)
-(column-number-mode -1)
-;;-------------------------------
-;; highlight defined keywords
-;;-------------------------------
-(global-font-lock-mode t)
-;;-------------------------------
-;; highlight selected region
-;;-------------------------------
-(transient-mark-mode 1)
-;;-------------------------------
-;; highlight corresponding parensis
-;;-------------------------------
-(show-paren-mode t)
-(setq show-paren-style 'parensis)
-;;(setq show-paren-style 'mixed)
 ;;-------------------------------
 ;; highlight current line
 ;;-------------------------------
