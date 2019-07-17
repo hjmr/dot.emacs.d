@@ -477,7 +477,6 @@ check for the whole contents of FILE, otherwise check for the first
   (undohist-initialize)
   (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa")))
 ;;-------------------------------
-;; super-save
 ;;-------------------------------
 ;; (setq super-save-auto-save-when-idle t
 ;;       super-save-idle-duration 10)
