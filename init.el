@@ -82,6 +82,7 @@
 (setq use-package-compute-statistics t)
 (setq use-package-minimum-reported-time 0)
 (setq use-package-verbose t)
+(setq use-package-expand-minimally t)
 (require 'use-package)
 ;;-------------------------------
 ;; paths and environment vars
