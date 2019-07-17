@@ -9,21 +9,22 @@
 ;;-------------------------------
 ;; speeding up startup process
 ;;-------------------------------
+(when (< 24 emacs-major-version)
 ;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
-(defun ambrevar/reset-gc-cons-threshold ()
-  (setq gc-cons-threshold (* 128 1024 1024)))
-(setq gc-cons-threshold (* 64 1024 1024))
-(add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
+  (defun ambrevar/reset-gc-cons-threshold ()
+    (setq gc-cons-threshold (* 128 1024 1024)))
+  (setq gc-cons-threshold (* 64 1024 1024))
+  (add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
 
 ;;; Temporarily disable the file name handler.
-(setq default-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-(defun ambrevar/reset-file-name-handler-alist ()
-  (setq file-name-handler-alist
-        (append default-file-name-handler-alist
-                file-name-handler-alist))
-  (cl-delete-duplicates file-name-handler-alist :test 'equal))
-(add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist)
+  (setq default-file-name-handler-alist file-name-handler-alist)
+  (setq file-name-handler-alist nil)
+  (defun ambrevar/reset-file-name-handler-alist ()
+    (setq file-name-handler-alist
+          (append default-file-name-handler-alist
+                  file-name-handler-alist))
+    (cl-delete-duplicates file-name-handler-alist :test 'equal))
+  (add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist))
 ;;-------------------------------
 ;; set system check variables
 ;;-------------------------------
@@ -559,6 +560,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;;(setq-default show-trailing-whitespace t)
 (use-package whitespace
+  :defer t
   :delight global-whitespace-mode
   :config
   (setq whitespace-style '(face              ; faceで可視化
