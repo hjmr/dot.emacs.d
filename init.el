@@ -475,8 +475,9 @@ check for the whole contents of FILE, otherwise check for the first
 (use-package undohist
   :config
   (undohist-initialize)
-  (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa")))
+  (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa" "COMMIT_EDITMSG")))
 ;;-------------------------------
+;; super-save
 ;;-------------------------------
 ;; (setq super-save-auto-save-when-idle t
 ;;       super-save-idle-duration 10)
