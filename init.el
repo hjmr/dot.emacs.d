@@ -180,16 +180,6 @@
 (setq tab-stop-list
       '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80))
 ;;-------------------------------
-;; UCS normalize
-;;-------------------------------
-(use-package ucs-normalize
-  :commands (ucs-normalize-NFC-buffer)
-  :bind (("C-x RET u"  .  ucs-normalize-NFC-buffer))
-  :init
-  (defun ucs-normalize-NFC-buffer ()
-    (interactive)
-    (ucs-normalize-NFC-region (point-min) (point-max))))
-;;-------------------------------
 ;; KANJI code
 ;;-------------------------------
 ;; (setq-default enable-multibyte-characters t)
@@ -202,6 +192,16 @@
 (when (memq 'utf-8-hfs-mac coding-system-list)
   (setq default-file-name-coding-system 'utf-8-hfs-mac)
   (set-file-name-coding-system 'utf-8-hfs-mac))
+;;-------------------------------
+;; UCS normalize
+;;-------------------------------
+(use-package ucs-normalize
+  :commands (ucs-normalize-NFC-buffer)
+  :bind (("C-x RET u"  .  ucs-normalize-NFC-buffer))
+  :init
+  (defun ucs-normalize-NFC-buffer ()
+    (interactive)
+    (ucs-normalize-NFC-region (point-min) (point-max))))
 ;;-------------------------------
 ;; shorten mode-line
 ;;-------------------------------
@@ -216,45 +216,12 @@
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/Python/" ":Python:") t)
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/" ":Prog:") t))
 
-(use-package rich-minority
-  :config
-  (add-to-list 'rm-blacklist '" Projectile" t))
+(use-package simple
+  :delight
+  (visual-line-mode " VLine"))
 
-(defvar mode-line-cleaner-alist
-  '( ;; For minor-mode, first char is 'space'
-    (undo-tree-mode . "")
-    (company-mode . "")
-    (hiwin-mode . "")
-    (global-whitespace-mode . "")
-    (eldoc-mode . "")
-    (flyspell-mode . " FlyS")
-    (pipenv-mode . " Pev")
-    (highlight-indent-guides-mode . "")
-    (visual-line-mode . " VLine")
-    (volatile-highlights-mode . "")
-    (auto-revert-mode . "")
-    (latex-preview-pane-mode . " LtxPP")
-    (counsel-mode . "")
-    (ivy-mode . "")
-    ;; Major modes
-    (lisp-interaction-mode . "Li")
-    (python-mode . "Py")
-    (emacs-lisp-mode . "El")
-    (js-mode . "JS")
-    (markdown-mode . "Md")))
-
-(defun clean-mode-line ()
-  (interactive)
-  (cl-loop for (mode . mode-str) in mode-line-cleaner-alist
-           do
-           (let ((old-mode-str (cdr (assq mode minor-mode-alist))))
-             (when old-mode-str
-               (setcar old-mode-str mode-str))
-             ;; major mode
-             (when (eq mode major-mode)
-               (setq mode-name mode-str)))))
-
-(add-hook 'after-change-major-mode-hook 'clean-mode-line)
+(use-package autorevert
+  :delight auto-revert-mode)
 
 ;;-------------------------------
 ;; line and column on mode-line
@@ -299,6 +266,7 @@
 ;; highlight indentation
 ;;-------------------------------
 (use-package highlight-indent-guides
+  :delight
   :config
   ;;(add-hook 'python-mode-hook 'highlight-indent-guides-mode)
   (setq highlight-indent-guides-method 'column)
@@ -317,6 +285,7 @@
 ;; highlight volatile
 ;;-------------------------------
 (use-package volatile-highlights
+  :delight
   :config
   (volatile-highlights-mode t))
 ;;-------------------------------
@@ -476,14 +445,16 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Projectile: a project manager
 ;;-------------------------------
 (use-package projectile
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :delight '(:eval (concat " Proj[" (projectile-project-name) "]"))
   :config
-  (projectile-global-mode)
-  (setq projectile-mode-line-prefix " Proj")
-  (bind-key "C-c p" 'projectile-command-map projectile-mode-map))
+  (projectile-global-mode))
 ;;-------------------------------
 ;; undo-tree
 ;;-------------------------------
 (use-package undo-tree
+  :delight
   :config
   (global-undo-tree-mode t))
 ;;-------------------------------
@@ -576,6 +547,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;;(setq-default show-trailing-whitespace t)
 (use-package whitespace
+  :delight global-whitespace-mode
   :config
   (setq whitespace-style '(face              ; faceで可視化
                            trailing          ; 行末
@@ -663,6 +635,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; hiwin-mode
 ;;-------------------------------
 (use-package hiwin
+  :delight
   :config
   (add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
   (add-to-list 'hiwin-ignore-buffer-names '".pdf")
@@ -850,6 +823,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; company-mode
 ;;-------------------------------
 (use-package company
+  :delight
   :config
   (global-company-mode)                   ; 全バッファで有効にする
   (setq company-idle-delay 0.5)           ; デフォルトは0.5
@@ -913,6 +887,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; IVY & COUNSEL
 ;;-------------------------------
 (use-package ivy
+  :delight
   :config
   (ivy-mode 1)
   (setq ivy-use-virtula-buffers t)
@@ -921,11 +896,13 @@ check for the whole contents of FILE, otherwise check for the first
   (setq ivy-extra-directories nil))
 
 (use-package ivy-rich
+  :after (ivy)
   :config
   (ivy-rich-mode 1)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
 (use-package counsel
+  :delight
   :config
   (counsel-mode 1)
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
@@ -982,65 +959,38 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; flyspell
 ;;-------------------------------
+(use-package flyspell
+  :delight " FlyS")
+
 (use-package flyspell-correct-popup
   :config
   (bind-key "C-;" 'flyspell-correct-previous-word-generic
             flyspell-mode-map))
-;;
 ;;=============================================================================================
 ;;  major mode settings
 ;;=============================================================================================
 ;;
 ;;-------------------------------
-;; setup extra extentions
-;;-------------------------------
-(setq auto-mode-alist
-      (append '(
-                ("\\.pde\\'"          . processing-mode)
-                ("\\.pjs\\'"          . processing-mode)
-                ("\\.pas\\'"          . delphi-mode)
-                ("\\.sdoc\\'"         . sdoc-mode)
-                ("README\\.md\\'"     . gfm-mode)
-                ("\\.markdown\\'"     . markdown-mode)
-                ("\\.md\\'"           . markdown-mode)
-                ("\\.[Cc][Ss][Vv]\\'" . csv-mode)
-                ("\\.html\\'"         . jinja2-mode)
-                ("\\.jinja2\\'"       . jinja2-mode)
-                ("\\.el\\'"           . emacs-lisp-mode)
-                ("\\.gs\\'"           . js-mode)
-                )
-              auto-mode-alist))
-;;-------------------------------
 ;; text-mode
 ;;-------------------------------
-(add-hook 'text-mode-hook
-          '(lambda ()
-             (visual-line-mode)
-             ))
+(use-package text-mode
+  :hook (text-mode . visual-line-mode))
 ;;-------------------------------
 ;; eshell-mode
 ;;-------------------------------
-(setq eshell-prompt-function
-      (lambda ()
-        (concat (file-name-nondirectory (directory-file-name (eshell/pwd)))
-                (if (= (user-uid) 0) " # " " $ "))))
-(setq eshell-command-aliases-list
-      (append
-       (list
-        (list "emacs" "find-file $1"))))
+(use-package esh-mode
+  :config
+  (setq eshell-prompt-function
+        (lambda ()
+          (concat (file-name-nondirectory (directory-file-name (eshell/pwd)))
+                  (if (= (user-uid) 0) " # " " $ "))))
+  (setq eshell-command-aliases-list
+        (append
+         (list
+          (list "emacs" "find-file $1")))))
 ;;-------------------------------
-;; multi-term
+;; shell-pop
 ;;-------------------------------
-;; (when (require 'multi-term nil t)
-;;   (add-to-list 'term-unbind-key-list '"C-p")
-;;   (add-to-list 'term-unbind-key-list '"C-n"))
-
-;; (add-hook 'term-mode-hook
-;;           '(lambda ()
-;;              (define-key term-raw-map (kbd "C-y") 'term-paste)
-;;              (define-key term-raw-map (kbd "C-z")
-;;                (lookup-key (current-global-map) (kbd "C-z")))
-;;              ))
 (use-package shell-pop
   :bind (("<f9>" . shell-pop))
   :config
@@ -1086,34 +1036,44 @@ check for the whole contents of FILE, otherwise check for the first
 ;; markdown-mode
 ;;-------------------------------
 (use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :config
+  :delight "Md"
+  :mode (("README\\.md\\'"  . gfm-mode)
+         ("\\.markdown\\'"  . markdown-mode)
+         ("\\.md\\'"        . markdown-mode))
+  :init
   (add-hook 'markdown-mode-hook
             '(lambda ()
-               (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)
-               (setq markdown-command "multimarkdown")
-               )))
+               (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)))
+  :config
+  (setq markdown-command "multimarkdown"))
 ;;-------------------------------
 ;; C/C++/ObjC common settings
 ;;-------------------------------
-(setq c-tab-always-indent nil)
-(add-hook 'c-mode-common-hook
-          '(lambda ()
-             (setq c-basic-offset 4)
-             (c-set-offset 'label -2)
-             (c-set-offset 'case-label -2)
-             (define-key c-mode-map (kbd "C-c C-b") 'compile)
-             (fic-mode)
-             ))
+(use-package cc-mode
+  :commands (c-mode c++-mode)
+  :config
+  (setq c-tab-always-indent nil)
+  (setq c-basic-offset 4)
+  (c-set-offset 'label -2)
+  (c-set-offset 'case-label -2)
+  (bind-key "C-c C-b" 'compile c-mode-map)
+  (add-hook 'c-mode-common-hook  #'fic-mode))
 ;;-------------------------------
 ;; java mode settings
 ;;-------------------------------
-(add-hook 'java-mode-hook
-          '(lambda ()
-             (load-library "java-compile")
-             (setq java-compile-command "javec")
-             (define-key java-mode-map (kbd "C-c C-b") 'java-compile)
-             ))
+(use-package java-mode
+  :commands java-mode
+  :config
+  (load-library "java-compile")
+  (setq java-compile-command "javec")
+  (bind-key "C-c C-b" 'java-compile java-mode-map))
+;;-------------------------------
+;; JavaScript mode settings
+;;-------------------------------
+(use-package js
+  :commands js-mode
+  :delight "JS"
+  :mode (("\\.gs\\'" . js-mode)))
 ;;-------------------------------
 ;; Python mode settings
 ;;-------------------------------
@@ -1126,40 +1086,36 @@ check for the whole contents of FILE, otherwise check for the first
   (setq jedi:use-shortcuts t)
   (add-to-list 'company-backends 'company-jedi)
   (add-hook 'python-mode-hook 'jedi:setup))
+;;
 ;; python-mode-hook
-(add-hook 'python-mode-hook
-          '(lambda ()
-             (setq python-indent        4)
-             (setq python-indent-offset 4)
-             (setq python-shell-interpreter "python3")
-             (setq python-shell-interpreter-args "")
-             (setq python-shell-completion-native-enable nil)
+;; (use-package python-mode
+;;   :config
+;;   (define-key python-mode-map (kbd "C-h") 'py-electric-backspace)
+;;   (setq py-indent-offset 4)
+;;   (setq py-split-window-on-execute t)
+;;   (setq py-split-windows-on-execute-function 'split-window-sensibly))
+;;
+(use-package python
+  :delight "Py"
+  :config
+  (setq python-indent        4)
+  (setq python-indent-offset 4)
+  (setq python-shell-interpreter "python3")
+  (setq python-shell-interpreter-args "")
+  (setq python-shell-completion-native-enable nil)
+  (setq flycheck-python-pylint-executable "pylint")
+  (add-hook 'python-mode-hook  #'fic-mode))
 
-;; settings for python-mode
-;;             (define-key python-mode-map (kbd "C-h") 'py-electric-backspace)
-;;             (setq py-indent-offset 4)
-;;             (setq py-split-window-on-execute t)
-;;             (setq py-split-windows-on-execute-function 'split-window-sensibly)
+(use-package py-autopep8
+  :config
+  (py-autopep8-enable-on-save)
+  (setq py-autopep8-options '("--max-line-length=120"))
+  (bind-key "C-c f" 'py-autopep8 python-mode-map))
 
-             (require 'py-autopep8)
-             (py-autopep8-enable-on-save)
-             (setq py-autopep8-options '("--max-line-length=120"))
-             (define-key python-mode-map (kbd "C-c f") 'py-autopep8)
-
-             (setq flycheck-python-pylint-executable "pylint")
-
-;;             (pipenv-mode)
-;;             (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended)
-
-             (fic-mode)
-             )
-          )
-
-;; pyenv-mode
-(when (fboundp 'pyenv-mode)
+(use-package pyenv-mode
+  :config
   (setq pyenv-mode-map nil)
   (pyenv-mode)
-
   ;; pyenv-mode-auto
   (defun pyenv-mode-auto-hook (prev cur)
     "Automatically set pyenv version when changing buffer from PREV to CUR."
@@ -1173,49 +1129,60 @@ check for the whole contents of FILE, otherwise check for the first
                          t)))))
         (pyenv-mode-unset)
         )))
-
   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
-(autoload 'csv-mode "csv-mode"
-  "Major mode for editing comma-separated value files." t)
+(use-package csv-mode
+  :mode (("\\.[Cc][Ss][Vv]\\'" . csv-mode)))
 ;;-------------------------------
 ;; jinja2-mode settings
 ;;-------------------------------
-(autoload 'jinja2-mode "jinja2-mode"
-  "Major mode for editing Jinja2 template files." t)
+(use-package jinja2-mode
+  :mode (("\\.html\\'"     . jinja2-mode)
+         ("\\.jinja2\\'"   . jinja2-mode)))
 ;;-------------------------------
 ;; processing-mode settings
 ;;-------------------------------
-(autoload 'processing-mode "processing-mode"
-  "Major mode for editing Processing.org template files." t)
+(use-package processing-mode
+  :mode (("\\.pde\\'"      . processing-mode)
+         ("\\.pjs\\'"      . processing-mode)))
+;;-------------------------------
+;; Emacs-Lisp
+;;-------------------------------
+(use-package elisp-mode
+  :delight (emacs-lisp-mode "El"))
 ;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
-(exec-if-bound (auctex-latexmk-setup))
-(exec-if-bound (company-auctex-init))
+(use-package auctex
+  :defer t
+  :config
+  (auctex-latexmk-setup)
+  (company-auctex-init)
 
-(setq-default TeX-master nil)
-(setq TeX-PDF-mode t)
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq TeX-PDF-from-DVI "Dvipdfmx")
+  (setq-default TeX-master nil)
+  (setq TeX-PDF-mode t)
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-PDF-from-DVI "Dvipdfmx")
 
-(add-hook 'LaTeX-mode-hook
-          '(lambda ()
-;;             (japanese-latex-mode)
-             (visual-line-mode)
-             (flyspell-mode)
-             (LaTeX-math-mode)
-             (safe-define-key 'LaTeX-mode-map (kbd "<f12>")        'my-toggle-fullscreen)
-             (safe-define-key 'LaTeX-mode-map (kbd "<C-M-return>") 'my-toggle-fullscreen)
-             (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
-             (fic-mode)
-             ))
+  (setq latex-preview-pane-multifile-mode 'auctex)
+  (setq pdf-latex-command "latexmk")
 
-(setq latex-preview-pane-multifile-mode 'auctex)
-(setq pdf-latex-command "latexmk")
+  (add-hook 'LaTeX-mode-hook
+            '(lambda ()
+               (visual-line-mode)
+               (flyspell-mode)
+               (LaTeX-math-mode)
+               (safe-define-key 'LaTeX-mode-map (kbd "<f12>")        'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "<C-M-return>") 'my-toggle-fullscreen)
+               (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
+               (fic-mode)
+               )))
+
+(use-package latex-preview-pane
+  :delight " LtxPP")
 ;;
 ;;=============================================================================================
 ;;  key configuration
