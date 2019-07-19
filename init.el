@@ -661,6 +661,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 (use-package magit
   :if (executable-find "git")
+  :commands magit-status
   :bind (("C-x g" . magit-status)))
 ;;-------------------------------
 ;; Show diff
@@ -668,6 +669,7 @@ check for the whole contents of FILE, otherwise check for the first
 (use-package diff-hl
   :defer t
   :config
+  (global-diff-hl-mode)
   (diff-hl-margin-mode 1)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 ;;-------------------------------
@@ -850,31 +852,24 @@ check for the whole contents of FILE, otherwise check for the first
   (when sys-centos-p
     (setq company-clang-executable "/usr/bin/cc"))
   ;;
+  ;; 未選択項目
   (set-face-attribute 'company-tooltip nil
-                      :foreground "black" :background "lightgrey")
-  (set-face-attribute 'company-tooltip-selection nil
-                      :foreground "black" :background "steelblue")
-  ;;
-  (set-face-attribute 'company-tooltip-search nil
-                      :foreground "black" :background "lightgrey")
-  (set-face-attribute 'company-tooltip-search-selection nil
-                      :foreground "black" :background "steelblue")
-  ;;
-  (set-face-attribute 'company-tooltip-mouse nil
-                      :foreground "black" :background "lightgrey")
-  ;;
+                      :foreground "black"    :background "lightgrey")
+  ;; 未選択項目&一致文字
   (set-face-attribute 'company-tooltip-common nil
-                      :foreground "black" :background "lightgrey")
+                      :foreground "black"    :background "lightgrey")
+  ;; 選択項目
+  (set-face-attribute 'company-tooltip-selection nil
+                      :foreground "black"    :background "steelblue")
+  ;; 選択項目&一致文字
   (set-face-attribute 'company-tooltip-common-selection nil
-                      :foreground "white" :background "steelblue")
-  ;;
-  ;; (set-face-attribute 'company-tooltip-annotation nil
-  ;;                     :foreground "black" :background "lightgrey")
-  ;; (set-face-attribute 'company-tooltip-annotation-selection nil
-  ;;                     :foreground "white" :background "steelblue")
-  ;;
+                      :foreground "white"    :background "steelblue")
+  ;; preview?
+  (set-face-attribute 'company-preview nil
+                      :foreground "darkgray" :background "steelblue" :underline t)
   (set-face-attribute 'company-preview-common nil
-                      :background nil :foreground "lightgrey" :underline t)
+                      :foreground "white"    :background "steelblue" :underline t)
+  ;;
   (set-face-attribute 'company-scrollbar-fg nil
                       :background "gray40")
   (set-face-attribute 'company-scrollbar-bg nil
@@ -887,7 +882,32 @@ check for the whole contents of FILE, otherwise check for the first
              ("C-n"  .   company-select-next)
              ("C-p"  .   company-select-previous)
              ("M-n"  .   nil)
-             ("M-p"  .   nil))
+             ("M-p"  .   nil)
+             ("C-s"  .   company-filter-candidates)  ;; 絞り込み
+             :map company-search-map
+             ("C-n"  .   company-select-next)
+             ("C-p"  .   company-select-previous)
+             )
+  )
+;;
+(use-package company-quickhelp
+  :after (company)
+  :config
+  (setq company-quickhelp-delay 0)
+  (company-quickhelp-mode t))
+;;
+(use-package company-box
+  :after (company)
+  :hook (company-mode . company-box-mode)
+  :delight
+  :config
+  (setq company-box-icons-alist 'company-box-icons-all-the-icons)
+  (setq company-box-backends-colors nil)
+  (setq company-box-enable-icon nil)
+  (setq company-box-doc-enable t)
+  ;;
+  (add-to-list 'company-box-doc-frame-parameters  '(background-color .  "lightgrey"))
+  (add-to-list 'company-box-doc-frame-parameters  '(foreground-color .  "black"))
   )
 ;;-------------------------------
 ;; ripgrep.el
@@ -958,11 +978,10 @@ check for the whole contents of FILE, otherwise check for the first
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   (setq flycheck-idle-change-delay 5))
 
-(use-package flycheck-popup-tip
+(use-package flycheck-posframe
   :after (flycheck)
-  :commands flycheck-popup-tip-mode
-  :init
-  (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
+  :config
+  (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode))
 
 (use-package flycheck-vale
   :after (flycheck)
