@@ -927,7 +927,7 @@ check for the whole contents of FILE, otherwise check for the first
   :delight
   :config
   (ivy-mode 1)
-  (setq ivy-use-virtula-buffers t)
+  (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
   (setq ivy-height 25)
   (setq ivy-extra-directories nil))
