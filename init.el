@@ -947,20 +947,29 @@ check for the whole contents of FILE, otherwise check for the first
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
   (bind-keys ("M-x"      .   counsel-M-x)
              ("C-x C-f"  .   counsel-find-file)))
+
+(use-package swiper
+  :defer t
+  :delight
+  :config
+  (setq swiper-include-line-number-in-search t)
+  (bind-keys ("C-s"      .   swiper)
+             ("C-r"      .   swiper-backward)))
+
 ;;-------------------------------
 ;; migemo
 ;;-------------------------------
-(use-package migemo
-  :if (executable-find "cmigemo")
-  :config
-  (setq migemo-command "cmigemo")
-  (when sys-mac-p
-    (setq migemo-dictionary "/opt/brew/share/migemo/utf-8/migemo-dict"))
-  (setq migemo-options '("-q" "--emacs" "-i" "\a"))
-  (setq migemo-user-dictionary nil)
-  (setq migemo-regex-dictionary nil)
-  (setq migemo-coding-system 'utf-8-unix)
-  (migemo-init))
+;; (use-package migemo
+;;   :if (executable-find "cmigemo")
+;;   :config
+;;   (setq migemo-command "cmigemo")
+;;   (when sys-mac-p
+;;     (setq migemo-dictionary "/opt/brew/share/migemo/utf-8/migemo-dict"))
+;;   (setq migemo-options '("-q" "--emacs" "-i" "\a"))
+;;   (setq migemo-user-dictionary nil)
+;;   (setq migemo-regex-dictionary nil)
+;;   (setq migemo-coding-system 'utf-8-unix)
+;;   (migemo-init))
 ;;-------------------------------
 ;; multi-cursor
 ;;-------------------------------
