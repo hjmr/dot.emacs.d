@@ -990,6 +990,11 @@ check for the whole contents of FILE, otherwise check for the first
 (use-package flycheck-posframe
   :after (flycheck)
   :config
+  (setq flycheck-posframe-border-width 5)
+  (set-face-attribute 'flycheck-posframe-face nil
+                      :foreground  "black")
+  (set-face-attribute 'flycheck-posframe-background-face nil
+                      :background  "gray60")
   (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode))
 
 (use-package flycheck-vale
