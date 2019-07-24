@@ -5,23 +5,23 @@
 ;;
 ;;===============================================================================================
 ;;
-;; (defun my-dpi ()
-;;   "Get the DPI of the physical monitor dominating FRAME."
-;;   (if (fboundp 'display-monitor-attributes-list)
-;;       (cl-flet ((pyth (w h)
-;;                       (sqrt (+ (* w w)
-;;                                (* h h))))
-;;                 (mm2in (mm)
-;;                        (/ mm 25.4)))
-;;         (let* ((atts (frame-monitor-attributes))
-;;                (pix-w (cl-fourth (assoc 'geometry atts)))
-;;                (pix-h (cl-fifth (assoc 'geometry atts)))
-;;                (pix-d (pyth pix-w pix-h))
-;;                (mm-w (cl-second (assoc 'mm-size atts)))
-;;                (mm-h (cl-third (assoc 'mm-size atts)))
-;;                (mm-d (pyth mm-w mm-h)))
-;;           (/ pix-d (mm2in mm-d))))
-;;     96.0))
+(defun my-dpi ()
+  "Get the DPI of the physical monitor dominating FRAME."
+  (if (fboundp 'display-monitor-attributes-list)
+      (cl-flet ((pyth (w h)
+                      (sqrt (+ (* w w)
+                               (* h h))))
+                (mm2in (mm)
+                       (/ mm 25.4)))
+        (let* ((atts (frame-monitor-attributes))
+               (pix-w (cl-fourth (assoc 'geometry atts)))
+               (pix-h (cl-fifth (assoc 'geometry atts)))
+               (pix-d (pyth pix-w pix-h))
+               (mm-w (cl-second (assoc 'mm-size atts)))
+               (mm-h (cl-third (assoc 'mm-size atts)))
+               (mm-d (pyth mm-w mm-h)))
+          (/ pix-d (mm2in mm-d))))
+    96.0))
 ;;
 ;; (defun my-preferred-ascii-font-size ()
 ;;   "Calc preferred size of ascii fonts from screen DPI"
