@@ -222,8 +222,11 @@
 ;; highlight corresponding parensis
 ;;-------------------------------
 (show-paren-mode t)
-(setq show-paren-style 'parensis)
+(setq show-paren-delay 0.15)
+;;(setq show-paren-style 'parensis)
 ;;(setq show-paren-style 'mixed)
+(setq show-paren-style 'expression)
+(set-face-attribute 'show-paren-match nil :background "midnightblue" :weight 'normal)
 ;;-------------------------------
 ;; UCS normalize
 ;;-------------------------------
