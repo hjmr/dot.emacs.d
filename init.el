@@ -333,12 +333,12 @@
 (exec-if-bound (mac-auto-ascii-mode 1))
 
 (when sys-linux-p
-  (safe-global-set-key (kbd "<hiragana-katakana>")
-                       (lambda () (interactive)
-                         (when (null current-input-method) (toggle-input-method))))
-  (safe-global-set-key (kbd "<eisu-toggle>")
-                       (lambda () (interactive)
-                         (inactivate-input-method))))
+  (global-set-key (kbd "<hiragana-katakana>")
+                  (lambda () (interactive)
+                    (when (null current-input-method) (toggle-input-method))))
+  (global-set-key (kbd "<eisu-toggle>")
+                  (lambda () (interactive)
+                    (inactivate-input-method))))
 
 (use-package mozc
   :if sys-linux-p
