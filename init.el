@@ -1259,7 +1259,6 @@ check for the whole contents of FILE, otherwise check for the first
 (global-set-key                       (kbd "C-x n")     'next-error)
 (global-set-key                       (kbd "C-z")       'scroll-down)
 (global-set-key                       (kbd "M-g")       'goto-line)
-(global-set-key                       (kbd "C-_")       'undo)
 (global-set-key                       (kbd "C-x C-b")   'buffer-menu)
 (global-set-key                       (kbd "<end>")     'end-of-buffer )
 (global-set-key                       (kbd "<home>")    'beginning-of-buffer )
