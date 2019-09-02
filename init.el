@@ -255,6 +255,9 @@
   :delight
   (visual-line-mode " VLine"))
 
+(use-package eldoc
+  :delight eldoc-mode)
+
 (use-package autorevert
   :delight auto-revert-mode)
 ;;-------------------------------
@@ -664,8 +667,8 @@ check for the whole contents of FILE, otherwise check for the first
   :config
   (add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
   (add-to-list 'hiwin-ignore-buffer-names '".pdf")
-  ;; (set-face-attribute 'hiwin-face nil :weight 'bold :slant 'italic)
-  (set-face-background 'hiwin-face "#202530")
+  (set-face-attribute 'hiwin-face nil
+                      :foreground nil :background "#202530")
   (hiwin-mode 1))
 ;;-------------------------------
 ;; Git Client
@@ -941,7 +944,8 @@ check for the whole contents of FILE, otherwise check for the first
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
   (setq ivy-height 25)
-  (setq ivy-extra-directories nil))
+  (setq ivy-extra-directories nil)
+  (setq ivy-use-selectable-prompt t))
 
 (use-package ivy-rich
   :defer t
