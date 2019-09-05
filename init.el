@@ -85,6 +85,15 @@
 (setq use-package-verbose t)
 (require 'use-package)
 ;;-------------------------------
+;; Paradox
+;;-------------------------------
+(use-package paradox
+  :defer t
+  :delight
+  :config
+  (paradox-enable)
+  (load-library "paradox-conf"))
+;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
 (when (getenv "HOME")
