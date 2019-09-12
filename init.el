@@ -948,6 +948,18 @@ check for the whole contents of FILE, otherwise check for the first
 (use-package ivy
   :defer t
   :delight
+  :init
+  (defun eh-ivy-open-current-typed-path ()
+    (interactive)
+    (when ivy--directory
+      (let* ((dir ivy--directory)
+             (text-typed ivy-text)
+             (path (concat dir text-typed)))
+        (delete-minibuffer-contents)
+        (ivy--done path))))
+  :bind (:map ivy-minibuffer-map
+              ("RET" . ivy-alt-done)
+              ("C-f" . eh-ivy-open-current-typed-path))
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
@@ -968,6 +980,7 @@ check for the whole contents of FILE, otherwise check for the first
   :delight
   :config
   (counsel-mode 1)
+  (recentf-mode 1)
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
   (bind-keys ("M-x"      .   counsel-M-x)
              ("C-x C-f"  .   counsel-find-file)))
@@ -1105,7 +1118,7 @@ check for the whole contents of FILE, otherwise check for the first
   (setq shr-color-visible-luminance-min 90)
   (setq shr-width 100)
   (setq shr-max-image-proportion 0.5)
-  (setq eww-search-prefix "https://www.google.co.jp/search?btnI&q=")
+  (setq eww-search-prefix "https://www.google.com/search?q=")
   ;;
   (add-hook 'eww-mode-hook
             '(lambda ()
@@ -1235,7 +1248,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Emacs-Lisp
 ;;-------------------------------
 (use-package elisp-mode
-  :delight (emacs-lisp-mode "El"))
+  :delight
+  (emacs-lisp-mode "El")
+  (lisp-interaction-mode "El Int"))
 ;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
@@ -1260,7 +1275,7 @@ check for the whole contents of FILE, otherwise check for the first
                (flyspell-mode)
                (LaTeX-math-mode)
                (safe-define-key 'LaTeX-mode-map (kbd "<f12>")        'my-toggle-fullscreen)
-               (safe-define-key 'LaTeX-mode-map (kbd "<C-M-return>") 'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-M-<return>") 'my-toggle-fullscreen)
                (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
                (fic-mode)
                )))
