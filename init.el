@@ -765,12 +765,26 @@ check for the whole contents of FILE, otherwise check for the first
         )
   ;;-- grouping
   ;; (setq tabbar-buffer-groups-function nil) ;; ungrouping
-  (setq my-tabbar-star-buffer-list '("*scratch*"
-                                     "*Messages*"
-                                     "*Python*"
-                                     "*Help*"
-                                     "*eww*"
+  (setq my-tabbar-proc-buffer-list '("^\\*ansi-term"
+                                     "^\\*Paradox"
                                      ))
+  (setq my-tabbar-common-buffer-list '("^\\*scratch\\*"
+                                       "^\\*Messages\\*"
+                                       "^\\*Python\\*"
+                                       "^\\*Help\\*"
+                                       "^\\*eww\\*"
+                                       "^\\*epc con"
+                                     ))
+  ;;
+  (defun check-member-regex (target regex-list)
+    "Check if TARGET is in the LIST of regex."
+    (let ((ret nil)
+          (list regex-list))
+      (while list
+        (when (string-match (car list) target)
+          (setq ret t))
+        (setq list (cdr list)))
+      ret))
   ;;
   (setq tabbar-buffer-groups-function
         (lambda ()
@@ -780,11 +794,9 @@ check for the whole contents of FILE, otherwise check for the first
                   (tabbar-buffer-mode-derived-p
                    major-mode '(comint-mode compilation-mode)))
               (list "*proc*"))
-             ((string-match "^\*ansi-term" (buffer-name))
+             ((check-member-regex (buffer-name) my-tabbar-proc-buffer-list)
               (list "*proc*"))
-             ((member (buffer-name) my-tabbar-star-buffer-list)
-              (list "*common*"))
-             ((string-match "^\*epc con" (buffer-name))
+             ((check-member-regex (buffer-name) my-tabbar-common-buffer-list)
               (list "*common*"))
              ((string-match-p "/.emacs.d/" dir)
               (list ".emacs.d"))
@@ -806,7 +818,8 @@ check for the whole contents of FILE, otherwise check for the first
                        ((eq (current-buffer) b) b)
                        ((buffer-file-name b) b)
                        ((char-equal ?\  (aref (buffer-name b) 0)) nil)
-                       ((member (buffer-name b) my-tabbar-star-buffer-list) b)
+                       ((check-member-regex (buffer-name b) my-tabbar-proc-buffer-list) b)
+                       ((check-member-regex (buffer-name b) my-tabbar-common-buffer-list) b)
                        ((char-equal ?* (aref (buffer-name b) 0)) nil)       ; not-show buffers starting from *
                        ((string-match-p "magit:" (buffer-name b)) nil)
                        ((string-match-p "magit-diff:" (buffer-name b)) nil)
