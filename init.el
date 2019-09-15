@@ -776,15 +776,13 @@ check for the whole contents of FILE, otherwise check for the first
                                        "^\\*epc con"
                                      ))
   ;;
-  (defun check-member-regex (target regex-list)
-    "Check if TARGET is in the LIST of regex."
-    (let ((ret nil)
-          (list regex-list))
-      (while list
-        (when (string-match (car list) target)
-          (setq ret t))
-        (setq list (cdr list)))
-      ret))
+(defun check-member-regex (target regex-list)
+  "Check if TARGET is in the LIST of regex."
+  (eval
+   (cons 'or
+         (mapcar '(lambda (check-item)
+                    (if (string-match check-item target) t nil))
+                 regex-list))))
   ;;
   (setq tabbar-buffer-groups-function
         (lambda ()
