@@ -92,7 +92,12 @@
   :delight
   :config
   (paradox-enable)
-  (load-library "paradox-conf"))
+  (load-library "paradox-conf")
+  (setq paradox-display-download-count t)
+  (setq paradox-execute-asynchronously t)
+  (setq paradox-column-width-package 24)  ;; default: 18
+  (setq paradox-column-width-version 16)  ;; default:  9
+  )
 ;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
