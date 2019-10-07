@@ -936,6 +936,7 @@ check for the whole contents of FILE, otherwise check for the first
   (company-quickhelp-mode t))
 ;;
 (use-package company-box
+  :if (locate-library "company-box")
   :after (company)
   :hook (company-mode . company-box-mode)
   :delight
