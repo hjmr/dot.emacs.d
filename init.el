@@ -245,6 +245,7 @@
 ;; UCS normalize
 ;;-------------------------------
 (use-package ucs-normalize
+  :if sys-mac-p
   :commands (ucs-normalize-NFC-buffer)
   :bind (("C-x RET u"  .  ucs-normalize-NFC-buffer))
   :init
