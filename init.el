@@ -103,19 +103,12 @@
 ;;-------------------------------
 (when (getenv "HOME")
   (cd (getenv "HOME")))
-(when sys-mac-p
-  (setenv "TEXINPUTS" "~/Library/TeX//:")
-  ;; (let ((path-str
-  ;;        (concat
-  ;;         "/brew/bin:"
-  ;;         "/usr/local/bin:"
-  ;;         "/Library/TeX/texbin:"
-  ;;         (getenv "PATH") ":"
-  ;;         (expand-file-name "~/bin")
-  ;;         )))
-  ;;   (setenv "PATH" path-str)
-  ;;   (setq exec-path (nconc (split-string path-str ":") exec-path)))
-  )
+(use-package exec-path-from-shell
+  :defer t
+  :if sys-mac-p
+  :config
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-envs '("TEXINPUTS")))
 (add-to-list 'load-path (concat user-emacs-directory "conf"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
 ;;-------------------------------
