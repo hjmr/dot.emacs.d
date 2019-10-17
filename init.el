@@ -946,13 +946,13 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; ripgrep.el
 ;;-------------------------------
-(use-package ripgrep
-  :bind (("C-c n" . ripgrep-regexp))
-  :config
-  (setq ripgrep-arguments '("-S"))
-  (bind-keys :map ripgrep-search-mode-map
-             ("n" .  next-error-no-select)
-             ("p" .  previous-error-no-select)))
+;; (use-package ripgrep
+;;   :bind (("C-c n" . ripgrep-regexp))
+;;   :config
+;;   (setq ripgrep-arguments '("-S"))
+;;   (bind-keys :map ripgrep-search-mode-map
+;;              ("n" .  next-error-no-select)
+;;              ("p" .  previous-error-no-select)))
 ;;-------------------------------
 ;; IVY & COUNSEL
 ;;-------------------------------
@@ -994,7 +994,8 @@ check for the whole contents of FILE, otherwise check for the first
   (recentf-mode 1)
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
   (bind-keys ("M-x"      .   counsel-M-x)
-             ("C-x C-f"  .   counsel-find-file)))
+             ("C-x C-f"  .   counsel-find-file)
+             ("C-c n"    .   counsel-rg)))
 
 (use-package swiper
   :defer t
