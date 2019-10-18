@@ -1005,6 +1005,12 @@ check for the whole contents of FILE, otherwise check for the first
   (bind-keys ("C-s"      .   swiper)
              ("C-r"      .   swiper-backward)))
 
+(use-package counsel-projectile
+  :defer t
+  :after (projectile counsel)
+  :config
+  (counsel-projectile-mode t))
+
 ;;-------------------------------
 ;; migemo
 ;;-------------------------------
