@@ -163,7 +163,7 @@
 (set-face-foreground 'font-lock-comment-face           "gray60")
 (add-to-list 'default-frame-alist '(foreground-color . "white"))
 (add-to-list 'default-frame-alist '(background-color . "black"))
-(add-to-list 'default-frame-alist '(width . 120))
+(add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
   (add-to-list 'default-frame-alist '(height . 100)))
@@ -1272,8 +1272,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
-(use-package auctex
-  :defer t
+(use-package tex-site
+  :ensure auctex
+  :mode ("\\.tex\\'" . latex-mode)
   :config
   (auctex-latexmk-setup)
   (company-auctex-init)
@@ -1345,3 +1346,15 @@ check for the whole contents of FILE, otherwise check for the first
 ;; END OF FILE
 ;;-------------------------------
 (setq debug-on-error nil)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(paradox-automatically-star t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
