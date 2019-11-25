@@ -156,6 +156,7 @@
 (setq scroll-margin 5)
 (setq scroll-step 1)
 (setq tramp-default-method "ssh")
+(server-start)
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
