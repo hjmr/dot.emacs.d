@@ -958,7 +958,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; IVY & COUNSEL
 ;;-------------------------------
 (use-package ivy
-  :defer t
+;;  :defer t
   :delight
   :init
   (defun eh-ivy-open-current-typed-path ()
@@ -988,7 +988,7 @@ check for the whole contents of FILE, otherwise check for the first
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
 (use-package counsel
-  :defer t
+;;  :defer t
   :delight
   :config
   (counsel-mode 1)
