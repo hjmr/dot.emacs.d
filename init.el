@@ -262,7 +262,9 @@
 
 (use-package simple
   :delight
-  (visual-line-mode " VLine"))
+  (visual-line-mode " VLine")
+  (emacs-lisp-mode "El")
+  (lisp-interaction-mode "El Int"))
 
 (use-package eldoc
   :delight eldoc-mode)
@@ -1264,22 +1266,22 @@ check for the whole contents of FILE, otherwise check for the first
   :mode (("\\.pde\\'"      . processing-mode)
          ("\\.pjs\\'"      . processing-mode)))
 ;;-------------------------------
-;; Emacs-Lisp
-;;-------------------------------
-(use-package elisp-mode
-  :delight
-  (emacs-lisp-mode "El")
-  (lisp-interaction-mode "El Int"))
-;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
+(use-package auctex-latexmk
+  :ensure auctex
+  :config
+  (auctex-latexmk-setup))
+
+(use-package company-auctex
+  :ensure auctex
+  :config
+  (company-auctex-init))
+
 (use-package tex-site
   :ensure auctex
   :mode ("\\.tex\\'" . latex-mode)
   :config
-  (auctex-latexmk-setup)
-  (company-auctex-init)
-
   (setq-default TeX-master nil)
   (setq TeX-PDF-mode t)
   (setq TeX-auto-save t)
