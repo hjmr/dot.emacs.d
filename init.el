@@ -85,10 +85,21 @@
 (setq use-package-verbose t)
 (require 'use-package)
 ;;-------------------------------
+;; paths and environment vars
+;;-------------------------------
+(when (getenv "HOME")
+  (cd (getenv "HOME")))
+(use-package exec-path-from-shell
+  :if sys-mac-p
+  :config
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-envs '("TEXINPUTS")))
+(add-to-list 'load-path (concat user-emacs-directory "conf"))
+(add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
+;;-------------------------------
 ;; Paradox
 ;;-------------------------------
 (use-package paradox
-  :defer t
   :delight
   :config
   (paradox-enable)
@@ -98,19 +109,6 @@
   (setq paradox-column-width-package 24)  ;; default: 18
   (setq paradox-column-width-version 16)  ;; default:  9
   )
-;;-------------------------------
-;; paths and environment vars
-;;-------------------------------
-(when (getenv "HOME")
-  (cd (getenv "HOME")))
-(use-package exec-path-from-shell
-  :defer t
-  :if sys-mac-p
-  :config
-  (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-envs '("TEXINPUTS")))
-(add-to-list 'load-path (concat user-emacs-directory "conf"))
-(add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
 ;;-------------------------------
 ;; desktop-save
 ;;-------------------------------
@@ -314,7 +312,6 @@
 ;; highlight volatile
 ;;-------------------------------
 (use-package volatile-highlights
-  :defer t
   :delight
   :config
   (volatile-highlights-mode t))
@@ -585,7 +582,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;;(setq-default show-trailing-whitespace t)
 (use-package whitespace
-  :defer t
   :delight global-whitespace-mode
   :config
   (setq whitespace-style '(face              ; faceで可視化
@@ -692,7 +688,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Show diff
 ;;-------------------------------
 (use-package diff-hl
-  :defer t
   :config
   (global-diff-hl-mode)
   (diff-hl-margin-mode 1)
@@ -876,7 +871,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; company-mode
 ;;-------------------------------
 (use-package company
-  :defer t
   :delight
   :config
   (global-company-mode)                   ; 全バッファで有効にする
@@ -960,7 +954,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; IVY & COUNSEL
 ;;-------------------------------
 (use-package ivy
-;;  :defer t
   :delight
   :init
   (defun eh-ivy-open-current-typed-path ()
@@ -983,14 +976,12 @@ check for the whole contents of FILE, otherwise check for the first
   (setq ivy-use-selectable-prompt t))
 
 (use-package ivy-rich
-  :defer t
   :after (ivy)
   :config
   (ivy-rich-mode 1)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
 (use-package counsel
-;;  :defer t
   :delight
   :config
   (counsel-mode 1)
@@ -1001,7 +992,6 @@ check for the whole contents of FILE, otherwise check for the first
              ("C-c n"    .   counsel-rg)))
 
 (use-package swiper
-  :defer t
   :delight
   :config
   (setq swiper-include-line-number-in-search t)
@@ -1009,7 +999,6 @@ check for the whole contents of FILE, otherwise check for the first
              ("C-r"      .   swiper-backward)))
 
 (use-package counsel-projectile
-  :defer t
   :after (projectile counsel)
   :config
   (counsel-projectile-mode t))
@@ -1039,7 +1028,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; syntax check by flycheck
 ;;-------------------------------
 (use-package flycheck
-  :defer t
   :config
   (global-flycheck-mode)
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
@@ -1092,7 +1080,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; eshell-mode
 ;;-------------------------------
 (use-package esh-mode
-  :defer t
   :config
   (setq eshell-prompt-function
         (lambda ()
@@ -1195,7 +1182,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; (setq python-indent-guess-indent-offset nil)
 ;; jedi
 (use-package jedi-core
-  :defer t
   :config
   (setq jedi:complete-on-dot t)
   (setq jedi:use-shortcuts t)
@@ -1303,7 +1289,6 @@ check for the whole contents of FILE, otherwise check for the first
                )))
 
 (use-package latex-preview-pane
-  :defer t
   :commands (latex-preview-pane-mode)
   :delight " LtxPP")
 ;;
