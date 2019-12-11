@@ -1234,6 +1234,12 @@ check for the whole contents of FILE, otherwise check for the first
         (pyenv-mode-unset)
         )))
   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
+
+(use-package pipenv
+  :hook (python-mode . pipenv-mode)
+  :delight " Penv"
+  :init
+  (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
@@ -1300,7 +1306,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;;(global-set-key "\C-h"     'backward-delete-char-untabify)
 (keyboard-translate ?\C-h ?\C-?)
 (when sys-mac-p
-  (setq mac-option-modifier 'meta))
+  (setq mac-option-modifier 'meta)
+  (global-unset-key (kbd "<swipe-left>"))
+  (global-unset-key (kbd "<swipe-right>")))
 
 (global-set-key                       (kbd "C-x n")     'next-error)
 (global-set-key                       (kbd "C-z")       'scroll-down)
