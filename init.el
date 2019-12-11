@@ -336,6 +336,13 @@
           (set-frame-position nil 0 0))
       (set-frame-parameter nil 'fullscreen 'fullscreen))))
 ;;-------------------------------
+;; do-not-exit-emacs hide instead
+;;-------------------------------
+(when gui-mac-p
+  (defun my-hide-emacs ()
+    (interactive)
+    (make-frame-invisible nil t)))
+;;-------------------------------
 ;; IME settings
 ;;-------------------------------
 (when (and gui-ns-p
@@ -1308,7 +1315,9 @@ check for the whole contents of FILE, otherwise check for the first
 (when sys-mac-p
   (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
-  (global-unset-key (kbd "<swipe-right>")))
+  (global-unset-key (kbd "<swipe-right>"))
+  (global-set-key   (kbd "C-x C-c")  'my-hide-emacs)
+  )
 
 (global-set-key                       (kbd "C-x n")     'next-error)
 (global-set-key                       (kbd "C-z")       'scroll-down)
