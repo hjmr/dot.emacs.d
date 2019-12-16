@@ -91,6 +91,7 @@
   (cd (getenv "HOME")))
 (use-package exec-path-from-shell
   :if sys-mac-p
+  :defer t
   :config
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-envs '("TEXINPUTS")))
@@ -101,6 +102,7 @@
 ;;-------------------------------
 (use-package paradox
   :delight
+  :commands (paradox-list-packages)
   :config
   (paradox-enable)
   (load-library "paradox-conf")
@@ -512,16 +514,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;; (setq super-save-auto-save-when-idle t
 ;;       super-save-idle-duration 10)
 ;; (exec-if-bound (super-save-mode t))
-;;-------------------------------
-;; minimap
-;;-------------------------------
-;; (when (require 'minimap nil t)
-;;   (setq minimap-window-location 'right)
-;;   (set-face-attribute 'minimap-font-face nil
-;;                       :family "Input Mono Narrow" :height 30 :weight 'ultra-light)
-;;   (set-face-attribute 'minimap-active-region-background nil
-;;                       :background "#003355")
-;;   )
 ;;-------------------------------------------------
 ;; neotree: show directory tree at the left-side
 ;;-------------------------------------------------
@@ -1337,8 +1329,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- Mac Finder control
 (safe-global-set-key                  (kbd "<f6>")      'open-terminal-here)
 (safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
-;;-- minimap
-;; (safe-global-set-key                  (kbd "<f10>")     'minimap-mode)
 ;;
 ;;===============================================================================================
 ;;  set custom-file
