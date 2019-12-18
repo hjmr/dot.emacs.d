@@ -343,7 +343,8 @@
 (when gui-mac-p
   (defun my-hide-emacs ()
     (interactive)
-    (make-frame-invisible nil t)))
+    (if (not (eq (frame-parameter nil 'fullscreen) 'fullscreen))
+        (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
 ;;-------------------------------
 ;; IME settings
 ;;-------------------------------
@@ -1308,8 +1309,7 @@ check for the whole contents of FILE, otherwise check for the first
   (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
   (global-unset-key (kbd "<swipe-right>"))
-  (global-set-key   (kbd "C-x C-c")  'my-hide-emacs)
-  )
+  (global-set-key (kbd "C-x C-c") 'my-hide-emacs))
 
 (global-set-key                       (kbd "C-x n")     'next-error)
 (global-set-key                       (kbd "C-z")       'scroll-down)
