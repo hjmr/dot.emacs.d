@@ -85,6 +85,15 @@
 (setq use-package-verbose t)
 (require 'use-package)
 ;;-------------------------------
+;; benchmarking
+;;-------------------------------
+(use-package benchmark-init
+  :disabled t
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+;;-------------------------------
 ;; paths and environment vars
 ;;-------------------------------
 (when (getenv "HOME")
