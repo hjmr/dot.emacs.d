@@ -334,17 +334,30 @@
   :config
   (setq realgud:pdb-command-name "python -m pdb"))
 ;;-------------------------------
-;; toggle-full-screen
+;; full screen
 ;;-------------------------------
 (when gui-mac-p
+  (defun my-init-framesize ()
+    (interactive)
+    (if (eq (frame-parameter nil 'fullscreen) 'fullscreen)
+        (set-frame-parameter nil 'fullscreen nil))
+    (set-frame-width nil 130)
+    (set-frame-height nil 100)
+    (set-frame-position nil 0 0))
+  (defun my-center-frame ()
+    (interactive)
+    (let ((new-frame-width-in-pixel (truncate (* (display-pixel-width) 0.9)))
+          (new-frame-height-in-pixel (truncate (* (display-pixel-height) 0.9))))
+      (set-frame-width nil new-frame-width-in-pixel nil 'pixelwise)
+      (set-frame-height nil new-frame-height-in-pixel nil 'pixelwise)
+      (let ((new-frame-pos-x-in-pixel (truncate (/ (- (display-pixel-width) new-frame-width-in-pixel) 2)))
+            (new-frame-pos-y-in-pixel (truncate (/ (- (display-pixel-height) new-frame-height-in-pixel) 2))))
+        (set-frame-position nil new-frame-pos-x-in-pixel new-frame-pos-y-in-pixel))))
   (defun my-toggle-fullscreen ()
     (interactive)
     (if (eq (frame-parameter nil 'fullscreen) 'fullscreen)
         (progn
-          (set-frame-parameter nil 'fullscreen nil)
-          (set-frame-width nil 120)
-          (set-frame-height nil 100)
-          (set-frame-position nil 0 0))
+          (set-frame-parameter nil 'fullscreen nil))
       (set-frame-parameter nil 'fullscreen 'fullscreen))))
 ;;-------------------------------
 ;; do-not-exit-emacs hide instead
@@ -1297,8 +1310,10 @@ check for the whole contents of FILE, otherwise check for the first
                (visual-line-mode)
                (flyspell-mode)
                (LaTeX-math-mode)
-               (safe-define-key 'LaTeX-mode-map (kbd "<f12>")        'my-toggle-fullscreen)
-               (safe-define-key 'LaTeX-mode-map (kbd "C-M-<return>") 'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "M-C-f")    'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-c d f")  'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-c d i")  'my-init-framesize)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-c d c")  'my-center-frame)
                (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
                (fic-mode)
                )))
@@ -1333,8 +1348,10 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- move file
 (global-set-key                       (kbd "C-x m")     #'move-file)
 ;;-- toggle-fullscreen
-(safe-global-set-key                  (kbd "<f12>")     'my-toggle-fullscreen)
-(safe-global-set-key                  (kbd "C-M-<return>")        'my-toggle-fullscreen)
+(safe-global-set-key                  (kbd "M-C-f")     'my-toggle-fullscreen)
+(safe-global-set-key                  (kbd "C-c d f")   'my-toggle-fullscreen)
+(safe-global-set-key                  (kbd "C-c d i")   'my-init-framesize)
+(safe-global-set-key                  (kbd "C-c d c")   'my-center-frame)
 ;;-- Mac Finder control
 (safe-global-set-key                  (kbd "<f6>")      'open-terminal-here)
 (safe-global-set-key                  (kbd "<f7>")      'open-in-finder)
