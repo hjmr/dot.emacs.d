@@ -2,6 +2,7 @@
 ;;-------------------------------
 ;; control startup process
 ;;-------------------------------
+;;
 ;;(profiler-start 'cpu+mem)
 (setq inhibit-startup-message t)
 (setq debug-on-error t)
