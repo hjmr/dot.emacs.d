@@ -532,11 +532,10 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; undo hist
 ;;-------------------------------
-(use-package undohist
-  :disabled t
-  :config
-  (undohist-initialize)
-  (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa" "COMMIT_EDITMSG")))
+;;(use-package undohist
+;;  :config
+;;  (undohist-initialize)
+;;  (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa" "COMMIT_EDITMSG")))
 ;;-------------------------------
 ;; super-save
 ;;-------------------------------
