@@ -101,7 +101,6 @@
   (cd (getenv "HOME")))
 (use-package exec-path-from-shell
   :if sys-mac-p
-  :defer t
   :config
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-envs '("TEXINPUTS")))
@@ -337,7 +336,7 @@
 ;;-------------------------------
 ;; full screen
 ;;-------------------------------
-(when gui-mac-p
+(when gui-mac-or-ns-p
   (defun my-init-framesize ()
     (interactive)
     (if (eq (frame-parameter nil 'fullscreen) 'fullscreen)
@@ -353,7 +352,8 @@
       (set-frame-height nil new-frame-height-in-pixel nil 'pixelwise)
       (let ((new-frame-pos-x-in-pixel (truncate (/ (- (display-pixel-width) new-frame-width-in-pixel) 2)))
             (new-frame-pos-y-in-pixel (truncate (/ (- (display-pixel-height) new-frame-height-in-pixel) 2))))
-        (set-frame-position nil new-frame-pos-x-in-pixel new-frame-pos-y-in-pixel))))
+        (set-frame-position nil new-frame-pos-x-in-pixel new-frame-pos-y-in-pixel)))))
+(when gui-mac-p
   (defun my-toggle-fullscreen ()
     (interactive)
     (if (eq (frame-parameter nil 'fullscreen) 'fullscreen)
@@ -474,7 +474,7 @@ properly disable mozc-mode."
 ;;-------------------------------
 ;; open terminal
 ;;-------------------------------
-(when gui-mac-p
+(when gui-mac-or-ns-p
   (defun open-terminal-here ()
     (interactive)
     (shell-command
@@ -970,13 +970,14 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; ripgrep.el
 ;;-------------------------------
-;; (use-package ripgrep
-;;   :bind (("C-c n" . ripgrep-regexp))
-;;   :config
-;;   (setq ripgrep-arguments '("-S"))
-;;   (bind-keys :map ripgrep-search-mode-map
-;;              ("n" .  next-error-no-select)
-;;              ("p" .  previous-error-no-select)))
+(use-package ripgrep
+  :bind (("C-c n" . ripgrep-regexp))
+  :if (executable-find "rg")
+  :config
+  (setq ripgrep-arguments '("-S"))
+  (bind-keys :map ripgrep-search-mode-map
+             ("n" .  next-error-no-select)
+             ("p" .  previous-error-no-select)))
 ;;-------------------------------
 ;; IVY & COUNSEL
 ;;-------------------------------
@@ -1016,7 +1017,8 @@ check for the whole contents of FILE, otherwise check for the first
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
   (bind-keys ("M-x"      .   counsel-M-x)
              ("C-x C-f"  .   counsel-find-file)
-             ("C-c n"    .   counsel-rg)))
+             ;; ("C-c n"    .   counsel-rg)
+             ))
 
 (use-package swiper
   :delight
@@ -1242,31 +1244,35 @@ check for the whole contents of FILE, otherwise check for the first
                  (setq py-autopep8-options '("--max-line-length=120"))
                  (bind-key "C-c f" 'py-autopep8 python-mode-map)))))
 
-(use-package pyenv-mode
-  :after (python)
-  :config
-  (setq pyenv-mode-map nil)
-  (pyenv-mode)
-  ;; pyenv-mode-auto
-  (defun pyenv-mode-auto-hook (prev cur)
-    "Automatically set pyenv version when changing buffer from PREV to CUR."
-    (let ((file-path '(buffer-file-name (cur))))
-      (unless (f-traverse-upwards
-               (lambda (file-path)
-                 (let ((pyenv-version-path (f-expand ".python-version" file-path)))
-                   (if (f-exists? pyenv-version-path)
-                       (progn
-                         (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
-                         t)))))
-        (pyenv-mode-unset)
-        )))
-  (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
+;; (use-package pyenv-mode
+;;   :after (python)
+;;   :config
+;;   (setq pyenv-mode-map nil)
+;;   (pyenv-mode)
+;;   ;; pyenv-mode-auto
+;;   (defun pyenv-mode-auto-hook (prev cur)
+;;     "Automatically set pyenv version when changing buffer from PREV to CUR."
+;;     (let ((file-path '(buffer-file-name (cur))))
+;;       (unless (f-traverse-upwards
+;;                (lambda (file-path)
+;;                  (let ((pyenv-version-path (f-expand ".python-version" file-path)))
+;;                    (if (f-exists? pyenv-version-path)
+;;                        (progn
+;;                          (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
+;;                          t)))))
+;;         (pyenv-mode-unset)
+;;         )))
+;;   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
 
 (use-package pipenv
   :hook (python-mode . pipenv-mode)
   :delight " Penv"
   :init
   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
+
+(use-package direnv
+  :config
+  (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
@@ -1334,7 +1340,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-- global keys
 ;;(global-set-key "\C-h"     'backward-delete-char-untabify)
 (keyboard-translate ?\C-h ?\C-?)
-(when sys-mac-p
+(when gui-mac-p
   (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
   (global-unset-key (kbd "<swipe-right>"))
