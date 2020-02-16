@@ -654,7 +654,7 @@ check for the whole contents of FILE, otherwise check for the first
   (setq whitespace-space-regexp     "\\(　+\\)")
 
   (global-whitespace-mode 1)
-  (setq whitespace-global-modes '(not dired-mode tar-mode eww-mode term-mode))
+  (setq whitespace-global-modes '(not dired-mode tar-mode eww-mode term-mode eshell-mode vterm-mode))
 
   (defvar delete-trailing-whitespece-before-save t)
   (defun my-delete-trailing-whitespace ()
@@ -1119,12 +1119,23 @@ check for the whole contents of FILE, otherwise check for the first
          (list
           (list "emacs" "find-file $1")))))
 ;;-------------------------------
+;; vterm
+;;-------------------------------
+(use-package vterm
+  :ensure t
+  :delight "VT"
+  :bind (:map vterm-mode-map
+              ("<f9>" . shell-pop))
+  )
+;;-------------------------------
 ;; shell-pop
 ;;-------------------------------
 (use-package shell-pop
   :bind (("<f9>" . shell-pop))
-  :config
-  (setq shell-pop-shell-type '("multi-term" "*shell-pop-multi-term*" (lambda nil (multi-term))))
+  :init
+  ;; (setq shell-pop-shell-type '("eshell" "*eshell*" (lambda () (eshell))))
+  (setq shell-pop-shell-type '("vterm" "*vterm*" (lambda nil (vterm))))
+  ;; (setq shell-pop-shell-type '("multi-term" "*multi-term*" (lambda nil (multi-term))))
   (setq shell-pop-window-height 30)           ;; 30% の高さに分割する
   (setq shell-pop-window-position "bottom")   ;; 下に開く
   ;; (setq shell-pop-full-span t)                ;; 横幅いっぱいに開く
