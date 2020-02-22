@@ -1281,17 +1281,17 @@ check for the whole contents of FILE, otherwise check for the first
 ;; (use-package pipenv
 ;;   :hook (python-mode . pipenv-mode)
 ;;   :delight " Penv"
- ;;   :init
+;;   :init
 ;;   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
 
-;; (use-package poetry
-;;   :config
-;;   (poetry-tracking-mode))
-
-(use-package direnv
+(use-package poetry
   :config
-  (setq direnv-show-paths-in-summary nil)
-  (direnv-mode))
+  (poetry-tracking-mode))
+
+;; (use-package direnv
+;;   :config
+;;   (setq direnv-show-paths-in-summary nil)
+;;   (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
