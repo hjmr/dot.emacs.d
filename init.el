@@ -846,6 +846,8 @@ check for the whole contents of FILE, otherwise check for the first
                        ((string-match-p "magit:" (buffer-name b)) nil)
                        ((string-match-p "magit-diff:" (buffer-name b)) nil)
                        ((string-match-p "magit-process:" (buffer-name b)) nil)
+                       ((string-match-p "magit-log:" (buffer-name b)) nil)
+                       ((string-match-p "magit-revision:" (buffer-name b)) nil)
                        ((buffer-live-p b) b)))
                   (buffer-list))))
   (setq tabbar-buffer-list-function 'my-tabbar-buffer-list)
@@ -1015,9 +1017,10 @@ check for the whole contents of FILE, otherwise check for the first
   (counsel-mode 1)
   (recentf-mode 1)
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
+  (setq counsel-rg-base-command "rg --with-filename --no-heading --line-number --color never %s")
   (bind-keys ("M-x"      .   counsel-M-x)
              ("C-x C-f"  .   counsel-find-file)
-             ;; ("C-c n"    .   counsel-rg)
+             ("C-c n"    .   counsel-rg)
              ))
 
 (use-package swiper
