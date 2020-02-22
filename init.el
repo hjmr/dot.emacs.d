@@ -1290,6 +1290,7 @@ check for the whole contents of FILE, otherwise check for the first
 
 (use-package direnv
   :config
+  (setq direnv-show-paths-in-summary nil)
   (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
