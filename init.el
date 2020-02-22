@@ -524,7 +524,7 @@ check for the whole contents of FILE, otherwise check for the first
 (use-package undo-tree
   :delight
   :config
-  (setq undo-tree-enable-undo-in-region t)
+;;  (setq undo-tree-enable-undo-in-region t)
   (setq undo-tree-auto-save-history t)
   (add-to-list 'undo-tree-history-directory-alist
                (cons ".*" (expand-file-name (concat user-emacs-directory "undohist"))))
@@ -532,10 +532,10 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; undo hist
 ;;-------------------------------
-;;(use-package undohist
-;;  :config
-;;  (undohist-initialize)
-;;  (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa" "COMMIT_EDITMSG")))
+;; (use-package undohist
+;;   :config
+;;   (undohist-initialize)
+;;   (setq undohist-ignored-files '("/tmp" "/EDITMSG" "/elpa" "COMMIT_EDITMSG")))
 ;;-------------------------------
 ;; super-save
 ;;-------------------------------
