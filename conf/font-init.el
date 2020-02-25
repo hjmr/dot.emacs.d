@@ -64,6 +64,17 @@
       )
     t))
 ;;
+(defun my-use-font (my-fontset my-default-fontset)
+  (let ((font-exists
+         (ignore-errors
+           (progn
+             (set-default-font my-fontset)
+             (add-to-list 'default-frame-alist (cons 'font my-fontset)))
+           t)))
+    (unless font-exists
+      (progn
+        (set-default-font my-default-fontset)
+        (add-to-list 'default-frame-alist (cons 'font my-default-fontset))))))
 ;;-----------------------------
 ;;  For macOS
 ;;-----------------------------
@@ -104,11 +115,9 @@
 ;;===============================================================================================
 ;;
 (when gui-mac-or-ns-p
-  (set-default-font "fontset-udkyokasho")
-  (add-to-list 'default-frame-alist '(font . "fontset-udkyokasho")))
+  (my-use-font "fontset-udkyokasho" "fontset-hirakaku"))
 (when gui-win-p
-  (set-default-font "fontset-udkyokashowin")
-  (add-to-list 'default-frame-alist '(font . "fontset-udkyokashowin")))
+  (my-use-font "fontset-udkyokashowin" "fontset-meiryo"))
 (when gui-x-p
   (when sys-centos-p
     (set-default-font "fontset-vlgoth")
