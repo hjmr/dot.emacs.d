@@ -367,7 +367,8 @@
   (defun my-hide-emacs ()
     (interactive)
     (if (not (eq (frame-parameter nil 'fullscreen) 'fullscreen))
-        (do-applescript "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))))
+        (let ((script "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))
+          (start-process "osascript-getinfo" nil "osascript" "-e" script)))))
 ;;-------------------------------
 ;; IME settings
 ;;-------------------------------
