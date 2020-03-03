@@ -844,11 +844,8 @@ check for the whole contents of FILE, otherwise check for the first
                        ((check-member-regex (buffer-name b) my-tabbar-proc-buffer-list) b)
                        ((check-member-regex (buffer-name b) my-tabbar-common-buffer-list) b)
                        ((char-equal ?* (aref (buffer-name b) 0)) nil)       ; not-show buffers starting from *
-                       ((string-match-p "magit:" (buffer-name b)) nil)
-                       ((string-match-p "magit-diff:" (buffer-name b)) nil)
-                       ((string-match-p "magit-process:" (buffer-name b)) nil)
-                       ((string-match-p "magit-log:" (buffer-name b)) nil)
-                       ((string-match-p "magit-revision:" (buffer-name b)) nil)
+                       ((string-match-p "^magit:" (buffer-name b)) nil)
+                       ((string-match-p "^magit-.*:" (buffer-name b)) nil)
                        ((buffer-live-p b) b)))
                   (buffer-list))))
   (setq tabbar-buffer-list-function 'my-tabbar-buffer-list)
@@ -1243,21 +1240,24 @@ check for the whole contents of FILE, otherwise check for the first
 (use-package python
   :commands python-mode
   :delight "Py"
+  :init
+  (add-hook 'python-mode-hook
+            '(lambda ()
+               (fic-mode)
+               (hs-minor-mode 1)
+               (bind-key "C-¥" 'hs-toggle-hiding python-mode-map)
+               (use-package py-autopep8
+                 :config
+                 (py-autopep8-enable-on-save)
+                 (setq py-autopep8-options '("--max-line-length=120"))
+                 (bind-key "C-c f" 'py-autopep8 python-mode-map))))
   :config
   (setq python-indent        4)
   (setq python-indent-offset 4)
   (setq python-shell-interpreter "python3")
   (setq python-shell-interpreter-args "")
   (setq python-shell-completion-native-enable nil)
-  (setq flycheck-python-pylint-executable "pylint")
-  (add-hook 'python-mode-hook
-            '(lambda ()
-               (fic-mode)
-               (use-package py-autopep8
-                 :config
-                 (py-autopep8-enable-on-save)
-                 (setq py-autopep8-options '("--max-line-length=120"))
-                 (bind-key "C-c f" 'py-autopep8 python-mode-map)))))
+  (setq flycheck-python-pylint-executable "pylint"))
 
 (use-package pyenv-mode
   :after (python)
