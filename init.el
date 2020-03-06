@@ -1105,7 +1105,9 @@ check for the whole contents of FILE, otherwise check for the first
 ;; text-mode
 ;;-------------------------------
 (use-package text-mode
-  :hook (text-mode . visual-line-mode))
+  :hook ((text-mode . visual-line-mode)
+         (text-mode . flyspell-mode))
+  )
 ;;-------------------------------
 ;; eshell-mode
 ;;-------------------------------
@@ -1333,8 +1335,6 @@ check for the whole contents of FILE, otherwise check for the first
   (setq TeX-parse-self t)
   (setq TeX-PDF-from-DVI "Dvipdfmx")
 
-  (setq latex-preview-pane-multifile-mode 'auctex)
-  (setq pdf-latex-command "latexmk")
 
   (add-hook 'LaTeX-mode-hook
             '(lambda ()
@@ -1351,7 +1351,12 @@ check for the whole contents of FILE, otherwise check for the first
 
 (use-package latex-preview-pane
   :commands (latex-preview-pane-mode)
-  :delight " LtxPP")
+  :delight " LtxPP"
+  :init
+  (setq latex-preview-pane-multifile-mode 'auctex)
+  (setq pdf-latex-command "latexmk")
+  (setq preview-orientation 'right)
+  )
 ;;
 ;;=============================================================================================
 ;;  key configuration
