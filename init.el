@@ -1125,6 +1125,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; vterm
 ;;-------------------------------
 (use-package vterm
+  :if sys-mac-p
   :ensure t
   :delight "VT"
   :bind (:map vterm-mode-map
