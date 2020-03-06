@@ -44,7 +44,7 @@
   (cond
     (gui-mac-p  14)
     (gui-ns-p   14)
-    (gui-win-p  14)
+    (gui-win-p  15)
     (gui-x-p    15)
     (t          14)))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
