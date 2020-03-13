@@ -1372,7 +1372,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;(define-key local-function-key-map [?\C-\M-¥] [?\C-\M-\\])
 
 (when gui-mac-p
-  (setq mac-option-modifier 'meta)
+;;  (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
   (global-unset-key (kbd "<swipe-right>"))
   (global-set-key (kbd "C-x C-c") 'my-hide-emacs))
