@@ -165,7 +165,8 @@
 (setq scroll-margin 5)
 (setq scroll-step 1)
 (setq tramp-default-method "ssh")
-(server-start)
+(when gui-mac-p
+  (server-start))
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
@@ -1364,7 +1365,12 @@ check for the whole contents of FILE, otherwise check for the first
 ;;
 ;;-- global keys
 ;;(global-set-key "\C-h"     'backward-delete-char-untabify)
-(keyboard-translate ?\C-h ?\C-?)
+(define-key key-translation-map [?\C-h] [?\C-?])
+(define-key key-translation-map [?\C-¥] [?\C-\\])
+(define-key key-translation-map [?\M-¥] [?\M-\\])
+(define-key key-translation-map [?\C-\M-¥] [?\C-\M-\\])
+;;(define-key local-function-key-map [?\C-\M-¥] [?\C-\M-\\])
+
 (when gui-mac-p
   (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
