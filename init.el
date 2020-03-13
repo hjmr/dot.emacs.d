@@ -1368,7 +1368,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;;(define-key local-function-key-map [?\C-\M-¥] [?\C-\M-\\])
 
 (when gui-mac-p
-;;  (setq mac-option-modifier 'meta)
+  (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
   (global-unset-key (kbd "<swipe-right>")))
 
@@ -1381,7 +1381,7 @@ check for the whole contents of FILE, otherwise check for the first
 (global-set-key                       (kbd "C-x C-b")   'buffer-menu)
 (global-set-key                       (kbd "<end>")     'end-of-buffer )
 (global-set-key                       (kbd "<home>")    'beginning-of-buffer )
-(global-set-key                       (kbd "C-^")       'universal-argument) ;; quick hack
+;;(global-set-key                       (kbd "C-^")       'universal-argument) ;; quick hack
 (safe-global-set-key                  (kbd "<ns-drag-file>") 'ns-find-file)
 ;;-- imenus
 (global-set-key                       (kbd "C-.")       #'imenu-anywhere)
