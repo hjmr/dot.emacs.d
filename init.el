@@ -165,8 +165,7 @@
 (setq scroll-margin 5)
 (setq scroll-step 1)
 (setq tramp-default-method "ssh")
-(when gui-mac-p
-  (server-start))
+(server-start)
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
@@ -354,6 +353,7 @@
       (let ((new-frame-pos-x-in-pixel (truncate (/ (- (display-pixel-width) new-frame-width-in-pixel) 2)))
             (new-frame-pos-y-in-pixel (truncate (/ (- (display-pixel-height) new-frame-height-in-pixel) 2))))
         (set-frame-position nil new-frame-pos-x-in-pixel new-frame-pos-y-in-pixel)))))
+
 (when gui-mac-p
   (defun my-toggle-fullscreen ()
     (interactive)
@@ -361,24 +361,20 @@
         (progn
           (set-frame-parameter nil 'fullscreen nil))
       (set-frame-parameter nil 'fullscreen 'fullscreen))))
+
 ;;-------------------------------
 ;; do-not-exit-emacs hide instead
 ;;-------------------------------
-(when gui-mac-p
+(when gui-mac-or-ns-p
   (defun my-hide-emacs ()
     (interactive)
-    (if (not (eq (frame-parameter nil 'fullscreen) 'fullscreen))
+    (if (not (or (eq (frame-parameter nil 'fullscreen) 'fullscreen)
+                 (eq (frame-parameter nil 'fullscreen) 'fullboth)))
         (let ((script "tell application \"System Events\" to tell process \"Emacs\" to set visible to false"))
           (start-process "osascript-getinfo" nil "osascript" "-e" script)))))
 ;;-------------------------------
 ;; IME settings
 ;;-------------------------------
-(when (and gui-ns-p
-           (functionp 'mac-change-language-to-us))
-  (setq default-input-method "MacOSX")
-  (add-hook 'minibuffer-setup-hook 'mac-change-language-to-us)
-  (add-hook 'isearch-mode-hook     'mac-change-language-to-us))
-
 (exec-if-bound (mac-auto-ascii-mode 1))
 
 (when sys-linux-p
@@ -447,7 +443,7 @@ properly disable mozc-mode."
 ;;-------------------------------
 ;; open finder
 ;;-------------------------------
-(when gui-mac-p
+(when sys-mac-p
   (defun open-in-finder-1 (dir file)
     (let ((script
            (if file
@@ -476,7 +472,7 @@ properly disable mozc-mode."
 ;;-------------------------------
 ;; open terminal
 ;;-------------------------------
-(when gui-mac-or-ns-p
+(when sys-mac-p
   (defun open-terminal-here ()
     (interactive)
     (shell-command
@@ -1374,7 +1370,9 @@ check for the whole contents of FILE, otherwise check for the first
 (when gui-mac-p
 ;;  (setq mac-option-modifier 'meta)
   (global-unset-key (kbd "<swipe-left>"))
-  (global-unset-key (kbd "<swipe-right>"))
+  (global-unset-key (kbd "<swipe-right>")))
+
+(when gui-mac-or-ns-p
   (global-set-key (kbd "C-x C-c") 'my-hide-emacs))
 
 (global-set-key                       (kbd "C-x n")     'next-error)
