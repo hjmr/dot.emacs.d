@@ -375,7 +375,7 @@
 ;;-------------------------------
 ;; IME settings
 ;;-------------------------------
-(exec-if-bound (mac-auto-ascii-mode 1))
+;;(exec-if-bound (mac-auto-ascii-mode 1))
 
 (when sys-linux-p
   (global-set-key (kbd "<hiragana-katakana>")
@@ -1312,6 +1312,33 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
+(use-package auctex
+  :mode ("\\.tex\\'" . japanese-latex-mode)
+  :init
+  (add-hook 'LaTeX-mode-hook
+            '(lambda ()
+               (visual-line-mode)
+               (flyspell-mode)
+               (LaTeX-math-mode)
+               (fic-mode)
+
+               (safe-define-key 'LaTeX-mode-map (kbd "M-C-f")    'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-c d f")  'my-toggle-fullscreen)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-c d i")  'my-init-framesize)
+               (safe-define-key 'LaTeX-mode-map (kbd "C-c d c")  'my-center-frame)
+               (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
+               ))
+  :config
+  (setq-default TeX-master nil)
+  (setq TeX-PDF-mode t)
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+
+  (setq TeX-engine 'uptex)
+  (setq japanese-TeX-engine-default 'uptex)
+  (setq TeX-PDF-from-DVI "Dvipdfmx")
+  )
+
 (use-package auctex-latexmk
   :ensure auctex
   :config
@@ -1321,30 +1348,6 @@ check for the whole contents of FILE, otherwise check for the first
   :ensure auctex
   :config
   (company-auctex-init))
-
-(use-package tex-site
-  :ensure auctex
-  :mode ("\\.tex\\'" . latex-mode)
-  :config
-  (setq-default TeX-master nil)
-  (setq TeX-PDF-mode t)
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq TeX-PDF-from-DVI "Dvipdfmx")
-
-
-  (add-hook 'LaTeX-mode-hook
-            '(lambda ()
-               (visual-line-mode)
-               (flyspell-mode)
-               (LaTeX-math-mode)
-               (safe-define-key 'LaTeX-mode-map (kbd "M-C-f")    'my-toggle-fullscreen)
-               (safe-define-key 'LaTeX-mode-map (kbd "C-c d f")  'my-toggle-fullscreen)
-               (safe-define-key 'LaTeX-mode-map (kbd "C-c d i")  'my-init-framesize)
-               (safe-define-key 'LaTeX-mode-map (kbd "C-c d c")  'my-center-frame)
-               (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
-               (fic-mode)
-               )))
 
 (use-package latex-preview-pane
   :commands (latex-preview-pane-mode)
