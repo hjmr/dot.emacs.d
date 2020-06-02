@@ -57,7 +57,7 @@
 (defun safe-define-key (map key command)
   "Assign KEY in MAP to COMMAND iff COMMAND exsits."
   (when (and (boundp map)
-         (fboundp command))
+             (fboundp command))
     (define-key (eval map) key command)))
 ;;
 (defun font-exists-p (font)
@@ -128,7 +128,7 @@
   (setq desktop-restore-frames nil))
 ;;-------------------------------
 ;; Japanese environment
- ;;-------------------------------
+;;-------------------------------
 (set-language-environment 'Japanese)
 ;;-------------------------------
 ;; hide menus and tool bars
@@ -179,7 +179,7 @@
   (add-to-list 'default-frame-alist '(height . 100)))
 (add-to-list 'default-frame-alist '(top .  0))
 (add-to-list 'default-frame-alist '(left   . 0))
-;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+                                        ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(alpha . (100 . 75)))
 (add-to-list 'default-frame-alist '(line-spacing . 2))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
@@ -796,15 +796,15 @@ check for the whole contents of FILE, otherwise check for the first
                                        "^\\*Help\\*"
                                        "^\\*eww\\*"
                                        "^\\*epc con"
-                                     ))
+                                       ))
   ;;
-(defun check-member-regex (target regex-list)
-  "Check if TARGET is in the LIST of regex."
-  (eval
-   (cons 'or
-         (mapcar '(lambda (check-item)
-                    (if (string-match check-item target) t nil))
-                 regex-list))))
+  (defun check-member-regex (target regex-list)
+    "Check if TARGET is in the LIST of regex."
+    (eval
+     (cons 'or
+           (mapcar '(lambda (check-item)
+                      (if (string-match check-item target) t nil))
+                   regex-list))))
   ;;
   (setq tabbar-buffer-groups-function
         (lambda ()
@@ -1180,13 +1180,13 @@ check for the whole contents of FILE, otherwise check for the first
   :delight "Md"
   :mode (("README\\.md\\'"  . gfm-mode)
          ("\\.markdown\\'"  . markdown-mode)
-         ("\\.md\\'"        . markdown-mode))
+         ("\\.md\\'"        . gfm-mode))
   :init
   (add-hook 'markdown-mode-hook
             '(lambda ()
                (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)))
   :config
-  (setq markdown-command "multimarkdown"))
+  (setq indent-tabs-mode t))
 ;;-------------------------------
 ;; C/C++/ObjC common settings
 ;;-------------------------------
@@ -1384,7 +1384,7 @@ check for the whole contents of FILE, otherwise check for the first
 (global-set-key                       (kbd "C-x C-b")   'buffer-menu)
 (global-set-key                       (kbd "<end>")     'end-of-buffer )
 (global-set-key                       (kbd "<home>")    'beginning-of-buffer )
-;;(global-set-key                       (kbd "C-^")       'universal-argument) ;; quick hack
+(global-set-key                       (kbd "C-^")       'universal-argument) ;; quick hack
 (safe-global-set-key                  (kbd "<ns-drag-file>") 'ns-find-file)
 ;;-- imenus
 (global-set-key                       (kbd "C-.")       #'imenu-anywhere)
@@ -1404,8 +1404,8 @@ check for the whole contents of FILE, otherwise check for the first
 ;;===============================================================================================
 ;;
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-   (when (file-exists-p custom-file)
-       (load custom-file))
+(when (file-exists-p custom-file)
+  (load custom-file))
 ;;-------------------------------
 ;; END OF FILE
 ;;-------------------------------
