@@ -696,12 +696,12 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 (use-package hiwin
   :delight
+  ;;(add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
+  ;;(add-to-list 'hiwin-ignore-buffer-names '".pdf")
   :config
-  (add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
-  (add-to-list 'hiwin-ignore-buffer-names '".pdf")
   (set-face-attribute 'hiwin-face nil
                       :foreground nil :background "#202530")
-  (hiwin-mode 1))
+  (hiwin-activate))
 ;;-------------------------------
 ;; Git Client
 ;;-------------------------------
