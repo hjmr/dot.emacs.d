@@ -68,12 +68,12 @@
   (let ((font-exists
          (ignore-errors
            (progn
-             (set-default-font my-fontset)
+             ;; (set-default-font my-fontset)
              (add-to-list 'default-frame-alist (cons 'font my-fontset)))
            t)))
     (unless font-exists
       (progn
-        (set-default-font my-default-fontset)
+        ;; (set-default-font my-default-fontset)
         (add-to-list 'default-frame-alist (cons 'font my-default-fontset))))))
 ;;-----------------------------
 ;;  For macOS
@@ -120,10 +120,10 @@
   (my-use-font "fontset-udkyokashowin" "fontset-meiryo"))
 (when gui-x-p
   (when sys-centos-p
-    (set-default-font "fontset-vlgoth")
+    ;; (set-default-font "fontset-vlgoth")
     (add-to-list 'default-frame-alist '(font . "fontset-vlgoth")))
   (when sys-ubuntu-p
-    (set-default-font "fontset-notosans")
+    ;; (set-default-font "fontset-notosans")
     (add-to-list 'default-frame-alist '(font . "fontset-notosans"))))
 ;;
 ;;===============================================================================================
