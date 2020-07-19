@@ -269,7 +269,7 @@
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/Python/" ":Python:") t)
   (add-to-list 'sml/replacer-regexp-list '("^:Doc:Programs/" ":Prog:") t))
 
-(use-package simple
+(use-package emacs
   :delight
   (visual-line-mode " VLine")
   (emacs-lisp-mode "El")
