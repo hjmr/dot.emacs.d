@@ -700,7 +700,7 @@ check for the whole contents of FILE, otherwise check for the first
   ;;(add-to-list 'hiwin-ignore-buffer-names '".pdf")
   :config
   (set-face-attribute 'hiwin-face nil
-                      :foreground nil :background "#202530")
+                      :foreground nil :background "#202530" :extend t)
   (hiwin-activate))
 ;;-------------------------------
 ;; Git Client
