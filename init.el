@@ -453,7 +453,7 @@ properly disable mozc-mode."
                 "    make new Finder window to (POSIX file \"" dir "\")\n"
                 "    select file \"" file "\"\n"
                 "end tell\n")
-             (concat
+            (concat
               "tell application \"Finder\"\n"
               "    set frontmost to true\n"
               "    make new Finder window to {path to desktop folder}\n"
@@ -718,11 +718,121 @@ check for the whole contents of FILE, otherwise check for the first
   (diff-hl-margin-mode 1)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 ;;-------------------------------
+;; Centaur Tab
+;;-------------------------------
+(use-package centaur-tabs
+  :disabled t
+  :bind
+  ("C-<tab>"      .  centaur-tabs-forward)
+  ("C-S-<tab>"    .  centaur-tabs-backward)
+  ("C-c C-<tab>"  .  centaur-tabs-toggle-groups)
+  :config
+  (centaur-tabs-mode t)
+  (centaur-tabs-headline-match)
+  (centaur-tabs-group-by-projectile-project)
+  (centaur-tabs-change-fonts (face-attribute 'default :family) 120)
+  (setq centaur-tabs-style "bar")
+  (setq centaur-tabs-set-icons t)
+  (setq centaur-tabs-gray-out-icons 'buffer)
+  (setq centaur-tabs-set-bar 'over)
+  ;; (setq x-underline-at-descent-line t)
+  (setq centaur-tabs-set-close-button nil)
+  (setq centaur-tabs-set-modified-marker t)
+  (setq centaur-tabs-modified-marker "*")
+  (setq centaur-tabs-cycle-scope 'tabs)
+
+  (defun centaur-tabs-buffer-groups ()
+    "`centaur-tabs-buffer-groups' control buffers' group rules.
+    Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+    All buffer name start with * will group to \"Emacs\".
+    Other buffer group by `centaur-tabs-get-group-name' with project name."
+    (list
+     (cond
+      ((string-equal "*" (substring (buffer-name) 0 1))
+       "Emacs")
+      ((memq major-mode '(magit-process-mode
+                          magit-status-mode
+                          magit-diff-mode
+                          magit-log-mode
+                          magit-file-mode
+                          magit-blob-mode
+                          magit-blame-mode
+                          ))
+       "Magit")
+      ((derived-mode-p 'prog-mode)
+       "Program")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
+      ((memq major-mode '(helpful-mode
+                          help-mode))
+       "Help")
+      ((memq major-mode '(org-mode
+                          org-agenda-clockreport-mode
+                          org-src-mode
+                          org-agenda-mode
+                          org-beamer-mode
+                          org-indent-mode
+                          org-bullets-mode
+                          org-cdlatex-mode
+                          org-agenda-log-mode
+                          diary-mode))
+       "OrgMode")
+      (t
+       (centaur-tabs-get-group-name (current-buffer))))))
+  ;;---
+  (defun centaur-tabs-hide-tab (x)
+    "Do no to show buffer X in tabs."
+    (let ((name (format "%s" x)))
+      (or
+       ;; Current window is not dedicated window.
+       (window-dedicated-p (selected-window))
+       ;;
+       ;; Buffer name not match below blacklist.
+       (string-prefix-p "*epc" name)
+       (string-prefix-p "*helm" name)
+       (string-prefix-p "*Helm" name)
+       (string-prefix-p "*Compile-Log*" name)
+       (string-prefix-p "*lsp" name)
+       (string-prefix-p "*company" name)
+       (string-prefix-p "*Flycheck" name)
+       (string-prefix-p "*tramp" name)
+       (string-prefix-p " *Mini" name)
+       (string-prefix-p "*help" name)
+       (string-prefix-p "*straight" name)
+       (string-prefix-p " *temp" name)
+       (string-prefix-p "*Help" name)
+       (string-prefix-p "*mybuf" name)
+       ;;
+       ;; Is not magit buffer.
+       (and (string-prefix-p "magit" name)
+            (not (file-name-extension name)))
+       )))
+  )
+;;-------------------------------
 ;; Tabbar
 ;;-------------------------------
 (use-package tabbar
   :config
   (tabbar-mode 1)
+  ;;
+  ;;-- label style
+  (defun tabbar-buffer-tab-label (tab)
+    "Return a label for TAB.
+That is, a string used to represent it on the tab bar."
+    (let ((label  (if tabbar--buffer-show-groups
+                      (format " [%s] " (tabbar-tab-tabset tab))
+                    (format "  %s  " (tabbar-tab-value tab)))))
+      ;; Unless the tab bar auto scrolls to keep the selected tab
+      ;; visible, shorten the tab label to keep as many tabs as possible
+      ;; in the visible area of the tab bar.
+      (if tabbar-auto-scroll-flag
+          label
+        (tabbar-shorten
+         label (max 1 (/ (window-width)
+                         (length (tabbar-view
+                                  (tabbar-current-tabset)))))))))
+  ;;
+  ;;-- toggle groups
   (defvar my-tabbar-show-group-timer nil)
   (defun my-tabbar-buffer-hide-groups ()
     "Hide groups"
@@ -744,7 +854,7 @@ check for the whole contents of FILE, otherwise check for the first
     (when my-tabbar-show-group-timer
       (cancel-timer my-tabbar-show-group-timer))
     (setq my-tabbar-show-group-timer
-          (run-with-timer 2 nil 'my-tabbar-buffer-hide-groups)))
+          (run-with-timer 3 nil 'my-tabbar-buffer-hide-groups)))
   ;;
   (defun my-tabbar-backward-group ()
     "Go to selected tab in the previous available group."
@@ -774,17 +884,39 @@ check for the whole contents of FILE, otherwise check for the first
              ("C-<tab>"     .  tabbar-forward-tab)
              ("C-S-<tab>"   .  tabbar-backward-tab))
   ;;
-  ;;-- mode-line
-  ;;(add-to-list 'tabbar-header-line-format
-  ;;             '(:eval
-  ;;               (concat " [" (format "%s" (tabbar-current-tabset t)) "] ")))
+  ;;-- refrect modification status
+  (defun my-tabbar-on-saving-buffer ()
+    "Function to be run after the buffer is saved."
+    (tabbar-set-template tabbar-current-tabset nil)
+    (tabbar-display-update))
+  (defun my-tabbar-on-modifying-buffer ()
+    "Function to be run after the buffer is first changed."
+    (set-buffer-modified-p (buffer-modified-p))
+    (tabbar-set-template tabbar-current-tabset nil)
+    (tabbar-display-update))
+  (defun my-tabbar-after-modifying-buffer (&rest _)
+    "Function to be run after the buffer is changed.
+BEGIN, END and LENGTH are just standard arguments for after-changes-function
+hooked functions"
+    (set-buffer-modified-p (buffer-modified-p))
+    (tabbar-set-template tabbar-current-tabset nil)
+    (tabbar-display-update))
+  ;;
+  (add-hook 'after-save-hook #'my-tabbar-on-saving-buffer)
+  (add-hook 'first-change-hook #'my-tabbar-on-modifying-buffer)
+  (advice-add #'undo :after #'my-tabbar-after-modifying-buffer)
+  (advice-add #'undo-tree-undo-1 :after #'my-tabbar-after-modifying-buffer)
+  (advice-add #'undo-tree-redo-1 :after #'my-tabbar-after-modifying-buffer)
+  ;;
   ;;-- no images
   (setq tabbar-use-images nil)
+  ;;
   ;;-- buttons
   (setq tabbar-scroll-left-button  (quote (("") ""))
         tabbar-scroll-right-button (quote (("") ""))
-        ;; tabbar-buffer-home-button  (quote (("") ""))
+        tabbar-buffer-home-button  (quote (("") ""))
         )
+  ;;
   ;;-- grouping
   ;; (setq tabbar-buffer-groups-function nil) ;; ungrouping
   (setq my-tabbar-proc-buffer-list '("^\\*ansi-term"
@@ -795,7 +927,6 @@ check for the whole contents of FILE, otherwise check for the first
                                        "^\\*Python\\*"
                                        "^\\*Help\\*"
                                        "^\\*eww\\*"
-                                       "^\\*epc con"
                                        ))
   ;;
   (defun check-member-regex (target regex-list)
@@ -843,7 +974,7 @@ check for the whole contents of FILE, otherwise check for the first
                        ((char-equal ?* (aref (buffer-name b) 0)) nil)       ; not-show buffers starting from *
                        ((string-match-p "^magit:" (buffer-name b)) nil)
                        ((string-match-p "^magit-.*:" (buffer-name b)) nil)
-                       ((buffer-live-p b) b)))
+                        ((buffer-live-p b) b)))
                   (buffer-list))))
   (setq tabbar-buffer-list-function 'my-tabbar-buffer-list)
   ;;
@@ -852,45 +983,59 @@ check for the whole contents of FILE, otherwise check for the first
   (set-face-attribute
    'tabbar-default nil
    :family (face-attribute 'default :family)
-   :foreground (face-attribute 'mode-line-inactive :foreground)
-   :background (face-attribute 'mode-line-inactive :background)
-   :height 1.0)
+   :foreground "black"
+   :background "gray15"
+   :height 120)
   (set-face-attribute
    'tabbar-unselected nil
-   :background (face-attribute 'mode-line-inactive :background)
-   :foreground (face-attribute 'mode-line-inactive :foreground)
+   :family (face-attribute 'default :family)
+   :background "gray15"
+   :foreground "gray40"
+   :height 120
    :box nil)
   (set-face-attribute
    'tabbar-modified nil
-   :background (face-attribute 'mode-line-inactive :background)
+   :family (face-attribute 'default :family)
+   :background "gray15"
    :foreground "red"
+   :height 120
    :box nil)
   (set-face-attribute
    'tabbar-selected nil
-   :background (face-attribute 'mode-line :foreground)
-   :foreground (face-attribute 'mode-line-inactive :background)
-   :box '(:line-width 1.0))
+   :family (face-attribute 'default :family)
+   :background "gray30"
+   :foreground "white"
+;;   :weight 'bold
+   :height 120
+   :box nil)
   (set-face-attribute
    'tabbar-selected-modified nil
-   :background (face-attribute 'mode-line :foreground)
+   :family (face-attribute 'default :family)
+   :background "gray30"
    :foreground "yellow"
-   :box '(:line-width 1.0))
+   :height 120
+   :box nil)
   (set-face-attribute
    'tabbar-separator nil
-   :background (face-attribute 'mode-line-inactive :background)
-   :foreground (face-attribute 'mode-line-inactive :foreground)
+   :family (face-attribute 'default :family)
+   :background "gray15"
+   :foreground "gray15"
    :height 1.3)
   (set-face-attribute
    'tabbar-button nil
-   :background (face-attribute 'mode-line-inactive :background)
-   :foreground (face-attribute 'mode-line-inactive :foreground)
+   :family (face-attribute 'default :family)
+   :background "gray15"
+   :foreground "gray40"
+   :height 120
    :box nil)
   (set-face-attribute
    'tabbar-button-highlight nil
-   :background (face-attribute 'mode-line-inactive :background)
-   :foreground (face-attribute 'mode-line-inactive :foreground)
+   :family (face-attribute 'default :family)
+   :background "gray30"
+   :foreground "white"
+   :height 120
    :box nil)
-  (setq tabbar-separator '(1.0)))
+  (setq tabbar-separator '(0.0)))
 ;;-------------------------------
 ;; company-mode
 ;;-------------------------------
