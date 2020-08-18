@@ -815,23 +815,6 @@ check for the whole contents of FILE, otherwise check for the first
   :config
   (tabbar-mode 1)
   ;;
-  ;;-- label style
-  (defun tabbar-buffer-tab-label (tab)
-    "Return a label for TAB.
-That is, a string used to represent it on the tab bar."
-    (let ((label  (if tabbar--buffer-show-groups
-                      (format " [%s] " (tabbar-tab-tabset tab))
-                    (format "  %s  " (tabbar-tab-value tab)))))
-      ;; Unless the tab bar auto scrolls to keep the selected tab
-      ;; visible, shorten the tab label to keep as many tabs as possible
-      ;; in the visible area of the tab bar.
-      (if tabbar-auto-scroll-flag
-          label
-        (tabbar-shorten
-         label (max 1 (/ (window-width)
-                         (length (tabbar-view
-                                  (tabbar-current-tabset)))))))))
-  ;;
   ;;-- toggle groups
   (defvar my-tabbar-show-group-timer nil)
   (defun my-tabbar-buffer-hide-groups ()
@@ -885,15 +868,26 @@ That is, a string used to represent it on the tab bar."
              ("C-S-<tab>"   .  tabbar-backward-tab))
   ;;
   ;;-- refrect modification status
+  ;; Add a buffer modification state indicator in the tab label, and place a
+  ;; space around the label to make it looks less crowd.
+  (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
+    (setq ad-return-value
+          (if (and (buffer-modified-p (tabbar-tab-value tab))
+                   (buffer-file-name (tabbar-tab-value tab)))
+              (concat "  " (concat ad-return-value " * "))
+            (concat "  " (concat ad-return-value "  ")))))
+  ;;
   (defun my-tabbar-on-saving-buffer ()
     "Function to be run after the buffer is saved."
     (tabbar-set-template tabbar-current-tabset nil)
     (tabbar-display-update))
+  ;;
   (defun my-tabbar-on-modifying-buffer ()
     "Function to be run after the buffer is first changed."
     (set-buffer-modified-p (buffer-modified-p))
     (tabbar-set-template tabbar-current-tabset nil)
     (tabbar-display-update))
+  ;;
   (defun my-tabbar-after-modifying-buffer (&rest _)
     "Function to be run after the buffer is changed.
 BEGIN, END and LENGTH are just standard arguments for after-changes-function
