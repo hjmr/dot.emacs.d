@@ -837,7 +837,7 @@ check for the whole contents of FILE, otherwise check for the first
     (when my-tabbar-show-group-timer
       (cancel-timer my-tabbar-show-group-timer))
     (setq my-tabbar-show-group-timer
-          (run-with-timer 3 nil 'my-tabbar-buffer-hide-groups)))
+          (run-with-timer 5 nil 'my-tabbar-buffer-hide-groups)))
   ;;
   (defun my-tabbar-backward-group ()
     "Go to selected tab in the previous available group."
