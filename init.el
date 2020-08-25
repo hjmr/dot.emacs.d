@@ -133,9 +133,11 @@
 ;;-------------------------------
 ;; hide menus and tool bars
 ;;-------------------------------
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(set-scroll-bar-mode 'nil)
+;; it has been done in early-init.el in Emacs 27
+(when (< emacs-major-version 27)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (set-scroll-bar-mode 'nil))
 ;;-------------------------------
 ;; visible-bell
 ;;-------------------------------
@@ -189,7 +191,7 @@
   (add-to-list 'default-frame-alist '(height . 100)))
 (add-to-list 'default-frame-alist '(top .  0))
 (add-to-list 'default-frame-alist '(left   . 0))
-                                        ;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(alpha . (100 . 75)))
 (add-to-list 'default-frame-alist '(line-spacing . 2))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
