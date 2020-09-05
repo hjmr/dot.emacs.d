@@ -13,8 +13,9 @@
 (when (< 24 emacs-major-version)
 ;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
   (defun ambrevar/reset-gc-cons-threshold ()
-    (setq gc-cons-threshold (* 128 1024 1024)))
-  (setq gc-cons-threshold (* 64 1024 1024))
+    (setq gc-cons-threshold (* 16 1024 1024)) ;; set to standard size
+    (run-with-idle-timer 60.0 t #'garbage-collect))
+  (setq gc-cons-threshold (* 128 1024 1024))  ;; temporarily increase
   (add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
 
 ;;; Temporarily disable the file name handler.
