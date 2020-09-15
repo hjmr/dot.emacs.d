@@ -7,49 +7,39 @@
 ;;
 (defun my-dpi ()
   "Get the DPI of the physical monitor dominating FRAME."
-  (if (fboundp 'display-monitor-attributes-list)
-      (cl-flet ((pyth (w h)
-                      (sqrt (+ (* w w)
-                               (* h h))))
-                (mm2in (mm)
-                       (/ mm 25.4)))
-        (let* ((atts (frame-monitor-attributes))
-               (pix-w (cl-fourth (assoc 'geometry atts)))
-               (pix-h (cl-fifth (assoc 'geometry atts)))
-               (pix-d (pyth pix-w pix-h))
-               (mm-w (cl-second (assoc 'mm-size atts)))
-               (mm-h (cl-third (assoc 'mm-size atts)))
-               (mm-d (pyth mm-w mm-h)))
-          (/ pix-d (mm2in mm-d))))
-    96.0))
+  (cl-flet ((pyth (w h)
+                  (sqrt (+ (* w w)
+                           (* h h))))
+            (mm2in (mm)
+                   (/ mm 25.4)))
+    (let* ((pix-w (x-display-pixel-width))
+           (pix-h (x-display-pixel-height))
+           (pix-d (pyth pix-w pix-h))
+           (mm-w (x-display-mm-width))
+           (mm-h (x-display-mm-height))
+           (mm-d (pyth mm-w mm-h)))
+      (/ pix-d (mm2in mm-d)))))
 
-(defun my-preferred-ascii-font-size1 ()
-  "Calc preferred size of ascii fonts from screen DPI"
-  (let ( (dpi (my-dpi)) )
-    (cond
-     ((< 260 dpi) 30)
-     (t 14))))
-
-(defun my-preferred-ascii-font-size2 ()
+(defun my-preferred-ascii-font-size ()
   "Calc preferred size of ascii fonts from screen width"
-  (if (fboundp 'display-monitor-attributes-list)
-      (let* ((atts (frame-monitor-attributes))
-             (pix-w (cl-fourth (assoc 'geometry atts))))
-        (round (/ pix-w 120)))
-    (if (fboundp 'x-display-pixel-width)
-        (let* ((pix-w (x-display-pixel-width)))
-          (round (/ pix-w 120)))
-      14)))
+  (cl-flet ((pyth (w h)
+                  (sqrt (+ (* w w)
+                           (* h h)))))
+    (let* ((pix-w (x-display-pixel-width))
+           (pix-h (x-display-pixel-height))
+           (pix-d (pyth pix-w pix-h))
+           (dpi (my-dpi)))
+      (ceiling (/ pix-d dpi)))))
 
-;; (defvar my-ascii-font-size (my-preferred-ascii-font-size))
+(defvar my-ascii-font-size (my-preferred-ascii-font-size))
 ;;
-(defvar my-ascii-font-size
-  (cond
-    (gui-mac-p  14)
-    (gui-ns-p   14)
-    (gui-win-p  30)
-    (gui-x-p    15)
-    (t          14)))
+;; (defvar my-ascii-font-size
+;;   (cond
+;;     (gui-mac-p  14)
+;;     (gui-ns-p   14)
+;;     (gui-win-p  30)
+;;     (gui-x-p    15)
+;;     (t          14)))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
 (defun my-def-font (name asciifont asciifont-size asciifont-weight jpfont jpfont-size jpfont-weight anti-alias)
