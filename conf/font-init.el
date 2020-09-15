@@ -27,8 +27,10 @@
     (let* ((dpi (my-dpi)))
       (round (* (mm2pt font-mm) (/ dpi 72))))))
 
-(defvar my-preferred-ascii-font-mm 2.5)
+(defvar my-preferred-ascii-font-mm 2.3)
 (defvar my-ascii-font-size (my-calc-font-pt my-preferred-ascii-font-mm))
+(when gui-win-p
+  (setq my-ascii-font-size (* my-ascii-font-size 2)))
 ;;
 ;; (defvar my-ascii-font-size
 ;;   (cond
