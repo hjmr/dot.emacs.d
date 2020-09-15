@@ -30,8 +30,8 @@
 ;;-------------------------------
 ;;  early-init in emacs < 27
 ;;-------------------------------
-(cond ((version< emacs-version "26.1")
-       (warn "M-EMACS requires Emacs 26.1 and above!"))
+(cond ;; ((version< emacs-version "26.1")
+      ;;  (warn "M-EMACS requires Emacs 26.1 and above!"))
       ((let* ((early-init-f (expand-file-name "early-init.el" user-emacs-directory))
               (early-init-do-not-edit-d (expand-file-name "early-init-do-not-edit/" user-emacs-directory))
               (early-init-do-not-edit-f (expand-file-name "early-init.el" early-init-do-not-edit-d)))
@@ -881,9 +881,10 @@ hooked functions"
   ;;
   (add-hook 'after-save-hook #'my-tabbar-on-saving-buffer)
   (add-hook 'first-change-hook #'my-tabbar-on-modifying-buffer)
-  (advice-add #'undo :after #'my-tabbar-after-modifying-buffer)
-  (advice-add #'undo-tree-undo-1 :after #'my-tabbar-after-modifying-buffer)
-  (advice-add #'undo-tree-redo-1 :after #'my-tabbar-after-modifying-buffer)
+  (when (>= emacs-major-version 26)
+    (advice-add #'undo :after #'my-tabbar-after-modifying-buffer)
+    (advice-add #'undo-tree-undo-1 :after #'my-tabbar-after-modifying-buffer)
+    (advice-add #'undo-tree-redo-1 :after #'my-tabbar-after-modifying-buffer))
   ;;
   ;;-- no images
   (setq tabbar-use-images nil)
