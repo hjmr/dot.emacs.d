@@ -221,7 +221,9 @@
 ;;(setq show-paren-style 'parensis)
 ;;(setq show-paren-style 'mixed)
 (setq show-paren-style 'expression)
-(set-face-attribute 'show-paren-match nil :background "midnightblue" :weight 'normal :extend t)
+(set-face-attribute 'show-paren-match nil :background "midnightblue" :weight 'normal)
+(if (>= emacs-major-version 27)
+    (set-face-attribute 'show-paren-match nil :extend t))
 ;;-------------------------------
 ;; UCS normalize
 ;;-------------------------------
@@ -269,15 +271,17 @@
       (global-hl-line-highlight)))
   (setq global-hl-line-timer
         (run-with-idle-timer 0.1 t 'global-hl-line-timer-function))
-  (defface my-hl-line-face
-    '((((class color) (background dark))  ; カラーかつ, 背景が dark ならば,
-       (:background "Gray15" :extend t t))          ; 背景を黒に.
-      (((class color) (background light)) ; カラーかつ, 背景が light ならば,
-       (:background "ForestGreen" :extend t t))     ; 背景を ForestGreen に.
-      (t (:bold t)))
+  (defface my-hl-line
+    '((((class color) (background dark))
+       :background "Gray15")
+      (((class color) (background light))
+       :background "ForestGreen")
+      (t :weight bold))
     "hl-line's my face")
   ;;(setq hl-line-face 'underline)
-  (setq hl-line-face 'my-hl-line-face))
+  (if (>= emacs-major-version 27)
+      (set-face-attribute 'my-hl-line nil :extend t))
+  (setq hl-line-face 'my-hl-line))
 ;;-------------------------------
 ;; highlight indentation
 ;;-------------------------------
@@ -677,8 +681,9 @@ check for the whole contents of FILE, otherwise check for the first
   ;;(add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
   ;;(add-to-list 'hiwin-ignore-buffer-names '".pdf")
   :config
-  (set-face-attribute 'hiwin-face nil
-                      :foreground nil :background "#202530" :extend t)
+  (set-face-attribute 'hiwin-face nil :foreground nil :background "#202530")
+  (if (>= emacs-major-version 27)
+      (set-face-attribute 'hiwin-face nil :extend t))
   (hiwin-activate))
 ;;-------------------------------
 ;; Git Client
