@@ -36,7 +36,10 @@
       (let* ((atts (frame-monitor-attributes))
              (pix-w (cl-fourth (assoc 'geometry atts))))
         (round (/ pix-w 120)))
-    14))
+    (if (fboundp 'x-display-pixel-width)
+        (let* ((pix-w (x-display-pixel-width)))
+          (round (/ pix-w 120)))
+      14)))
 
 ;; (defvar my-ascii-font-size (my-preferred-ascii-font-size))
 ;;
