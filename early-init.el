@@ -27,6 +27,22 @@
   (message "%s" (get-char-property (point) 'face)))
 
 ;;-------------------------------
+;; set system check variables
+;;-------------------------------
+(setq gui-mac-or-ns-p (memq window-system '(mac ns))
+      gui-mac-p       (eq window-system 'mac)
+      gui-ns-p        (eq window-system 'ns)
+      gui-win-p       (eq window-system 'w32)
+      gui-x-p         (eq window-system 'x)
+      sys-mac-p       (eq system-type 'darwin)
+      sys-win-p       (eq system-type 'window-nt)
+      sys-linux-p     (eq system-type 'gnu/linux)
+      sys-centos-p    (string-match "centos" (emacs-version))
+      sys-ubuntu-p    (string-match "Debian" (emacs-version))
+      sys-istc-p      (string-match "\\.center\\.kobe-u\\.ac\\.jp$" (system-name))
+      )
+
+;;-------------------------------
 ;; hide menus and tool bars
 ;;-------------------------------
 (exec-if-bound (menu-bar-mode -1))
