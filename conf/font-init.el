@@ -20,18 +20,15 @@
            (mm-d (pyth mm-w mm-h)))
       (/ pix-d (mm2in mm-d)))))
 
-(defun my-preferred-ascii-font-size ()
-  "Calc preferred size of ascii fonts from screen width"
-  (cl-flet ((pyth (w h)
-                  (sqrt (+ (* w w)
-                           (* h h)))))
-    (let* ((pix-w (x-display-pixel-width))
-           (pix-h (x-display-pixel-height))
-           (pix-d (pyth pix-w pix-h))
-           (dpi (my-dpi)))
-      (ceiling (/ pix-d dpi)))))
+(defun my-calc-font-pt (font-mm)
+  "Calc preferred size of ascii fonts from DPI"
+  (cl-flet ((mm2pt (mm)
+                   (/ (* mm 72) 25.4)))
+    (let* ((dpi (my-dpi)))
+      (round (* (mm2pt font-mm) (/ dpi 72))))))
 
-(defvar my-ascii-font-size (my-preferred-ascii-font-size))
+(defvar my-preferred-ascii-font-mm 2.5)
+(defvar my-ascii-font-size (my-calc-font-pt my-preferred-ascii-font-mm))
 ;;
 ;; (defvar my-ascii-font-size
 ;;   (cond
