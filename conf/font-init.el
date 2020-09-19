@@ -41,13 +41,7 @@
 ;; (defvar my-ascii-font-size (my-preferred-ascii-font-size))
 ;;
 (defvar my-ascii-font-size
-  (cond
-    (gui-mac-p  14)
-    (gui-ns-p   14)
-    (gui-win-p  30)
-    (gui-x-p
-     (if (> (x-display-pixel-width) 2000) 30 15))
-    (t          14)))
+  (if (> (x-display-pixel-width) 2000) 28 14))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
 (defun my-def-font (name asciifont asciifont-size asciifont-weight jpfont jpfont-size jpfont-weight anti-alias)
