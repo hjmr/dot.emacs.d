@@ -45,7 +45,7 @@
     (gui-mac-p  14)
     (gui-ns-p   14)
     (gui-win-p  30)
-    (gui-x-p    15)
+    (gui-x-p    30)
     (t          14)))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
@@ -93,7 +93,7 @@
 ;;-----------------------------
 ;;  For Linux
 ;;-----------------------------
-(my-def-font "taakoexgoth" "Ubuntu Mono" my-ascii-font-size 'light "TakaoExゴシック" my-jp-font-size 'medium nil)
+(my-def-font "takaoexgoth" "Ubuntu Mono" my-ascii-font-size 'light "TakaoExゴシック" my-jp-font-size 'medium nil)
 (my-def-font "notosans" "DejaVu Sans Mono" my-ascii-font-size 'light "Noto Sans CJK JP" my-jp-font-size 'light nil)
 (my-def-font "vlgoth" "DejaVu Sans Mono" my-ascii-font-size 'light "VL Gothic" my-jp-font-size 'light nil)
 ;;
@@ -114,17 +114,20 @@
 ;; Default Font Setup
 ;;===============================================================================================
 ;;
-(when gui-mac-or-ns-p
+(cond
+ (gui-mac-or-ns-p
   (my-use-font "fontset-udkyokasho" "fontset-hirakaku"))
-(when gui-win-p
+ (gui-win-p
   (my-use-font "fontset-udkyokashowin" "fontset-meiryo"))
-(when gui-x-p
-  (when sys-centos-p
-    ;; (set-default-font "fontset-vlgoth")
-    (add-to-list 'default-frame-alist '(font . "fontset-vlgoth")))
-  (when sys-ubuntu-p
-    ;; (set-default-font "fontset-notosans")
-    (add-to-list 'default-frame-alist '(font . "fontset-notosans"))))
+ (gui-x-p
+  (let ((ffl (font-family-list)))
+    (cond
+     ((member "Noto Sans CJK JP" ffl)
+      (add-to-list 'default-frame-alist '(font . "fontset-notosans")))
+     ((member "TakaoExゴシック" ffl)
+      (add-to-list 'default-frame-alist '(font . "fontset-takaoexgoth")))
+     ((member "VL Gothic" ffl)
+      (add-to-list 'default-frame-alist '(font . "fontset-vlgoth")))))))
 ;;
 ;;===============================================================================================
 ;; Fonts for Linum-mode
