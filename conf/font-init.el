@@ -46,7 +46,7 @@
     (gui-ns-p   14)
     (gui-win-p  30)
     (gui-x-p
-     (if (> x-display-pixel-width 2000) 30 15))
+     (if (> (x-display-pixel-width) 2000) 30 15))
     (t          14)))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
