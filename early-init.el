@@ -38,7 +38,6 @@
       sys-win-p       (eq system-type 'window-nt)
       sys-linux-p     (eq system-type 'gnu/linux)
       sys-centos-p    (string-match "centos" (emacs-version))
-      sys-ubuntu-p    (string-match "x86_64-pc-linux-gnu" (emacs-version))
       sys-istc-p      (string-match "\\.center\\.kobe-u\\.ac\\.jp$" (system-name))
       )
 
