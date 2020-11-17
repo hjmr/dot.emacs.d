@@ -5,6 +5,12 @@
 ;;
 ;;===============================================================================================
 ;;
+(defun my-display-pixel-width ()
+  "Retrieve primary display width in pixels."
+  (if (fboundp 'display-monitor-attributes-list)
+      (cl-fourth (assoc 'geometry (frame-monitor-attributes)))
+    (x-display-pixel-width)))
+
 ;; (defun my-dpi ()
 ;;   "Get the DPI of the physical monitor dominating FRAME."
 ;;   (if (fboundp 'display-monitor-attributes-list)
@@ -30,18 +36,10 @@
 ;;      ((< 260 dpi) 30)
 ;;      (t 14))))
 ;;
-;; (defun my-preferred-ascii-font-size ()
-;;   "Calc preferred size of ascii fonts from screen width"
-;;   (if (fboundp 'display-monitor-attributes-list)
-;;       (let* ((atts (frame-monitor-attributes))
-;;              (pix-w (cl-fourth (assoc 'geometry atts))))
-;;         (round (/ pix-w 120)))
-;;     14))
-;;
 ;; (defvar my-ascii-font-size (my-preferred-ascii-font-size))
 ;;
 (defvar my-ascii-font-size
-  (if (> (x-display-pixel-width) 2000) 28 14))
+  (if (> (my-display-pixel-width) 2000) 28 14))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
 (defun my-def-font (name asciifont asciifont-size asciifont-weight jpfont jpfont-size jpfont-weight anti-alias)

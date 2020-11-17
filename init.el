@@ -1499,7 +1499,8 @@ hooked functions"
   (global-unset-key (kbd "<swipe-right>")))
 
 (when gui-mac-or-ns-p
-  (global-set-key (kbd "C-x C-c") 'my-hide-emacs))
+  (global-set-key (kbd "C-x C-c") 'my-hide-emacs)
+  (define-key global-map [?¥] [?\\]))
 
 (global-set-key                       (kbd "C-x n")     'next-error)
 (global-set-key                       (kbd "C-z")       'scroll-down)
