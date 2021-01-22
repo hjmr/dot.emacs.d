@@ -8,7 +8,7 @@
 (defun my-display-pixel-width ()
   "Retrieve primary display width in pixels."
   (if (fboundp 'display-monitor-attributes-list)
-      (cl-fourth (assoc 'geometry (frame-monitor-attributes)))
+      (cl-fourth (assoc 'geometry (car (display-monitor-attributes-list))))
     (x-display-pixel-width)))
 
 ;; (defun my-dpi ()
