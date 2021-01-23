@@ -89,8 +89,8 @@
   :config
   (paradox-enable)
   (load-library "paradox-conf")
-  (setq paradox-display-download-count t)
   (setq paradox-execute-asynchronously t)
+  (setq paradox-display-download-count t)
   (setq paradox-column-width-package 24)  ;; default: 18
   (setq paradox-column-width-version 16)  ;; default:  9
   )
@@ -1407,14 +1407,15 @@ hooked functions"
 ;;   :init
 ;;   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
 
-;; (use-package poetry
-;;   :config
-;;   (poetry-tracking-mode))
-
-(use-package direnv
+(use-package poetry
+  :ensure t
   :config
-  (setq direnv-show-paths-in-summary nil)
-  (direnv-mode))
+  (poetry-tracking-mode))
+
+;; (use-package direnv
+;;   :config
+;;   (setq direnv-show-paths-in-summary nil)
+;;   (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
@@ -1534,15 +1535,3 @@ hooked functions"
 ;; END OF FILE
 ;;-------------------------------
 (setq debug-on-error nil)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(paradox-automatically-star t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
