@@ -1181,7 +1181,7 @@ hooked functions"
   :config
   (global-flycheck-mode)
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-  (setq flycheck-idle-change-delay 5))
+  (setq flycheck-idle-change-delay 3))
 
 (use-package flycheck-posframe
   :after (flycheck)
