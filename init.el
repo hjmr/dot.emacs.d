@@ -83,17 +83,17 @@
 ;;-------------------------------
 ;; Paradox
 ;;-------------------------------
-(use-package paradox
-  :delight
-  :commands (paradox-list-packages)
-  :config
-  (paradox-enable)
-  (load-library "paradox-conf")
-  (setq paradox-execute-asynchronously t)
-  (setq paradox-display-download-count t)
-  (setq paradox-column-width-package 24)  ;; default: 18
-  (setq paradox-column-width-version 16)  ;; default:  9
-  )
+;; (use-package paradox
+;;   :delight
+;;   :commands (paradox-list-packages)
+;;   :config
+;;   (paradox-enable)
+;;   (load-library "paradox-conf")
+;;   (setq paradox-execute-asynchronously t)
+;;   (setq paradox-display-download-count t)
+;;   (setq paradox-column-width-package 24)  ;; default: 18
+;;   (setq paradox-column-width-version 16)  ;; default:  9
+;;   )
 ;;-------------------------------
 ;; desktop-save
 ;;-------------------------------
@@ -1310,6 +1310,20 @@ hooked functions"
                (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)))
   :config
   (setq indent-tabs-mode t))
+
+;;-------------------------------
+;; LSP: Language Server Protocol
+;;-------------------------------
+;; (use-package lsp-mode
+;;   :init
+;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+;;   (setq lsp-keymap-prefix "C-c l")
+;;   :hook ((python-mode . lsp))
+;;   :commands lsp)
+;; (use-package lsp-ui :commands lsp-ui-mode)
+;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
 ;;-------------------------------
 ;; C/C++/ObjC common settings
 ;;-------------------------------
@@ -1341,8 +1355,6 @@ hooked functions"
 ;;-------------------------------
 ;; Python mode settings
 ;;-------------------------------
-;; (require 'python-mode) ;; to use python-mode.el instead of default python.el
-;; (setq python-indent-guess-indent-offset nil)
 ;; jedi
 (use-package jedi-core
   :config
@@ -1350,14 +1362,6 @@ hooked functions"
   (setq jedi:use-shortcuts t)
   (add-to-list 'company-backends 'company-jedi)
   (add-hook 'python-mode-hook 'jedi:setup))
-;;
-;; python-mode-hook
-;; (use-package python-mode
-;;   :config
-;;   (define-key python-mode-map (kbd "C-h") 'py-electric-backspace)
-;;   (setq py-indent-offset 4)
-;;   (setq py-split-window-on-execute t)
-;;   (setq py-split-windows-on-execute-function 'split-window-sensibly))
 ;;
 (use-package python
   :commands python-mode
@@ -1376,7 +1380,7 @@ hooked functions"
   :config
   (setq python-indent        4)
   (setq python-indent-offset 4)
-  (setq python-shell-interpreter "python3")
+  (setq python-shell-interpreter "python")
   (setq python-shell-interpreter-args "")
   (setq python-shell-completion-native-enable nil)
   (setq flycheck-python-pylint-executable "pylint"))
