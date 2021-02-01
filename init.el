@@ -1371,7 +1371,7 @@ hooked functions"
             '(lambda ()
                (fic-mode)
                (hs-minor-mode 1)
-               (bind-key "C-¥" 'hs-toggle-hiding python-mode-map)
+               (bind-key "C-\\" 'hs-toggle-hiding python-mode-map)
                (use-package py-autopep8
                  :config
                  (py-autopep8-enable-on-save)
