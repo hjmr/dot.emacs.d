@@ -78,8 +78,8 @@
   :config
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-envs '("TEXINPUTS")))
-(add-to-list 'load-path (concat user-emacs-directory "conf"))
-(add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
+(add-to-list 'load-path (expand-file-name "conf/" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "site-lisp/" user-emacs-directory))
 ;;-------------------------------
 ;; Paradox
 ;;-------------------------------
@@ -1477,14 +1477,18 @@ hooked functions"
   :config
   (company-auctex-init))
 
-(use-package latex-preview-pane
-  :commands (latex-preview-pane-mode)
-  :delight " LtxPP"
-  :init
-  (setq latex-preview-pane-multifile-mode 'auctex)
-  (setq pdf-latex-command "latexmk")
-  (setq preview-orientation 'right)
-  )
+(cond
+ ((let* ((latex-pp-d (expand-file-name "site-lisp/latex-preview-pane/" user-emacs-directory))
+         (latex-pp-f (expand-file-name "latex-preview-pane.el" latex-pp-d)))
+    (file-exists-p latex-pp-f)
+    (add-to-list 'load-path (expand-file-name "site-lisp/latex-preview-pane/" user-emacs-directory))
+    (use-package latex-preview-pane
+      :commands (latex-preview-pane-mode)
+      :delight " LtxPP"
+      :init
+      (setq latex-preview-pane-multifile-mode 'auctex)
+      (setq pdf-latex-command "latexmk")
+      (setq preview-orientation 'right)))))
 ;;
 ;;=============================================================================================
 ;;  key configuration
