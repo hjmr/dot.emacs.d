@@ -1305,6 +1305,7 @@ hooked functions"
          ("\\.markdown\\'"  . markdown-mode)
          ("\\.md\\'"        . gfm-mode))
   :init
+  (setq markdown-command "multimarkdown")
   (add-hook 'markdown-mode-hook
             '(lambda ()
                (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)))
