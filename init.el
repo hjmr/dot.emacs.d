@@ -163,6 +163,18 @@
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
 ;;-------------------------------
+;; side windows
+;;-------------------------------
+;; (use-package emacs
+;;   :custom
+;;   (display-buffer-alist
+;;    '(("\\(\\*e?shell\\*\\|vterm\\)"
+;;       (display-buffer-in-side-window)
+;;       (Window-height . 0.30)
+;;       (side . bottom)
+;;       (slot . -1))))
+;;   )
+;;-------------------------------
 ;; font settings
 ;;-------------------------------
 (when window-system
@@ -678,8 +690,6 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 (use-package hiwin
   :delight
-  ;;(add-to-list 'hiwin-ignore-buffer-names '"*MINIMAP")
-  ;;(add-to-list 'hiwin-ignore-buffer-names '".pdf")
   :config
   (set-face-attribute 'hiwin-face nil :foreground nil :background "#202530")
   (if (>= emacs-major-version 27)
@@ -1246,7 +1256,7 @@ hooked functions"
 ;;-------------------------------
 (use-package vterm
   :if sys-mac-p
-  :delight "VT"
+;;  :delight "VT"
   :bind (:map vterm-mode-map
               ("<f9>" . shell-pop))
   )
@@ -1310,7 +1320,8 @@ hooked functions"
             '(lambda ()
                (set (make-local-variable 'delete-trailing-whitespece-before-save) nil)))
   :config
-  (setq indent-tabs-mode t))
+  ;;(setq indent-tabs-mode t)
+)
 
 ;;-------------------------------
 ;; LSP: Language Server Protocol
