@@ -1256,7 +1256,7 @@ hooked functions"
 ;;-------------------------------
 (use-package vterm
   :if sys-mac-p
-;;  :delight "VT"
+  :delight "VT"
   :bind (:map vterm-mode-map
               ("<f9>" . shell-pop))
   )
