@@ -147,10 +147,10 @@
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
-(set-face-foreground 'font-lock-comment-delimiter-face "gray60")
-(set-face-foreground 'font-lock-comment-face           "gray60")
-(add-to-list 'default-frame-alist '(foreground-color . "white"))
-(add-to-list 'default-frame-alist '(background-color . "black"))
+;; (set-face-foreground 'font-lock-comment-delimiter-face "gray60")
+;; (set-face-foreground 'font-lock-comment-face           "gray60")
+;; (add-to-list 'default-frame-alist '(foreground-color . "white"))
+;; (add-to-list 'default-frame-alist '(background-color . "black"))
 (add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
@@ -162,6 +162,22 @@
 (add-to-list 'default-frame-alist '(line-spacing . 2))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
+;;--------------------------------
+;; theme
+;;--------------------------------
+(use-package modus-themes
+  :ensure
+;;  :bind ("<f5>" . modus-themes-toggle)
+  :init
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-slanted-constructs nil
+        modus-themes-bold-constructs nil)
+
+  ;; Load the theme files before enabling a theme
+  (modus-themes-load-themes)
+  :config
+  ;; Load the theme of your choice:
+  (modus-themes-load-vivendi))
 ;;-------------------------------
 ;; side windows
 ;;-------------------------------
