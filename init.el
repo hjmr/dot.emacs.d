@@ -165,15 +165,21 @@
 ;;-------------------------------
 ;; side windows
 ;;-------------------------------
-;; (use-package emacs
-;;   :custom
-;;   (display-buffer-alist
-;;    '(("\\(\\*e?shell\\*\\|vterm\\)"
-;;       (display-buffer-in-side-window)
-;;       (Window-height . 0.30)
-;;       (side . bottom)
-;;       (slot . -1))))
-;;   )
+(use-package emacs
+;;  :disabled t
+  :if (version<= "26.1" emacs-version)
+  :custom
+  (display-buffer-alist
+   '(("\\(\\*e?shell\\*\\|vterm\\)"
+      (display-buffer-in-side-window)
+      (Window-height . 0.30)
+      (side . bottom)
+      (slot . -1)
+;;      (window-parameters . ((no-delete-other-windows . t)))
+      )
+     )
+   )
+  )
 ;;-------------------------------
 ;; font settings
 ;;-------------------------------
@@ -805,6 +811,7 @@ check for the whole contents of FILE, otherwise check for the first
 ;; Tabbar
 ;;-------------------------------
 (use-package tabbar
+;;  :disabled t
   :config
   (tabbar-mode 1)
   ;;
@@ -1257,22 +1264,15 @@ hooked functions"
 (use-package vterm
   :if sys-mac-p
   :delight "VT"
-  :bind (:map vterm-mode-map
-              ("<f9>" . shell-pop))
   )
-;;-------------------------------
-;; shell-pop
-;;-------------------------------
-(use-package shell-pop
-  :bind (("<f9>" . shell-pop))
-  :init
-  ;; (setq shell-pop-shell-type '("eshell" "*eshell*" (lambda () (eshell))))
-  (setq shell-pop-shell-type '("vterm" "*vterm*" (lambda nil (vterm))))
-  ;; (setq shell-pop-shell-type '("multi-term" "*multi-term*" (lambda nil (multi-term))))
-  (setq shell-pop-window-height 30)           ;; 30% の高さに分割する
-  (setq shell-pop-window-position "bottom")   ;; 下に開く
-  ;; (setq shell-pop-full-span t)                ;; 横幅いっぱいに開く
+
+(use-package vterm-toggle
+  :after (vterm)
+  :bind (("<f9>" . vterm-toggle)
+         (:map vterm-mode-map
+               ("<f9>" . vterm-toggle)))
   )
+
 ;;-------------------------------
 ;; eww-mode
 ;;-------------------------------
