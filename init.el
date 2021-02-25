@@ -1002,7 +1002,8 @@ hooked functions"
    :foreground "white"
 ;;   :weight 'bold
    :height 120
-   :box nil)
+   :box nil
+   :overline "LightSkyBlue")
   (set-face-attribute
    'tabbar-selected-modified nil
    :family (face-attribute 'default :family)
@@ -1170,20 +1171,6 @@ hooked functions"
   :config
   (counsel-projectile-mode t))
 
-;;-------------------------------
-;; migemo
-;;-------------------------------
-;; (use-package migemo
-;;   :if (executable-find "cmigemo")
-;;   :config
-;;   (setq migemo-command "cmigemo")
-;;   (when sys-mac-p
-;;     (setq migemo-dictionary "/opt/brew/share/migemo/utf-8/migemo-dict"))
-;;   (setq migemo-options '("-q" "--emacs" "-i" "\a"))
-;;   (setq migemo-user-dictionary nil)
-;;   (setq migemo-regex-dictionary nil)
-;;   (setq migemo-coding-system 'utf-8-unix)
-;;   (migemo-init))
 ;;-------------------------------
 ;; multi-cursor
 ;;-------------------------------
