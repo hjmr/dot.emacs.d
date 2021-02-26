@@ -717,6 +717,19 @@ check for the whole contents of FILE, otherwise check for the first
   (diff-hl-margin-mode 1)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 ;;-------------------------------
+;; Mini Map
+;;-------------------------------
+(use-package minimap
+  :bind ("<f5>" . minimap-mode)
+  :config
+  (set-face-attribute 'minimap-font-face nil
+                      :fontset (face-attribute 'default :fontset)
+                      :height 40)
+  (set-face-attribute 'minimap-active-region-background nil
+                      :background "#555555555555")
+  (setq minimap-window-location 'right)
+  )
+;;-------------------------------
 ;; Centaur Tab
 ;;-------------------------------
 (use-package centaur-tabs
