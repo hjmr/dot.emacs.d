@@ -7,14 +7,18 @@
 (setq inhibit-startup-message t)
 (setq debug-on-error t)
 (setq garbage-collection-messages t)
+(setq load-prefer-newer t)
 ;;-------------------------------
 ;; speeding up startup process
 ;;-------------------------------
 (when (< 24 emacs-major-version)
 ;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
   (defun ambrevar/reset-gc-cons-threshold ()
-    (setq gc-cons-threshold (* 16 1024 1024)) ;; set to standard size
+    (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))
     (run-with-idle-timer 60.0 t #'garbage-collect))
+;;  (defun ambrevar/reset-gc-cons-threshold ()
+;;    (setq gc-cons-threshold (* 16 1024 1024)) ;; set to standard size
+;;    (run-with-idle-timer 60.0 t #'garbage-collect))
   (setq gc-cons-threshold (* 128 1024 1024))  ;; temporarily increase
   (add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
 
@@ -170,7 +174,7 @@
   :if (version<= "26.1" emacs-version)
   :custom
   (display-buffer-alist
-   '(("\\(\\*e?shell\\*\\|vterm\\)"
+   '(("\\(\\*e?shell\\*\\|\\*vterm\\)"
       (display-buffer-in-side-window)
       (Window-height . 0.30)
       (side . bottom)
@@ -284,9 +288,10 @@
 (use-package hl-line
   :config
   (defun global-hl-line-timer-function ()
-    (global-hl-line-unhighlight-all)
-    (let ((global-hl-line-mode t))
-      (global-hl-line-highlight)))
+    (when (not (memq major-mode hl-line-disable-modes))
+               (global-hl-line-unhighlight-all)
+               (let ((global-hl-line-mode t))
+                 (global-hl-line-highlight))))
   (setq global-hl-line-timer
         (run-with-idle-timer 0.1 t 'global-hl-line-timer-function))
   (defface my-hl-line
@@ -299,6 +304,7 @@
   ;;(setq hl-line-face 'underline)
   (if (>= emacs-major-version 27)
       (set-face-attribute 'my-hl-line nil :extend t))
+  (setq hl-line-disable-modes '(vterm-mode))
   (setq hl-line-face 'my-hl-line))
 ;;-------------------------------
 ;; highlight indentation
@@ -1196,7 +1202,7 @@ hooked functions"
 ;;-------------------------------
 (use-package flycheck
   :config
-  (global-flycheck-mode)
+  (global-flycheck-mode t)
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   (setq flycheck-idle-change-delay 3))
 
@@ -1215,6 +1221,10 @@ hooked functions"
   :config
   (flycheck-vale-setup)
   (flycheck-add-mode 'vale 'LaTeX-mode))
+
+(use-package flycheck-grammarly
+  :after (flycheck))
+
 ;;-------------------------------
 ;; spell checker (aspell)
 ;;-------------------------------
@@ -1271,6 +1281,8 @@ hooked functions"
   :bind (("<f9>" . vterm-toggle)
          (:map vterm-mode-map
                ("<f9>" . vterm-toggle)))
+  :config
+  (setq vterm-toggle-reset-window-configration-after-exit nil)
   )
 
 ;;-------------------------------
@@ -1397,25 +1409,25 @@ hooked functions"
   (setq python-shell-completion-native-enable nil)
   (setq flycheck-python-pylint-executable "pylint"))
 
-(use-package pyenv-mode
-  :after (python)
-  :config
-  (setq pyenv-mode-map nil)
-  (pyenv-mode)
-  ;; pyenv-mode-auto
-  (defun pyenv-mode-auto-hook (prev cur)
-    "Automatically set pyenv version when changing buffer from PREV to CUR."
-    (let ((file-path '(buffer-file-name (cur))))
-      (unless (f-traverse-upwards
-               (lambda (file-path)
-                 (let ((pyenv-version-path (f-expand ".python-version" file-path)))
-                   (if (f-exists? pyenv-version-path)
-                       (progn
-                         (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
-                         t)))))
-        (pyenv-mode-unset)
-        )))
-  (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
+;; (use-package pyenv-mode
+;;   :after (python)
+;;   :config
+;;   (setq pyenv-mode-map nil)
+;;   (pyenv-mode)
+;;   ;; pyenv-mode-auto
+;;   (defun pyenv-mode-auto-hook (prev cur)
+;;     "Automatically set pyenv version when changing buffer from PREV to CUR."
+;;     (let ((file-path '(buffer-file-name (cur))))
+;;       (unless (f-traverse-upwards
+;;                (lambda (file-path)
+;;                  (let ((pyenv-version-path (f-expand ".python-version" file-path)))
+;;                    (if (f-exists? pyenv-version-path)
+;;                        (progn
+;;                          (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
+;;                          t)))))
+;;         (pyenv-mode-unset)
+;;         )))
+;;   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
 
 ;; (use-package pipenv
 ;;   :hook (python-mode . pipenv-mode)
@@ -1423,15 +1435,15 @@ hooked functions"
 ;;   :init
 ;;   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
 
-(use-package poetry
-  :ensure t
-  :config
-  (poetry-tracking-mode))
-
-;; (use-package direnv
+;; (use-package poetry
+;;   :ensure t
 ;;   :config
-;;   (setq direnv-show-paths-in-summary nil)
-;;   (direnv-mode))
+;;   (poetry-tracking-mode))
+
+(use-package direnv
+  :config
+  (setq direnv-show-paths-in-summary nil)
+  (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
@@ -1447,8 +1459,17 @@ hooked functions"
 ;; processing-mode settings
 ;;-------------------------------
 (use-package processing-mode
-  :mode (("\\.pde\\'"      . processing-mode)
-         ("\\.pjs\\'"      . processing-mode)))
+  :mode (("\\.pde$"      . processing-mode)
+         ("\\.pjs$"      . processing-mode))
+  :config
+  (setq processing-location "/usr/local/bin/processing-java")
+  (setq processing-application-dir "/Application/Processing.app")
+  (setq processing-sketchbook-dir "~/Documents/Programs/Processing3")
+  (setq processing-output-dir "/tmp")
+  (add-hook 'processing-mode-hook
+            '(lambda ()
+               (setq-local c-basic-offset 4)))
+  )
 ;;-------------------------------
 ;; tex-mode settings
 ;;-------------------------------
