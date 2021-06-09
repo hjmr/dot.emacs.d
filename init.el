@@ -1175,7 +1175,7 @@ hooked functions"
   (setq counsel-rg-base-command "rg --with-filename --no-heading --line-number --color never %s")
   (bind-keys ("M-x"      .   counsel-M-x)
              ("C-x C-f"  .   counsel-find-file)
-             ("C-c n"    .   counsel-rg)
+             ("C-c k"    .   counsel-rg)
              ))
 
 (use-package swiper
@@ -1409,41 +1409,35 @@ hooked functions"
   (setq python-shell-completion-native-enable nil)
   (setq flycheck-python-pylint-executable "pylint"))
 
-;; (use-package pyenv-mode
-;;   :after (python)
-;;   :config
-;;   (setq pyenv-mode-map nil)
-;;   (pyenv-mode)
-;;   ;; pyenv-mode-auto
-;;   (defun pyenv-mode-auto-hook (prev cur)
-;;     "Automatically set pyenv version when changing buffer from PREV to CUR."
-;;     (let ((file-path '(buffer-file-name (cur))))
-;;       (unless (f-traverse-upwards
-;;                (lambda (file-path)
-;;                  (let ((pyenv-version-path (f-expand ".python-version" file-path)))
-;;                    (if (f-exists? pyenv-version-path)
-;;                        (progn
-;;                          (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
-;;                          t)))))
-;;         (pyenv-mode-unset)
-;;         )))
-;;   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
-
-;; (use-package pipenv
-;;   :hook (python-mode . pipenv-mode)
-;;   :delight " Penv"
-;;   :init
-;;   (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended))
-
-;; (use-package poetry
-;;   :ensure t
-;;   :config
-;;   (poetry-tracking-mode))
-
-(use-package direnv
+(use-package pyenv-mode
+  :after (python)
   :config
-  (setq direnv-show-paths-in-summary nil)
-  (direnv-mode))
+  (setq pyenv-mode-map nil)
+  (pyenv-mode)
+  ;; pyenv-mode-auto
+  (defun pyenv-mode-auto-hook (prev cur)
+    "Automatically set pyenv version when changing buffer from PREV to CUR."
+    (let ((file-path '(buffer-file-name (cur))))
+      (unless (f-traverse-upwards
+               (lambda (file-path)
+                 (let ((pyenv-version-path (f-expand ".python-version" file-path)))
+                   (if (f-exists? pyenv-version-path)
+                       (progn
+                         (pyenv-mode-set (car (s-lines (s-trim (f-read-text pyenv-version-path 'utf-8)))))
+                         t)))))
+        (pyenv-mode-unset)
+        )))
+  (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
+
+(use-package poetry
+  :ensure t
+  :config
+  (poetry-tracking-mode))
+
+;; (use-package direnv
+;;   :config
+;;   (setq direnv-show-paths-in-summary nil)
+;;   (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
