@@ -13,12 +13,12 @@
 ;;-------------------------------
 (when (< 24 emacs-major-version)
 ;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
-  (defun ambrevar/reset-gc-cons-threshold ()
-    (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))
-    (run-with-idle-timer 60.0 t #'garbage-collect))
 ;;  (defun ambrevar/reset-gc-cons-threshold ()
-;;    (setq gc-cons-threshold (* 16 1024 1024)) ;; set to standard size
+;;    (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))
 ;;    (run-with-idle-timer 60.0 t #'garbage-collect))
+  (defun ambrevar/reset-gc-cons-threshold ()
+    (setq gc-cons-threshold (* 16 1024 1024)) ;; set to standard size
+    (run-with-idle-timer 60.0 t #'garbage-collect))
   (setq gc-cons-threshold (* 128 1024 1024))  ;; temporarily increase
   (add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
 
@@ -149,12 +149,18 @@
 (setq tramp-default-method "ssh")
 (server-start)
 ;;-------------------------------
-;; initial frame settings
+;; color
 ;;-------------------------------
+(add-to-list 'default-frame-alist '(foreground-color . "white"))
+(add-to-list 'default-frame-alist '(background-color . "#151515"))
+(set-face-background 'mode-line                        "#151515")
+;;
 (set-face-foreground 'font-lock-comment-delimiter-face "gray60")
 (set-face-foreground 'font-lock-comment-face           "gray60")
-(add-to-list 'default-frame-alist '(foreground-color . "white"))
-(add-to-list 'default-frame-alist '(background-color . "black"))
+(set-face-foreground 'font-lock-keyword-face           "sky blue")
+;;-------------------------------
+;; initial frame settings
+;;-------------------------------
 (add-to-list 'default-frame-alist '(width . 130))
 (if gui-win-p
     (add-to-list 'default-frame-alist '(height . 54))
@@ -163,9 +169,19 @@
 (add-to-list 'default-frame-alist '(left   . 0))
 ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(alpha . (100 . 75)))
-(add-to-list 'default-frame-alist '(line-spacing . 2))
+(add-to-list 'default-frame-alist '(line-spacing . 3))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
+;;-------------------------------
+;; Theme
+;;-------------------------------
+;; (use-package modus-themes
+;;   :ensure
+;;   :init
+;;   (modus-themes-load-themes)
+;;   :config
+;;   (modus-themes-load-vivendi)
+;;   )
 ;;-------------------------------
 ;; side windows
 ;;-------------------------------
@@ -1481,7 +1497,12 @@ hooked functions"
                (safe-define-key 'LaTeX-mode-map (kbd "C-c d f")  'my-toggle-fullscreen)
                (safe-define-key 'LaTeX-mode-map (kbd "C-c d i")  'my-init-framesize)
                (safe-define-key 'LaTeX-mode-map (kbd "C-c d c")  'my-center-frame)
-               (set-face-foreground 'font-latex-bold-face   "lightsteelblue")
+
+               (set-face-foreground 'font-latex-bold-face             "lightsteelblue")
+               (set-face-foreground 'font-latex-sectioning-5-face     "khaki")
+               (set-face-attribute  'font-latex-warning-face nil
+                                    :foreground "deep pink"
+                                    :weight 'normal)
                ))
   :config
   (setq-default TeX-master nil)
