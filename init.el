@@ -161,12 +161,12 @@
 ;;-------------------------------
 ;; initial frame settings
 ;;-------------------------------
-(add-to-list 'default-frame-alist '(width . 130))
-(if gui-win-p
-    (add-to-list 'default-frame-alist '(height . 54))
-  (add-to-list 'default-frame-alist '(height . 100)))
-(add-to-list 'default-frame-alist '(top .  0))
-(add-to-list 'default-frame-alist '(left   . 0))
+;; (add-to-list 'default-frame-alist '(width . 130))
+;; (if gui-win-p
+;;     (add-to-list 'default-frame-alist '(height . 54))
+;;   (add-to-list 'default-frame-alist '(height . 100)))
+;; (add-to-list 'default-frame-alist '(top .  0))
+;; (add-to-list 'default-frame-alist '(left   . 0))
 ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(alpha . (100 . 75)))
 (add-to-list 'default-frame-alist '(line-spacing . 3))
@@ -708,7 +708,7 @@ check for the whole contents of FILE, otherwise check for the first
                 '(lambda ()
                    (set-face-font 'linum my-linum-font))))
     ;;
-    (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode))
+    (setq linum-disabled-modes '(eshell-mode compilation-mode eww-mode dired-mode doc-view-mode pdf-view-mode))
     (defun linum-on ()
       (unless (or (minibufferp)
                   (member major-mode linum-disabled-modes))
@@ -723,6 +723,13 @@ check for the whole contents of FILE, otherwise check for the first
   (if (>= emacs-major-version 27)
       (set-face-attribute 'hiwin-face nil :extend t))
   (hiwin-activate))
+;;-------------------------------
+;; PDF Tools
+;;-------------------------------
+(use-package pdf-tools
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page))
 ;;-------------------------------
 ;; Git Client
 ;;-------------------------------
