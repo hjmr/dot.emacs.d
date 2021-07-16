@@ -137,8 +137,6 @@
 (setq ns-pop-up-frames nil)
 (setq-default dnd-open-file-other-window nil)
 ;;(setq ring-bell-function 'ignore)
-(setq split-height-threshold nil)
-;;(setq split-width-threshold  0)
 (setq scroll-preserve-screen-position 'always)
 ;; variable width cursor
 (setq x-stretch-cursor t)
@@ -147,7 +145,6 @@
 (setq scroll-margin 5)
 (setq scroll-step 1)
 (setq tramp-default-method "ssh")
-(server-start)
 ;;-------------------------------
 ;; color
 ;;-------------------------------
@@ -172,6 +169,15 @@
 (add-to-list 'default-frame-alist '(line-spacing . 3))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (setq initial-frame-alist default-frame-alist)
+;;-------------------------------
+;; Emacs Server
+;;-------------------------------
+(server-start)
+;;-------------------------------
+;; Window Splitting
+;;-------------------------------
+(setq split-height-threshold nil)
+;; (setq split-width-threshold 0)
 ;;-------------------------------
 ;; Theme
 ;;-------------------------------
@@ -676,7 +682,7 @@ check for the whole contents of FILE, otherwise check for the first
   (global-whitespace-mode 1)
   (setq whitespace-global-modes '(not dired-mode tar-mode eww-mode term-mode eshell-mode vterm-mode))
 
-  (defvar delete-trailing-whitespece-before-save t)
+  (defvar delete-trailing-whitespece-before-save nil)
   (defun my-delete-trailing-whitespace ()
     (if delete-trailing-whitespece-before-save
         (delete-trailing-whitespace)))
@@ -726,10 +732,14 @@ check for the whole contents of FILE, otherwise check for the first
 ;;-------------------------------
 ;; PDF Tools
 ;;-------------------------------
-(use-package pdf-tools
-  :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-page))
+(defun delayed-load-pdf-tools ()
+    (message "Installing package pdf-tools ...")
+    (pdf-tools-install)
+    (message "pdf-tools installed.")
+    (cancel-timer delayed-load-pdf-tools-timer)
+    (setq delayed-load-pdf-tools-timer nil))
+(setq delayed-load-pdf-tools-timer
+      (run-with-idle-timer 5 nil 'delayed-load-pdf-tools))
 ;;-------------------------------
 ;; Git Client
 ;;-------------------------------
@@ -865,6 +875,7 @@ check for the whole contents of FILE, otherwise check for the first
     ;; (global-set-key "\C-g"             'keyboard-quit)
     (global-set-key (kbd "C-<tab>")    'tabbar-forward-tab)
     (global-set-key (kbd "C-S-<tab>")  'tabbar-backward-tab)
+    (cancel-timer my-tabbar-show-group-timer)
     (setq my-tabbar-show-group-timer nil)
     (tabbar-buffer-show-groups nil)
     (tabbar-display-update))
@@ -1150,14 +1161,14 @@ hooked functions"
 ;;-------------------------------
 ;; ripgrep.el
 ;;-------------------------------
-(use-package ripgrep
-  :bind (("C-c n" . ripgrep-regexp))
-  :if (executable-find "rg")
-  :config
-  (setq ripgrep-arguments '("-S"))
-  (bind-keys :map ripgrep-search-mode-map
-             ("n" .  next-error-no-select)
-             ("p" .  previous-error-no-select)))
+ (use-package ripgrep
+   :bind (("C-c n" . ripgrep-regexp))
+   :if (executable-find "rg")
+   :config
+   (setq ripgrep-arguments '("-S"))
+   (bind-keys :map ripgrep-search-mode-map
+              ("n" .  next-error-no-select)
+              ("p" .  previous-error-no-select)))
 ;;-------------------------------
 ;; IVY & COUNSEL
 ;;-------------------------------
@@ -1421,7 +1432,7 @@ hooked functions"
                (bind-key "C-\\" 'hs-toggle-hiding python-mode-map)
                (use-package py-autopep8
                  :config
-                 (py-autopep8-enable-on-save)
+                 ;; (py-autopep8-enable-on-save)
                  (setq py-autopep8-options '("--max-line-length=120"))
                  (bind-key "C-c f" 'py-autopep8 python-mode-map))))
   :config
