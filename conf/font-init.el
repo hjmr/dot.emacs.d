@@ -41,8 +41,8 @@
 (defvar my-ascii-font-size
   (if (and (not gui-mac-or-ns-p)
            (> (my-display-pixel-width) 2000))
-      28
-    14))
+      30
+    15))
 (defvar my-jp-font-size (truncate (* my-ascii-font-size 1.2)))
 ;;
 (defun my-def-font (name asciifont asciifont-size asciifont-weight jpfont jpfont-size jpfont-weight anti-alias)
@@ -83,8 +83,9 @@
 (my-def-font "hiramin" "Monaco" my-ascii-font-size 'medium "Hiragino Mincho Pro" my-jp-font-size 'medium nil)
 (my-def-font "hirasans" "Inconsolata" my-ascii-font-size 'medium "Hiragino Sans" my-jp-font-size 'light nil)
 (my-def-font "lettergoth" "Letter Gothic Std" my-ascii-font-size 'medium "Hiragino Sans" my-jp-font-size 'light nil)
-(my-def-font "inputmono" "Input Mono Narrow" my-ascii-font-size 'light "Hiragino Sans" my-jp-font-size 'light nil)
-(my-def-font "udkyokasho" "Input Mono Narrow" my-ascii-font-size 'light "UD Digi Kyokasho N-R" my-jp-font-size 'medium nil)
+(my-def-font "inputmono" "Input Mono Narrow" my-ascii-font-size 'semilight "Hiragino Sans" my-jp-font-size 'light nil)
+(my-def-font "udkyolight" "Input Mono Narrow" my-ascii-font-size 'semilight "UD Digi Kyokasho N-R" my-jp-font-size 'normal nil)
+(my-def-font "udkyonormal" "Input Mono Narrow" my-ascii-font-size 'normal "UD Digi Kyokasho N-R" my-jp-font-size 'normal nil)
 ;;
 ;;-----------------------------
 ;;  For Linux
@@ -112,7 +113,7 @@
 ;;
 (cond
  (gui-mac-or-ns-p
-  (my-use-font "fontset-udkyokasho" "fontset-hirakaku"))
+  (my-use-font "fontset-udkyonormal" "fontset-hirakaku"))
  (gui-win-p
   (my-use-font "fontset-udkyokashowin" "fontset-meiryo"))
  (gui-x-p

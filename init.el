@@ -178,6 +178,12 @@
 ;;-------------------------------
 (setq split-height-threshold nil)
 ;; (setq split-width-threshold 0)
+(defun update-split-width-threshold ()
+  (setq split-width-threshold (/ (frame-width) 2)))
+(add-hook 'window-setup-hook 'update-split-width-threshold)
+(setq window-size-change-functions
+      '((lambda (frame)
+          (setq split-width-threshold (/ (frame-width frame) 2)))))
 ;;-------------------------------
 ;; Theme
 ;;-------------------------------
@@ -374,13 +380,14 @@
     (set-frame-position nil 0 0))
   (defun my-center-frame ()
     (interactive)
-    (let ((new-frame-width-in-pixel (truncate (* (display-pixel-width) 0.9)))
-          (new-frame-height-in-pixel (truncate (* (display-pixel-height) 0.9))))
-      (set-frame-width nil new-frame-width-in-pixel nil 'pixelwise)
-      (set-frame-height nil new-frame-height-in-pixel nil 'pixelwise)
-      (let ((new-frame-pos-x-in-pixel (truncate (/ (- (display-pixel-width) new-frame-width-in-pixel) 2)))
-            (new-frame-pos-y-in-pixel (truncate (/ (- (display-pixel-height) new-frame-height-in-pixel) 2))))
-        (set-frame-position nil new-frame-pos-x-in-pixel new-frame-pos-y-in-pixel)))))
+    (let ((title-bar-height 30))
+      (let ((new-frame-width-in-pixel (truncate (* (display-pixel-width) 0.95)))
+          (new-frame-height-in-pixel (truncate (* (- (display-pixel-height) title-bar-height) 0.95))))
+        (set-frame-width nil new-frame-width-in-pixel nil 'pixelwise)
+        (set-frame-height nil new-frame-height-in-pixel nil 'pixelwise)
+        (let ((new-frame-pos-x-in-pixel (truncate (/ (- (display-pixel-width) new-frame-width-in-pixel) 2)))
+              (new-frame-pos-y-in-pixel (truncate (/ (- (- (display-pixel-height) title-bar-height) new-frame-height-in-pixel) 2))))
+          (set-frame-position nil new-frame-pos-x-in-pixel new-frame-pos-y-in-pixel))))))
 
 (when gui-mac-p
   (defun my-toggle-fullscreen ()
@@ -662,7 +669,7 @@ check for the whole contents of FILE, otherwise check for the first
                       :foreground "DarkSlateGray"
                       :background 'unspecified)
   (set-face-attribute 'whitespace-newline nil
-                      :foreground "DarkCyan")
+                      :foreground "DarkSlateGray")
   (set-face-attribute 'whitespace-empty nil
                       :background 'unspecified)
   (setq whitespace-display-mappings
@@ -682,7 +689,7 @@ check for the whole contents of FILE, otherwise check for the first
   (global-whitespace-mode 1)
   (setq whitespace-global-modes '(not dired-mode tar-mode eww-mode term-mode eshell-mode vterm-mode))
 
-  (defvar delete-trailing-whitespece-before-save nil)
+  (defvar delete-trailing-whitespece-before-save t)
   (defun my-delete-trailing-whitespace ()
     (if delete-trailing-whitespece-before-save
         (delete-trailing-whitespace)))
@@ -733,13 +740,14 @@ check for the whole contents of FILE, otherwise check for the first
 ;; PDF Tools
 ;;-------------------------------
 (defun delayed-load-pdf-tools ()
-    (message "Installing package pdf-tools ...")
-    (pdf-tools-install)
-    (message "pdf-tools installed.")
-    (cancel-timer delayed-load-pdf-tools-timer)
-    (setq delayed-load-pdf-tools-timer nil))
+  (message "Installing package pdf-tools ...")
+  (pdf-loader-install)
+  (message "pdf-tools installed.")
+  (cancel-timer delayed-load-pdf-tools-timer)
+  (setq delayed-load-pdf-tools-timer nil)
+  )
 (setq delayed-load-pdf-tools-timer
-      (run-with-idle-timer 5 nil 'delayed-load-pdf-tools))
+      (run-with-idle-timer 3 nil 'delayed-load-pdf-tools))
 ;;-------------------------------
 ;; Git Client
 ;;-------------------------------
@@ -1205,6 +1213,8 @@ hooked functions"
   :config
   (counsel-mode 1)
   (recentf-mode 1)
+  (setq recentf-max-menu-items  30)
+  (setq recentf-max-saved-items 30)
   (setq counsel-find-file-ignore-regexp (regexp-opt '("./" "../")))
   (setq counsel-rg-base-command "rg --with-filename --no-heading --line-number --color never %s")
   (bind-keys ("M-x"      .   counsel-M-x)
@@ -1420,7 +1430,7 @@ hooked functions"
   (setq jedi:use-shortcuts t)
   (add-to-list 'company-backends 'company-jedi)
   (add-hook 'python-mode-hook 'jedi:setup))
-;;
+
 (use-package python
   :commands python-mode
   :delight "Py"
@@ -1430,11 +1440,7 @@ hooked functions"
                (fic-mode)
                (hs-minor-mode 1)
                (bind-key "C-\\" 'hs-toggle-hiding python-mode-map)
-               (use-package py-autopep8
-                 :config
-                 ;; (py-autopep8-enable-on-save)
-                 (setq py-autopep8-options '("--max-line-length=120"))
-                 (bind-key "C-c f" 'py-autopep8 python-mode-map))))
+            ))
   :config
   (setq python-indent        4)
   (setq python-indent-offset 4)
@@ -1443,8 +1449,21 @@ hooked functions"
   (setq python-shell-completion-native-enable nil)
   (setq flycheck-python-pylint-executable "pylint"))
 
+;; (use-package py-autopep8
+;;   :after python
+;;   :config
+;;   (py-autopep8-enable-on-save)
+;;   (setq py-autopep8-options '("--max-line-length=120"))
+;;   (bind-key "C-c f" 'py-autopep8 python-mode-map))
+
+(use-package python-black
+  :demand t
+  :after python
+  :hook (python-mode . python-black-on-save-mode))
+
+
 (use-package pyenv-mode
-  :after (python)
+  :after python
   :config
   (setq pyenv-mode-map nil)
   (pyenv-mode)
@@ -1463,15 +1482,15 @@ hooked functions"
         )))
   (add-hook 'switch-buffer-functions #'pyenv-mode-auto-hook))
 
-(use-package poetry
-  :ensure t
-  :config
-  (poetry-tracking-mode))
-
-;; (use-package direnv
+;; (use-package poetry
+;;   :after python
 ;;   :config
-;;   (setq direnv-show-paths-in-summary nil)
-;;   (direnv-mode))
+;;   (poetry-tracking-mode))
+
+(use-package direnv
+  :config
+  (setq direnv-show-paths-in-summary nil)
+  (direnv-mode))
 ;;-------------------------------
 ;; csv-mode settings
 ;;-------------------------------
@@ -1547,7 +1566,7 @@ hooked functions"
  ((let* ((latex-pp-d (expand-file-name "site-lisp/latex-preview-pane/" user-emacs-directory))
          (latex-pp-f (expand-file-name "latex-preview-pane.el" latex-pp-d)))
     (file-exists-p latex-pp-f)
-    (add-to-list 'load-path (expand-file-name "site-lisp/latex-preview-pane/" user-emacs-directory))
+    (add-to-list 'load-path latex-pp-d)
     (use-package latex-preview-pane
       :commands (latex-preview-pane-mode)
       :delight " LtxPP"
