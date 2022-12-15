@@ -1382,15 +1382,17 @@ hooked functions"
 ;;-------------------------------
 ;; LSP: Language Server Protocol
 ;;-------------------------------
-;; (use-package lsp-mode
-;;   :init
-;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-;;   (setq lsp-keymap-prefix "C-c l")
-;;   :hook ((python-mode . lsp))
-;;   :commands lsp)
-;; (use-package lsp-ui :commands lsp-ui-mode)
-;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (add-to-list 'company-backends 'company-lsp))
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :hook ((lsp-mode . lsp-ui-mode)))
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 ;;-------------------------------
 ;; C/C++/ObjC common settings
@@ -1424,30 +1426,36 @@ hooked functions"
 ;; Python mode settings
 ;;-------------------------------
 ;; jedi
-(use-package jedi-core
-  :config
-  (setq jedi:complete-on-dot t)
-  (setq jedi:use-shortcuts t)
-  (add-to-list 'company-backends 'company-jedi)
-  (add-hook 'python-mode-hook 'jedi:setup))
+;; (use-package jedi-core
+;;   :config
+;;   (setq jedi:complete-on-dot t)
+;;   (setq jedi:use-shortcuts t)
+;;   (add-to-list 'company-backends 'company-jedi)
+;;   (add-hook 'python-mode-hook 'jedi:setup))
+
+(use-package lsp-pyright
+  :init
+  (add-hook 'python-mode-hook #'lsp))
 
 (use-package python
   :commands python-mode
   :delight "Py"
+  :mode (("\\.py$" . python-mode))
   :init
   (add-hook 'python-mode-hook
             '(lambda ()
                (fic-mode)
                (hs-minor-mode 1)
                (bind-key "C-\\" 'hs-toggle-hiding python-mode-map)
-            ))
+               ))
   :config
-  (setq python-indent        4)
+;;  (setq python-indent        4)
   (setq python-indent-offset 4)
   (setq python-shell-interpreter "python")
   (setq python-shell-interpreter-args "")
   (setq python-shell-completion-native-enable nil)
-  (setq flycheck-python-pylint-executable "pylint"))
+;;  (setq flycheck-python-pylint-executable "pylint")
+  )
 
 ;; (use-package py-autopep8
 ;;   :after python
@@ -1552,10 +1560,10 @@ hooked functions"
   (setq TeX-PDF-from-DVI "Dvipdfmx")
   )
 
-(use-package auctex-latexmk
-  :ensure auctex
-  :config
-  (auctex-latexmk-setup))
+;; (use-package auctex-latexmk
+;;   :ensure auctex
+;;   :config
+;;   (auctex-latexmk-setup))
 
 (use-package company-auctex
   :ensure auctex
