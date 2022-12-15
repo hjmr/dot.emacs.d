@@ -928,7 +928,7 @@ check for the whole contents of FILE, otherwise check for the first
              ("C-<tab>"     .  tabbar-forward-tab)
              ("C-S-<tab>"   .  tabbar-backward-tab))
   ;;
-  ;;-- refrect modification status
+  ;;-- Refrect modification status
   ;; Add a buffer modification state indicator in the tab label, and place a
   ;; space around the label to make it looks less crowd.
   (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
@@ -1435,7 +1435,10 @@ hooked functions"
 
 (use-package lsp-pyright
   :init
-  (add-hook 'python-mode-hook #'lsp))
+  (add-hook 'python-mode-hook #'lsp)
+  (when (fboundp 'flycheck-mode)
+    ;; pyright で lint するので python-mypy は使わない。
+    (setq flycheck-disabled-checkers '(python-mypy))))
 
 (use-package python
   :commands python-mode
